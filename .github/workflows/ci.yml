@@ -23,20 +23,47 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Restore dependencies
+    - name: Detect project directory
+      id: detect_dir
+      run: |
+        if [ -f "InteraktifKredi/InteraktifKredi.csproj" ]; then
+          echo "project_dir=InteraktifKredi" >> $GITHUB_OUTPUT
+        elif [ -f "InteraktifKredi.csproj" ]; then
+          echo "project_dir=." >> $GITHUB_OUTPUT
+        else
+          echo "❌ InteraktifKredi.csproj bulunamadı!"
+          exit 1
+        fi
+
+    - name: Restore .NET dependencies
       run: dotnet restore
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
 
     - name: Install npm dependencies
       run: npm install
-      working-directory: InteraktifKredi
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
 
     - name: Build SCSS
       run: npm run scss:build
-      working-directory: InteraktifKredi
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
 
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build .NET project
+      run: dotnet build --no-restore -c Release
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
 
-    - name: Test
+    - name: Check for test projects
+      id: check_tests
+      run: |
+        if [ -d "Tests" ] || find . -name "*.Tests.csproj" -type f | grep -q .; then
+          echo "has_tests=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_tests=false" >> $GITHUB_OUTPUT
+        fi
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
+      continue-on-error: true
+
+    - name: Run tests
+      if: steps.check_tests.outputs.has_tests == 'true'
       run: dotnet test --no-build --verbosity normal
+      working-directory: ${{ steps.detect_dir.outputs.project_dir }}
 
