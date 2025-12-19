@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="@(ViewData["Description"] ?? "İnteraktif Kredi - Web Şube 2.0. Dijital kredi başvurusu yapın, hızlı ve güvenli şekilde kredi başvurunuzu tamamlayın.")" />
+    <meta name="keywords" content="@(ViewData["Keywords"] ?? "kredi, kredi başvurusu, dijital şube, interaktif kredi, online kredi, hızlı kredi")" />
+    <meta name="author" content="İnteraktif Kredi" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Turkish" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@ViewData["Title"] - İnteraktif Kredi" />
+    <meta property="og:description" content="@(ViewData["Description"] ?? "Dijital kredi başvurusu yapın, hızlı ve güvenli şekilde kredi başvurunuzu tamamlayın.")" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:site_name" content="İnteraktif Kredi" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData["Title"] - İnteraktif Kredi" />
+    <meta name="twitter:description" content="@(ViewData["Description"] ?? "Dijital kredi başvurusu yapın, hızlı ve güvenli şekilde kredi başvurunuzu tamamlayın.")" />
+    
+    <title>@ViewData["Title"] - İnteraktif Kredi</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Skip to main content (Accessibility) -->
+    <a href="#main_content" class="skip_to_main" aria-label="Ana içeriğe geç">Ana içeriğe geç</a>
+    
+    <header class="header" role="banner">
+        <div class="header__container">
+            <a href="/" class="header__logo">
+                <span class="header__logo__text">İnteraktif Kredi</span>
+            </a>
+            
+            <nav class="header__nav">
+                <a href="/Dashboard" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Dashboard") == true ? "header__link--active" : "")">Dashboard</a>
+                <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
+                <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
+                <a href="/SSS" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/SSS") == true ? "header__link--active" : "")">SSS</a>
+            </nav>
+            
+            <div class="header__user">
+                <div class="header__user__avatar" id="user_menu_toggle" aria-label="Kullanıcı menüsü">
+                    <span id="user_avatar_initial">K</span>
+                </div>
+                <span class="header__user__name" id="user_name">Kullanıcı</span>
+                <div class="header__user__menu" id="user_menu">
+                    <a href="/Profile/Adres" class="header__user__menu_item">Profil</a>
+                    <a href="/Logout" class="header__user__menu_item header__user__menu_item--danger">Çıkış Yap</a>
+                </div>
+            </div>
+            
+            <button type="button" class="header__toggle" id="mobile_menu_toggle" aria-label="Menü">
+                <span class="header__toggle__icon"></span>
+            </button>
+        </div>
+        
+        <nav class="header__mobile_menu" id="mobile_menu">
+            <a href="/Dashboard" class="header__link">Dashboard</a>
+            <a href="/Profile/Adres" class="header__link">Profilim</a>
+            <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
+            <a href="/SSS" class="header__link">SSS</a>
+        </nav>
+    </header>
+
+    <main id="main_content" role="main" class="main_content" tabindex="-1">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__content">
+                <div class="footer__section">
+                    <h3 class="footer__section__title">Hızlı Linkler</h3>
+                    <div class="footer__section__links">
+                        <a href="/Dashboard" class="footer__section__link">Dashboard</a>
+                        <a href="/Profile/Adres" class="footer__section__link">Profilim</a>
+                        <a href="/Raporlar/Liste" class="footer__section__link">Raporlar</a>
+                        <a href="/SSS" class="footer__section__link">Sık Sorulan Sorular</a>
+                    </div>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__section__title">Destek</h3>
+                    <div class="footer__section__links">
+                        <a href="/Contact" class="footer__section__link">İletişim</a>
+                        <a href="/Privacy" class="footer__section__link">Gizlilik Politikası</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer__bottom">
+                <p class="footer__text">&copy; 2025 - İnteraktif Kredi - Web Şube 2.0. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    
+    <script>
+        // Mobile menu toggle
+        $(document).ready(function() {
+            var $mobileToggle = $('#mobile_menu_toggle');
+            var $mobileMenu = $('#mobile_menu');
+            
+            $mobileToggle.on('click', function() {
+                $mobileToggle.toggleClass('header__toggle--active');
+                $mobileMenu.toggleClass('header__mobile_menu--visible');
+            });
+            
+            // User menu toggle
+            var $userToggle = $('#user_menu_toggle');
+            var $userMenu = $('#user_menu');
+            
+            $userToggle.on('click', function(e) {
+                e.stopPropagation();
+                $userMenu.toggleClass('header__user__menu--visible');
+            });
+            
+            // Close user menu when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.header__user').length) {
+                    $userMenu.removeClass('header__user__menu--visible');
+                }
+            });
+
+            // Load user info from session
+            loadUserInfo();
+        });
+
+        function loadUserInfo() {
+            // Session'dan kullanıcı bilgilerini al (örnek)
+            var customerName = '@(Context.Session.GetString("CustomerName") ?? "Kullanıcı")';
+            var tckn = '@(Context.Session.GetString("TCKN") ?? "")';
+            
+            if (customerName && customerName !== 'Kullanıcı') {
+                $('#user_name').text(customerName);
+                $('#user_avatar_initial').text(customerName.charAt(0).toUpperCase());
+            } else if (tckn) {
+                // TCKN'dan isim çıkarılamaz, bu yüzden sadece baş harf göster
+                $('#user_avatar_initial').text('M');
+            }
+        }
+    </script>
+</body>
+</html>

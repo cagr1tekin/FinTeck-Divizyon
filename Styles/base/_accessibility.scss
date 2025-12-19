@@ -1,0 +1,61 @@
+@use '../abstracts' as *;
+
+// ============================================
+// ACCESSIBILITY STYLES
+// ============================================
+
+// Skip to main content link
+.skip_to_main {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: $z_modal + 10;
+    padding: $spacing_sm $spacing_md;
+    background-color: $brand_primary;
+    color: $text_white;
+    text-decoration: none;
+    font-weight: $font_weight_semibold;
+    border-radius: 0 0 $radius_md $radius_md;
+    transition: top $transition_normal;
+
+    &:focus {
+        top: 0;
+        @include focus_ring($brand_primary);
+    }
+}
+
+// Focus visible styles
+*:focus-visible {
+    @include focus_ring($brand_primary);
+    outline: none;
+}
+
+// Screen reader only text
+.sr_only {
+    @include visually_hidden;
+}
+
+// Screen reader only text (focusable)
+.sr_only_focusable {
+    @include visually_hidden_focusable;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .btn_primary,
+    .btn_secondary {
+        border-width: 2px;
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+

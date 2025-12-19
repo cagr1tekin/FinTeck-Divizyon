@@ -1,0 +1,414 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// CARD COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+// ============================================
+// BASE CARD
+// ============================================
+
+.card {
+    @include card_base;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_lg;
+        padding-bottom: $spacing_md;
+        border-bottom: 1px solid $border_light;
+        flex-shrink: 0;
+
+        // Header without border
+        .card--no_border & {
+            border-bottom: none;
+            padding-bottom: $spacing_lg;
+        }
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin: 0;
+        line-height: $line_height_tight;
+    }
+
+    &__subtitle {
+        font-size: $font_size_sm;
+        font-weight: $font_weight_normal;
+        color: $text_secondary;
+        margin-top: $spacing_xs;
+        line-height: $line_height_normal;
+    }
+
+    &__body {
+        padding: $spacing_lg;
+        flex: 1 1 auto;
+        color: $text_secondary;
+        line-height: $line_height_normal;
+
+        // Body without padding
+        .card--no_padding & {
+            padding: 0;
+        }
+    }
+
+    &__footer {
+        padding: $spacing_lg;
+        padding-top: $spacing_md;
+        border-top: 1px solid $border_light;
+        flex-shrink: 0;
+        @include flex_between;
+        gap: $spacing_md;
+
+        // Footer without border
+        .card--no_border & {
+            border-top: none;
+            padding-top: $spacing_lg;
+        }
+
+        // Footer centered
+        &--center {
+            justify-content: center;
+        }
+
+        // Footer right aligned
+        &--right {
+            justify-content: flex-end;
+        }
+    }
+
+    // Clickable card
+    &--clickable {
+        cursor: pointer;
+        transition: all $transition_normal;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: $shadow_lg;
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: $shadow_md;
+        }
+    }
+
+    // Highlighted card
+    &--highlighted {
+        border: 2px solid $brand_primary;
+        box-shadow: 0 0 0 3px rgba($brand_primary, 0.1);
+    }
+
+    // Card with no border
+    &--no_border {
+        box-shadow: none;
+        border: 1px solid $border_light;
+    }
+
+    // Card with no padding
+    &--no_padding {
+        .card__header,
+        .card__body,
+        .card__footer {
+            padding: 0;
+        }
+    }
+
+    // Card sizes
+    &--sm {
+        .card__header,
+        .card__body,
+        .card__footer {
+            padding: $spacing_md;
+        }
+    }
+
+    &--lg {
+        .card__header,
+        .card__body,
+        .card__footer {
+            padding: $spacing_xl;
+        }
+    }
+}
+
+// ============================================
+// STAT CARD (Dashboard İstatistik Kartı)
+// ============================================
+
+.stat_card {
+    @include card_base;
+    padding: $spacing_lg;
+    @include flex_between;
+    align-items: flex-start;
+    gap: $spacing_md;
+    position: relative;
+    overflow: hidden;
+
+    &__icon {
+        width: 48px;
+        height: 48px;
+        border-radius: $radius_md;
+        @include flex_center;
+        flex-shrink: 0;
+        background-color: $brand_light;
+        color: $brand_primary;
+        font-size: 24px;
+
+        // Icon colors
+        &--success {
+            background-color: color.mix($success_color, #fff, 60%);
+            color: $success_color;
+        }
+
+        &--error {
+            background-color: color.mix($error_color, #fff, 60%);
+            color: $error_color;
+        }
+
+        &--warning {
+            background-color: color.mix($warning_color, #fff, 60%);
+            color: $warning_color;
+        }
+
+        &--info {
+            background-color: color.mix($info_color, #fff, 60%);
+            color: $info_color;
+        }
+    }
+
+    &__content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    &__value {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+        line-height: $line_height_tight;
+        margin-bottom: $spacing_xs;
+    }
+
+    &__label {
+        font-size: $font_size_sm;
+        font-weight: $font_weight_medium;
+        color: $text_secondary;
+        line-height: $line_height_normal;
+        @include truncate;
+    }
+
+    &__change {
+        font-size: $font_size_xs;
+        font-weight: $font_weight_medium;
+        margin-top: $spacing_xs;
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing_xs;
+
+        &--positive {
+            color: $success_color;
+        }
+
+        &--negative {
+            color: $error_color;
+        }
+
+        &--neutral {
+            color: $text_muted;
+        }
+    }
+
+    // Stat card hover effect
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow_lg;
+    }
+}
+
+// ============================================
+// PROFILE CARD (Profil Özet Kartı)
+// ============================================
+
+.profile_card {
+    @include card_base;
+    padding: $spacing_lg;
+    text-align: center;
+
+    &__avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: $radius_full;
+        margin: 0 auto $spacing_md;
+        background-color: $bg_secondary;
+        @include flex_center;
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        border: 3px solid $border_light;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__name {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_xs;
+        line-height: $line_height_tight;
+    }
+
+    &__title {
+        font-size: $font_size_base;
+        font-weight: $font_weight_normal;
+        color: $text_secondary;
+        margin-bottom: $spacing_md;
+        line-height: $line_height_normal;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_sm;
+        margin-top: $spacing_lg;
+        padding-top: $spacing_lg;
+        border-top: 1px solid $border_light;
+    }
+
+    &__info_item {
+        @include flex_between;
+        font-size: $font_size_sm;
+        color: $text_secondary;
+
+        &__label {
+            font-weight: $font_weight_medium;
+        }
+
+        &__value {
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+        }
+    }
+
+    &__actions {
+        margin-top: $spacing_lg;
+        display: flex;
+        gap: $spacing_sm;
+        justify-content: center;
+    }
+}
+
+// ============================================
+// STEP CARD (Onboarding için)
+// ============================================
+
+.step_card {
+    @include card_base;
+    padding: $spacing_lg;
+    margin-bottom: $spacing_lg;
+    transition: all $transition_normal;
+    position: relative;
+
+    &__number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: $radius_full;
+        background-color: $brand_primary;
+        color: $text_white;
+        font-size: $font_size_base;
+        font-weight: $font_weight_bold;
+        margin-bottom: $spacing_md;
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $brand_primary;
+        margin-bottom: $spacing_sm;
+        line-height: $line_height_tight;
+    }
+
+    &__description {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        margin-bottom: $spacing_md;
+        line-height: $line_height_normal;
+    }
+
+    &__actions {
+        margin-top: $spacing_md;
+    }
+
+    &:hover {
+        box-shadow: $shadow_md;
+        transform: translateY(-2px);
+    }
+
+    // Completed step
+    &--completed {
+        border-left: 4px solid $success_color;
+
+        .step_card__number {
+            background-color: $success_color;
+        }
+    }
+
+    // Active step
+    &--active {
+        border-left: 4px solid $brand_primary;
+        box-shadow: $shadow_md;
+    }
+}
+
+// ============================================
+// RESPONSIVE CARDS
+// ============================================
+
+@include respond_to_max(sm) {
+    .card {
+        &__header,
+        &__body,
+        &__footer {
+            padding: $spacing_md;
+        }
+    }
+
+    .stat_card {
+        padding: $spacing_md;
+        flex-direction: column;
+        align-items: flex-start;
+
+        &__icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+        }
+
+        &__value {
+            font-size: $font_size_xl;
+        }
+    }
+
+    .profile_card {
+        padding: $spacing_md;
+
+        &__avatar {
+            width: 64px;
+            height: 64px;
+            font-size: $font_size_xl;
+        }
+    }
+}

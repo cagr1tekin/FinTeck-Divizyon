@@ -1,0 +1,150 @@
+// ============================================
+// BRAND COLORS - FinTech Renk Paleti
+// ============================================
+
+// Primary Brand Colors
+$brand_primary: #1E3A8A;        // Koyu mavi (güven, profesyonellik)
+$brand_secondary: #0EA5E9;      // Açık mavi/turkuaz (modern, dinamik)
+$brand_accent: #F59E0B;         // Altın/turuncu (önem, vurgu)
+$brand_light: #E0F2FE;          // Çok açık mavi (arka plan)
+$brand_dark: #0C4A6E;           // Çok koyu mavi
+
+// Legacy brand color (geriye dönük uyumluluk için)
+$brand_color: $brand_primary;
+
+// ============================================
+// TEXT COLORS
+// ============================================
+
+$text_primary: #1F2937;         // Ana metin rengi (koyu gri)
+$text_secondary: #6B7280;       // İkincil metin rengi (orta gri)
+$text_muted: #9CA3AF;           // Soluk metin rengi (açık gri)
+$text_white: #FFFFFF;            // Beyaz metin
+$text_light: $text_muted;       // Alias
+
+// ============================================
+// STATUS COLORS
+// ============================================
+
+$success_color: #10B981;        // Yeşil (başarı)
+$error_color: #EF4444;          // Kırmızı (hata)
+$warning_color: #F59E0B;        // Turuncu (uyarı)
+$info_color: #3B82F6;           // Mavi (bilgi)
+
+// Legacy status colors (geriye dönük uyumluluk için)
+$error_color_legacy: #DC3545;
+$success_color_legacy: #28A745;
+$warning_color_legacy: #FFC107;
+$info_color_legacy: #17A2B8;
+
+// ============================================
+// BACKGROUND COLORS
+// ============================================
+
+$background_light: #F9FAFB;    // Açık arka plan
+$background_dark: #111827;      // Koyu arka plan
+$bg_primary: #FFFFFF;           // Ana arka plan (beyaz)
+$bg_secondary: #F3F4F6;        // İkincil arka plan (açık gri)
+$bg_light: $background_light;   // Alias
+
+// ============================================
+// BORDER COLORS
+// ============================================
+
+$border_color: #E5E7EB;         // Ana border rengi
+$border_light: #F3F4F6;         // Açık border rengi
+$border_dark: #D1D5DB;          // Koyu border rengi
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+
+// Font Family
+$font_primary: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+// Font Sizes
+$font_size_xs: 12px;
+$font_size_sm: 14px;
+$font_size_base: 16px;
+$font_size_lg: 18px;
+$font_size_xl: 20px;
+$font_size_2xl: 24px;
+
+// Heading Sizes (legacy)
+$font_size_h1: 32px;
+$font_size_h2: $font_size_2xl;
+$font_size_h3: $font_size_xl;
+$font_size_small: $font_size_sm;
+$font_size_large: $font_size_lg;
+
+// Font Weights
+$font_weight_normal: 400;
+$font_weight_medium: 500;
+$font_weight_semibold: 600;
+$font_weight_bold: 700;
+
+// Line Heights
+$line_height_tight: 1.25;
+$line_height_normal: 1.5;
+$line_height_relaxed: 1.75;
+
+// ============================================
+// SPACING
+// ============================================
+
+$spacing_unit: 8px;
+
+$spacing_xs: $spacing_unit;           // 8px
+$spacing_sm: $spacing_unit * 2;        // 16px
+$spacing_md: $spacing_unit * 3;        // 24px
+$spacing_lg: $spacing_unit * 4;        // 32px
+$spacing_xl: $spacing_unit * 6;        // 48px
+$spacing_2xl: $spacing_unit * 8;       // 64px
+
+// ============================================
+// BORDER RADIUS
+// ============================================
+
+$radius_sm: 4px;
+$radius_md: 8px;
+$radius_lg: 12px;
+$radius_full: 9999px;                  // Tam yuvarlak
+
+// Legacy border radius (geriye dönük uyumluluk için)
+$border_radius: $radius_md;
+$border_radius_sm: $radius_sm;
+$border_radius_lg: $radius_lg;
+
+// ============================================
+// SHADOWS
+// ============================================
+
+$shadow_sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow_md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow_lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// ============================================
+// BREAKPOINTS
+// ============================================
+
+$breakpoint_sm: 576px;                 // Küçük ekranlar (mobil)
+$breakpoint_md: 768px;                 // Orta ekranlar (tablet)
+$breakpoint_lg: 992px;                 // Büyük ekranlar (desktop)
+$breakpoint_xl: 1200px;                // Çok büyük ekranlar (large desktop)
+
+// ============================================
+// TRANSITIONS
+// ============================================
+
+$transition_fast: 0.15s ease;
+$transition_normal: 0.2s ease;
+$transition_slow: 0.3s ease;
+
+// ============================================
+// Z-INDEX LAYERS
+// ============================================
+
+$z_dropdown: 1000;                     // Dropdown menüler
+$z_sticky: 1020;                       // Sticky header/footer
+$z_modal: 1050;                        // Modal dialoglar
+$z_toast: 1100;                        // Toast bildirimleri

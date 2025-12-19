@@ -1,0 +1,128 @@
+@page
+@model InteraktifKredi.Pages.Raporlar.ListeModel
+@{
+    ViewData["Title"] = "Raporlarım";
+}
+
+<div class="reports_container">
+    <div class="reports_header">
+        <h1 class="reports_title">Raporlarım</h1>
+        <p class="reports_subtitle">Kredi başvurularınızın listesi</p>
+    </div>
+
+    @if (Model.IsLoading)
+    {
+        <div class="reports_loading">
+            <div class="reports_loading__spinner"></div>
+            <p class="reports_loading__text">Raporlar yükleniyor...</p>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="form_error_message">
+            <span class="form_error_message__icon">⚠</span>
+            <span class="form_error_message__text">@Model.ErrorMessage</span>
+        </div>
+    }
+    else if (Model.Reports == null || !Model.Reports.Any())
+    {
+        <div class="reports_empty">
+            <div class="reports_empty__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+            </div>
+            <h3 class="reports_empty__title">Henüz rapor bulunmuyor</h3>
+            <p class="reports_empty__text">Kredi başvurunuz tamamlandığında raporlarınız burada görünecektir.</p>
+        </div>
+    }
+    else
+    {
+        <div class="reports_list" id="reports_list">
+            @foreach (var report in Model.Reports)
+            {
+                <div class="report_card" data-report-id="@report.ReportId">
+                    <div class="report_card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                    </div>
+                    <div class="report_card__content">
+                        <div class="report_card__header">
+                            <h3 class="report_card__title">@report.ReportName</h3>
+                            <span class="report_card__badge report_card__badge--@GetStatusClass(report.Status)">
+                                @report.StatusText
+                            </span>
+                        </div>
+                        <div class="report_card__details">
+                            <div class="report_card__detail_item">
+                                <span class="report_card__detail_label">Rapor No:</span>
+                                <span class="report_card__detail_value">@report.ReportNumber</span>
+                            </div>
+                            <div class="report_card__detail_item">
+                                <span class="report_card__detail_label">Tarih:</span>
+                                <span class="report_card__detail_value">@report.ReportDate.ToString("dd.MM.yyyy")</span>
+                            </div>
+                            <div class="report_card__detail_item">
+                                <span class="report_card__detail_label">Tutar:</span>
+                                <span class="report_card__detail_value">@FormatCurrency(report.LoanAmount)</span>
+                            </div>
+                            <div class="report_card__detail_item">
+                                <span class="report_card__detail_label">Vade:</span>
+                                <span class="report_card__detail_value">@report.Term Ay</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report_card__actions">
+                        <a href="/Raporlar/Detay?id=@report.ReportId" class="btn_primary btn_primary--sm" data-report-id="@report.ReportId">
+                            Detay Gör
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetStatusClass(int status)
+    {
+        return status switch
+        {
+            0 => "pending",    // Bekliyor
+            1 => "approved",  // Onaylandı
+            2 => "rejected",  // Reddedildi
+            _ => "unknown"
+        };
+    }
+
+    private string FormatCurrency(decimal amount)
+    {
+        return new System.Globalization.CultureInfo("tr-TR").NumberFormat.CurrencySymbol + 
+               amount.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Rapor kartları hover efekti
+            $('.report_card').on('mouseenter', function() {
+                $(this).addClass('report_card--hover');
+            }).on('mouseleave', function() {
+                $(this).removeClass('report_card--hover');
+            });
+
+            // Detay butonu tıklama
+            $('.report_card__actions .btn_primary').on('click', function(e) {
+                var $card = $(this).closest('.report_card');
+                var reportId = $card.data('report-id');
+                
+                // Loading state
+                $(this).prop('disabled', true)
+                    .addClass('btn_primary--loading')
+                    .text('Yükleniyor...');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,107 @@
+@use '../abstracts' as *;
+
+// ============================================
+// ERROR PAGE STYLES
+// ============================================
+
+.error_container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_xl * 2 $spacing_lg;
+}
+
+.error_content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.error_icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto $spacing_xl;
+    color: $error_color;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.error_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin-bottom: $spacing_md;
+    line-height: $line_height_tight;
+}
+
+.error_message {
+    font-size: $font_size_base;
+    color: $text_secondary;
+    line-height: $line_height_relaxed;
+    margin-bottom: $spacing_xl;
+}
+
+.error_request_id {
+    background-color: $bg_secondary;
+    border: 1px solid $border_light;
+    border-radius: $radius_md;
+    padding: $spacing_md;
+    margin-bottom: $spacing_xl;
+    display: inline-block;
+
+    &__label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        margin-right: $spacing_sm;
+    }
+
+    &__value {
+        font-family: 'Courier New', monospace;
+        font-size: $font_size_sm;
+        color: $text_primary;
+        background-color: $bg_primary;
+        padding: $spacing_xs $spacing_sm;
+        border-radius: $radius_sm;
+    }
+}
+
+.error_actions {
+    display: flex;
+    gap: $spacing_md;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+// ============================================
+// RESPONSIVE ERROR
+// ============================================
+
+@include respond_to_max(sm) {
+    .error_container {
+        padding: $spacing_xl $spacing_md;
+        min-height: 50vh;
+    }
+
+    .error_icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: $spacing_lg;
+    }
+
+    .error_title {
+        font-size: $font_size_xl;
+    }
+
+    .error_actions {
+        flex-direction: column;
+        
+        .btn_primary,
+        .btn_secondary {
+            width: 100%;
+        }
+    }
+}
+

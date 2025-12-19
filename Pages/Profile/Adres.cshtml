@@ -1,0 +1,208 @@
+@page
+@model InteraktifKredi.Pages.Profile.AdresModel
+@{
+    ViewData["Title"] = "Adres Bilgileri";
+}
+
+<div class="profile_container">
+    <div class="profile_header">
+        <h1 class="profile_title">Adres Bilgileri</h1>
+        <p class="profile_subtitle">Adres bilgilerinizi güncelleyin</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="form_success_message">
+            <span class="form_success_message__icon">✓</span>
+            <span class="form_success_message__text">@Model.SuccessMessage</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="form_error_message">
+            <span class="form_error_message__icon">⚠</span>
+            <span class="form_error_message__text">@Model.ErrorMessage</span>
+        </div>
+    }
+
+    <form id="adres_form" method="post" class="profile_form" novalidate>
+        <div class="form_group">
+            <label asp-for="CityId" class="form_label form_label--required">İl</label>
+            <select asp-for="CityId" asp-items="Model.Cities" id="city_select" class="form_select" required>
+            </select>
+            <span asp-validation-for="CityId" class="form_error"></span>
+        </div>
+
+        <div class="form_group">
+            <label asp-for="TownId" class="form_label form_label--required">İlçe</label>
+            <select asp-for="TownId" asp-items="Model.Districts" id="town_select" class="form_select" required disabled>
+            </select>
+            <span asp-validation-for="TownId" class="form_error"></span>
+            <span class="form_hint" id="town_hint" style="display: none;">Lütfen önce il seçiniz</span>
+        </div>
+
+        <div class="form_group">
+            <label asp-for="Address" class="form_label form_label--required">Açık Adres</label>
+            <textarea 
+                asp-for="Address" 
+                id="address_textarea"
+                class="form_textarea" 
+                rows="4" 
+                placeholder="Mahalle, Sokak, Bina No, Daire No"
+                maxlength="500"
+                required></textarea>
+            <span asp-validation-for="Address" class="form_error"></span>
+            <span class="form_hint">
+                <span id="address_char_count">0</span> / 500 karakter
+            </span>
+        </div>
+
+        <div class="form_group">
+            <label asp-for="PostalCode" class="form_label">Posta Kodu</label>
+            <input 
+                asp-for="PostalCode" 
+                id="postal_code_input"
+                class="form_input" 
+                type="text" 
+                maxlength="5" 
+                placeholder="34000"
+                inputmode="numeric"
+                pattern="[0-9]{5}" />
+            <span asp-validation-for="PostalCode" class="form_error"></span>
+        </div>
+
+        <div class="form_group">
+            <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                <span class="btn_primary__text">Kaydet</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/cities-districts.js" asp-append-version="true"></script>
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#adres_form');
+            var $citySelect = $('#city_select');
+            var $townSelect = $('#town_select');
+            var $townHint = $('#town_hint');
+            var $addressTextarea = $('#address_textarea');
+            var $addressCharCount = $('#address_char_count');
+            var $postalCodeInput = $('#postal_code_input');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+
+            // İl değişikliğinde ilçeleri yükle
+            $citySelect.on('change', function() {
+                var cityId = parseInt($(this).val());
+                
+                if (cityId > 0) {
+                    loadDistricts(cityId);
+                    $townSelect.prop('disabled', false);
+                    $townHint.hide();
+                } else {
+                    $townSelect.html('<option value="">İlçe Seçiniz</option>');
+                    $townSelect.prop('disabled', true);
+                    $townHint.show();
+                }
+            });
+
+            // İlçe yükleme fonksiyonu
+            function loadDistricts(cityId) {
+                $townSelect.html('<option value="">Yükleniyor...</option>');
+                $townSelect.prop('disabled', true);
+
+                // API'den ilçeleri çek (şimdilik static data kullan)
+                var districts = get_districts_by_city_id(cityId);
+                
+                if (districts && districts.length > 0) {
+                    var options = '<option value="">İlçe Seçiniz</option>';
+                    districts.forEach(function(district) {
+                        options += '<option value="' + district.id + '">' + district.name + '</option>';
+                    });
+                    $townSelect.html(options);
+                    $townSelect.prop('disabled', false);
+                } else {
+                    // API çağrısı yapılabilir
+                    $.ajax({
+                        url: '/api/cities/' + cityId + '/districts',
+                        method: 'GET',
+                        success: function(response) {
+                            if (response.success && response.data) {
+                                var options = '<option value="">İlçe Seçiniz</option>';
+                                response.data.forEach(function(district) {
+                                    options += '<option value="' + district.id + '">' + district.name + '</option>';
+                                });
+                                $townSelect.html(options);
+                                $townSelect.prop('disabled', false);
+                            } else {
+                                $townSelect.html('<option value="">İlçe bulunamadı</option>');
+                            }
+                        },
+                        error: function() {
+                            $townSelect.html('<option value="">İlçe yüklenemedi</option>');
+                        }
+                    });
+                }
+            }
+
+            // Adres karakter sayacı
+            $addressTextarea.on('input', function() {
+                var length = $(this).val().length;
+                $addressCharCount.text(length);
+                
+                if (length > 500) {
+                    $addressCharCount.parent().addClass('form_hint--error');
+                } else {
+                    $addressCharCount.parent().removeClass('form_hint--error');
+                }
+            });
+
+            // Posta kodu sadece rakam
+            $postalCodeInput.on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+                if (value.length > 5) value = value.substring(0, 5);
+                $(this).val(value);
+            });
+
+            // Form submit
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Client-side validation
+                if (!$form[0].checkValidity()) {
+                    $form[0].reportValidity();
+                    return false;
+                }
+
+                // Double submit prevention
+                if ($form.data('submitting')) {
+                    return false;
+                }
+
+                // Butonu disable et
+                $form.data('submitting', true);
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Kaydediliyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // İlk yüklemede ilçeleri kontrol et
+            var initialCityId = parseInt($citySelect.val());
+            if (initialCityId > 0) {
+                loadDistricts(initialCityId);
+                $townSelect.prop('disabled', false);
+            }
+
+            // İlk karakter sayısını göster
+            $addressCharCount.text($addressTextarea.val().length);
+        });
+    </script>
+}

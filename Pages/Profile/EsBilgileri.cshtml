@@ -1,0 +1,279 @@
+@page
+@model InteraktifKredi.Pages.Profile.EsBilgileriModel
+@{
+    ViewData["Title"] = "Eş Bilgileri";
+}
+
+<div class="profile_container">
+    <div class="profile_header">
+        <h1 class="profile_title">Eş Bilgileri</h1>
+        <p class="profile_subtitle">Eş bilgilerinizi güncelleyin</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="form_success_message">
+            <span class="form_success_message__icon">✓</span>
+            <span class="form_success_message__text">@Model.SuccessMessage</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="form_error_message">
+            <span class="form_error_message__icon">⚠</span>
+            <span class="form_error_message__text">@Model.ErrorMessage</span>
+        </div>
+    }
+
+    <form id="es_form" method="post" class="profile_form" novalidate>
+        <!-- Medeni Durum -->
+        <div class="form_group">
+            <label class="form_label form_label--required">Medeni Durum</label>
+            <div class="form_radio_group">
+                <label class="form_radio">
+                    <input 
+                        type="radio" 
+                        asp-for="MaritalStatus" 
+                        value="true" 
+                        name="MaritalStatus" 
+                        id="marital_status_married" />
+                    <span class="form_radio__label">Evli</span>
+                </label>
+                <label class="form_radio">
+                    <input 
+                        type="radio" 
+                        asp-for="MaritalStatus" 
+                        value="false" 
+                        name="MaritalStatus" 
+                        id="marital_status_single" />
+                    <span class="form_radio__label">Bekar</span>
+                </label>
+            </div>
+            <span asp-validation-for="MaritalStatus" class="form_error"></span>
+        </div>
+
+        <!-- Conditional Fields (Evli seçilirse gösterilecek) -->
+        <div class="conditional_fields" id="married_fields">
+            <!-- Eş Çalışma Durumu -->
+            <div class="form_group">
+                <label class="form_label form_label--required">Eş Çalışma Durumu</label>
+                <div class="form_radio_group">
+                    <label class="form_radio">
+                        <input 
+                            type="radio" 
+                            asp-for="WorkWife" 
+                            value="true" 
+                            name="WorkWife" 
+                            id="work_wife_yes" />
+                        <span class="form_radio__label">Çalışıyor</span>
+                    </label>
+                    <label class="form_radio">
+                        <input 
+                            type="radio" 
+                            asp-for="WorkWife" 
+                            value="false" 
+                            name="WorkWife" 
+                            id="work_wife_no" />
+                        <span class="form_radio__label">Çalışmıyor</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Eş Maaşı (Çalışıyorsa gösterilecek) -->
+            <div class="form_group conditional_fields" id="wife_salary_field">
+                <label asp-for="WifeSalaryAmount" class="form_label form_label--required">Eş Maaşı</label>
+                <div class="form_input_wrapper">
+                    <input 
+                        asp-for="WifeSalaryAmount" 
+                        id="wife_salary_input"
+                        class="form_input" 
+                        type="text" 
+                        data-mask="currency"
+                        placeholder="10.000,00"
+                        inputmode="decimal" />
+                    <span class="form_input_wrapper__icon form_input_wrapper__icon--right">₺</span>
+                </div>
+                <span asp-validation-for="WifeSalaryAmount" class="form_error"></span>
+                <span class="form_hint">Eşinizin aylık net maaşını girin</span>
+            </div>
+        </div>
+
+        <div class="form_group">
+            <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                <span class="btn_primary__text">Kaydet</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#es_form');
+            var $maritalStatusRadios = $('input[name="MaritalStatus"]');
+            var $marriedFields = $('#married_fields');
+            var $workWifeRadios = $('input[name="WorkWife"]');
+            var $wifeSalaryField = $('#wife_salary_field');
+            var $wifeSalaryInput = $('#wife_salary_input');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+
+            // Medeni durum değişikliğinde conditional fields'ı göster/gizle
+            function toggleMarriedFields() {
+                var isMarried = $maritalStatusRadios.filter(':checked').val() === 'True' || 
+                               $maritalStatusRadios.filter(':checked').val() === 'true';
+                
+                if (isMarried) {
+                    $marriedFields.slideDown(300);
+                } else {
+                    $marriedFields.slideUp(300);
+                    // Bekar seçilirse eş bilgilerini sıfırla
+                    $workWifeRadios.prop('checked', false);
+                    $wifeSalaryInput.val('');
+                }
+            }
+
+            // Eş çalışma durumu değişikliğinde maaş alanını göster/gizle
+            function toggleWifeSalaryField() {
+                var isWorking = $workWifeRadios.filter(':checked').val() === 'True' || 
+                               $workWifeRadios.filter(':checked').val() === 'true';
+                
+                if (isWorking) {
+                    $wifeSalaryField.slideDown(300);
+                    $wifeSalaryInput.prop('required', true);
+                } else {
+                    $wifeSalaryField.slideUp(300);
+                    $wifeSalaryInput.prop('required', false);
+                    $wifeSalaryInput.val('');
+                }
+            }
+
+            // Medeni durum değişikliği
+            $maritalStatusRadios.on('change', function() {
+                toggleMarriedFields();
+            });
+
+            // Eş çalışma durumu değişikliği
+            $workWifeRadios.on('change', function() {
+                toggleWifeSalaryField();
+            });
+
+            // Para input maskesi (10.000,00 ₺ formatı)
+            $wifeSalaryInput.on('input', function() {
+                var value = $(this).val().replace(/[^\d,]/g, '');
+                
+                // Virgül kontrolü (sadece bir virgül)
+                var commaIndex = value.indexOf(',');
+                if (commaIndex !== -1) {
+                    // Virgülden sonra maksimum 2 rakam
+                    var parts = value.split(',');
+                    if (parts[1] && parts[1].length > 2) {
+                        parts[1] = parts[1].substring(0, 2);
+                    }
+                    value = parts[0] + (parts[1] ? ',' + parts[1] : '');
+                }
+                
+                // Binlik ayırıcı ekle
+                var parts = value.split(',');
+                var integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                var formattedValue = integerPart + (parts[1] ? ',' + parts[1] : '');
+                
+                $(this).val(formattedValue);
+            });
+
+            // Form submit - Decimal'e çevir
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Medeni durum kontrolü
+                var maritalStatus = $maritalStatusRadios.filter(':checked').val();
+                if (!maritalStatus) {
+                    show_toast('Lütfen medeni durumunuzu seçiniz.', 'error');
+                    return false;
+                }
+
+                var isMarried = maritalStatus === 'True' || maritalStatus === 'true';
+                
+                // Evli ise eş çalışma durumu kontrolü
+                if (isMarried) {
+                    var workWife = $workWifeRadios.filter(':checked').val();
+                    if (!workWife) {
+                        show_toast('Lütfen eş çalışma durumunu seçiniz.', 'error');
+                        return false;
+                    }
+
+                    // Çalışıyorsa maaş kontrolü
+                    var isWorking = workWife === 'True' || workWife === 'true';
+                    if (isWorking) {
+                        var salaryValue = $wifeSalaryInput.val().replace(/\./g, '').replace(',', '.');
+                        var salaryDecimal = parseFloat(salaryValue) || 0;
+                        
+                        if (salaryDecimal <= 0) {
+                            show_toast('Eş maaşı 0\'dan büyük olmalıdır.', 'error');
+                            return false;
+                        }
+
+                        // Hidden input oluştur ve decimal değeri gönder
+                        var $hiddenInput = $('<input>', {
+                            type: 'hidden',
+                            name: 'WifeSalaryAmount',
+                            value: salaryDecimal.toFixed(2)
+                        });
+                        
+                        $form.append($hiddenInput);
+                        $wifeSalaryInput.prop('disabled', true);
+                    } else {
+                        // Çalışmıyorsa maaş 0
+                        var $hiddenInput = $('<input>', {
+                            type: 'hidden',
+                            name: 'WifeSalaryAmount',
+                            value: '0.00'
+                        });
+                        $form.append($hiddenInput);
+                    }
+                } else {
+                    // Bekar ise tüm eş bilgileri 0/false
+                    var $hiddenInput = $('<input>', {
+                        type: 'hidden',
+                        name: 'WorkWife',
+                        value: 'false'
+                    });
+                    $form.append($hiddenInput);
+                    
+                    var $hiddenSalaryInput = $('<input>', {
+                        type: 'hidden',
+                        name: 'WifeSalaryAmount',
+                        value: '0.00'
+                    });
+                    $form.append($hiddenSalaryInput);
+                }
+
+                // Double submit prevention
+                if ($form.data('submitting')) {
+                    return false;
+                }
+
+                // Butonu disable et
+                $form.data('submitting', true);
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Kaydediliyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // İlk yüklemede kontrol et
+            toggleMarriedFields();
+            toggleWifeSalaryField();
+
+            // Focus'ta tüm metni seç
+            $wifeSalaryInput.on('focus', function() {
+                $(this).select();
+            });
+        });
+    </script>
+}

@@ -1,0 +1,304 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// HEADER COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+.header {
+    background-color: $bg_primary;
+    border-bottom: 1px solid $border_light;
+    padding: $spacing_md 0;
+    box-shadow: $shadow_sm;
+    position: sticky;
+    top: 0;
+    z-index: $z_sticky;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    &__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 $spacing_lg;
+        @include flex_between;
+        align-items: center;
+        gap: $spacing_lg;
+    }
+
+    // Logo alanı
+    &__logo {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+        font-size: $font_size_xl;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        text-decoration: none;
+        transition: color $transition_normal;
+
+        &:hover {
+            color: $brand_secondary;
+        }
+
+        // Logo image (opsiyonel)
+        &__image {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        // Logo text
+        &__text {
+            font-family: $font_primary;
+        }
+    }
+
+    // Navigasyon
+    &__nav {
+        display: flex;
+        align-items: center;
+        gap: $spacing_md;
+        flex: 1 1 auto;
+        justify-content: center;
+
+        @include respond_to_max(md) {
+            display: none;
+        }
+    }
+
+    &__link {
+        color: $text_primary;
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        text-decoration: none;
+        padding: $spacing_xs $spacing_sm;
+        border-radius: $radius_sm;
+        transition: all $transition_normal;
+        position: relative;
+
+        &:hover {
+            color: $brand_primary;
+            background-color: $brand_light;
+        }
+
+        // Active state
+        &--active {
+            color: $brand_primary;
+            font-weight: $font_weight_semibold;
+            background-color: $brand_light;
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -$spacing_md - 1px;
+                left: $spacing_sm;
+                right: $spacing_sm;
+                height: 2px;
+                background-color: $brand_primary;
+                border-radius: $radius_full;
+            }
+        }
+    }
+
+    // Kullanıcı menüsü
+    &__user {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+        position: relative;
+
+        &__avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: $radius_full;
+            background-color: $bg_secondary;
+            @include flex_center;
+            font-size: $font_size_sm;
+            font-weight: $font_weight_semibold;
+            color: $brand_primary;
+            border: 2px solid $border_light;
+            cursor: pointer;
+            transition: all $transition_normal;
+
+            &:hover {
+                border-color: $brand_primary;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: $radius_full;
+            }
+        }
+
+        &__name {
+            display: none;
+            font-size: $font_size_sm;
+            font-weight: $font_weight_medium;
+            color: $text_primary;
+
+            @include respond_to(md) {
+                display: block;
+            }
+        }
+
+        &__menu {
+            position: absolute;
+            top: calc(100% + $spacing_sm);
+            right: 0;
+            background-color: $bg_primary;
+            border-radius: $radius_md;
+            box-shadow: $shadow_lg;
+            min-width: 200px;
+            padding: $spacing_xs;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all $transition_normal;
+            z-index: $z_dropdown;
+
+            &--visible {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+        }
+
+        &__menu_item {
+            display: block;
+            padding: $spacing_sm $spacing_md;
+            color: $text_primary;
+            text-decoration: none;
+            font-size: $font_size_base;
+            border-radius: $radius_sm;
+            transition: all $transition_normal;
+
+            &:hover {
+                background-color: $bg_secondary;
+                color: $brand_primary;
+            }
+
+            &--danger {
+                color: $error_color;
+
+                &:hover {
+                    background-color: color.mix($error_color, #fff, 55%);
+                    color: $error_color;
+                }
+            }
+        }
+    }
+
+    // Mobile menu toggle
+    &__toggle {
+        @include button_reset;
+        display: none;
+        width: 40px;
+        height: 40px;
+        @include flex_center;
+        color: $text_primary;
+        border-radius: $radius_sm;
+        transition: all $transition_normal;
+
+        @include respond_to_max(md) {
+            display: flex;
+        }
+
+        &:hover {
+            background-color: $bg_secondary;
+        }
+
+        &:focus {
+            @include focus_ring($brand_primary);
+        }
+
+        // Hamburger icon
+        &__icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+
+            &::before,
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: currentColor;
+                transition: all $transition_normal;
+            }
+
+            &::before {
+                top: 6px;
+            }
+
+            &::after {
+                bottom: 6px;
+            }
+
+            // Active state (X icon)
+            .header__toggle--active & {
+                &::before {
+                    top: 11px;
+                    transform: rotate(45deg);
+                }
+
+                &::after {
+                    bottom: 11px;
+                    transform: rotate(-45deg);
+                }
+            }
+        }
+    }
+
+    // Mobile menu
+    &__mobile_menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: $bg_primary;
+        border-top: 1px solid $border_light;
+        box-shadow: $shadow_md;
+        padding: $spacing_md;
+        max-height: calc(100vh - 100%);
+        overflow-y: auto;
+        z-index: $z_dropdown;
+
+        @include respond_to_max(md) {
+            display: block;
+        }
+
+        &--visible {
+            display: block;
+        }
+
+        .header__link {
+            display: block;
+            padding: $spacing_sm $spacing_md;
+            margin-bottom: $spacing_xs;
+        }
+    }
+}
+
+// ============================================
+// RESPONSIVE HEADER
+// ============================================
+
+@include respond_to_max(sm) {
+    .header {
+        padding: $spacing_sm 0;
+
+        &__container {
+            padding: 0 $spacing_md;
+        }
+
+        &__logo {
+            font-size: $font_size_lg;
+        }
+    }
+}

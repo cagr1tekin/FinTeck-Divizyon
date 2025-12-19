@@ -1,0 +1,196 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// PROFILE PAGE STYLES
+// ============================================
+
+.profile_container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: $spacing_xl $spacing_lg;
+}
+
+.profile_header {
+    margin-bottom: $spacing_xl;
+    text-align: center;
+
+    @include respond_to(sm) {
+        text-align: left;
+    }
+}
+
+.profile_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin-bottom: $spacing_sm;
+    line-height: $line_height_tight;
+}
+
+.profile_subtitle {
+    font-size: $font_size_base;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+.profile_form {
+    @include card_base;
+    padding: $spacing_xl;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    border-radius: $radius_lg;
+    box-shadow: $shadow_md;
+
+    .form_group {
+        margin-bottom: $spacing_lg;
+    }
+
+    .form_label {
+        font-weight: $font_weight_semibold;
+        margin-bottom: $spacing_sm;
+
+        &--required {
+            &::after {
+                content: ' *';
+                color: $error_color;
+            }
+        }
+    }
+
+    .form_select {
+        width: 100%;
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_base;
+        border: 2px solid $border_color;
+        border-radius: $radius_md;
+        background-color: $bg_primary;
+        color: $text_primary;
+        transition: all $transition_normal;
+        cursor: pointer;
+
+        &:focus {
+            border-color: $brand_primary;
+            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+            outline: none;
+        }
+
+        &:disabled {
+            background-color: $bg_secondary;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        &--error {
+            border-color: $error_color;
+
+            &:focus {
+                box-shadow: 0 0 0 4px rgba($error_color, 0.1);
+            }
+        }
+    }
+
+    .form_textarea {
+        width: 100%;
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_base;
+        font-family: $font_primary;
+        border: 2px solid $border_color;
+        border-radius: $radius_md;
+        background-color: $bg_primary;
+        color: $text_primary;
+        resize: vertical;
+        min-height: 120px;
+        transition: all $transition_normal;
+
+        &:focus {
+            border-color: $brand_primary;
+            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+            outline: none;
+        }
+
+        &--error {
+            border-color: $error_color;
+
+            &:focus {
+                box-shadow: 0 0 0 4px rgba($error_color, 0.1);
+            }
+        }
+    }
+}
+
+// Success message
+.form_success_message {
+    display: flex;
+    align-items: center;
+    gap: $spacing_sm;
+    padding: $spacing_md;
+    background-color: color.mix($success_color, #fff, 55%);
+    border: 1px solid $success_color;
+    border-radius: $radius_md;
+    margin-bottom: $spacing_lg;
+    color: color.mix($success_color, #000, 80%);
+
+    &__icon {
+        font-size: $font_size_lg;
+        flex-shrink: 0;
+        color: $success_color;
+    }
+
+    &__text {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        line-height: $line_height_normal;
+    }
+}
+
+// Error message (onboarding'dan kopyalandı)
+.form_error_message {
+    display: flex;
+    align-items: center;
+    gap: $spacing_sm;
+    padding: $spacing_md;
+    background-color: color.mix($error_color, #fff, 55%);
+    border: 1px solid $error_color;
+    border-radius: $radius_md;
+    margin-bottom: $spacing_lg;
+    color: $error_color;
+
+    &__icon {
+        font-size: $font_size_lg;
+        flex-shrink: 0;
+    }
+
+    &__text {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        line-height: $line_height_normal;
+    }
+}
+
+// Form hint
+.form_hint {
+    display: block;
+    font-size: $font_size_sm;
+    color: $text_muted;
+    margin-top: $spacing_xs;
+
+    &--error {
+        color: $error_color;
+    }
+}
+
+// ============================================
+// RESPONSIVE PROFILE
+// ============================================
+
+@include respond_to_max(sm) {
+    .profile_container {
+        padding: $spacing_lg $spacing_md;
+    }
+
+    .profile_form {
+        padding: $spacing_lg;
+    }
+}

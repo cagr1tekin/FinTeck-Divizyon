@@ -1,0 +1,13 @@
+{
+  "name": "interaktif-kredi",
+  "version": "1.0.0",
+  "description": "İnteraktif Kredi - Web Şube 2.0",
+  "scripts": {
+    "scss": "sass Styles/main.scss wwwroot/css/main.css --watch",
+    "scss:build": "sass Styles/main.scss wwwroot/css/main.css --style=compressed"
+  },
+  "devDependencies": {
+    "sass": "^1.69.0"
+  }
+}
+

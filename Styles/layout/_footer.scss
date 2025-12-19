@@ -1,0 +1,95 @@
+@use '../abstracts' as *;
+
+// ============================================
+// FOOTER COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+.footer {
+    background-color: $bg_secondary;
+    border-top: 1px solid $border_light;
+    padding: $spacing_xl 0;
+    margin-top: auto;
+
+    &__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 $spacing_lg;
+    }
+
+    &__content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing_xl;
+        margin-bottom: $spacing_lg;
+
+        @include respond_to_max(md) {
+            grid-template-columns: 1fr;
+            gap: $spacing_lg;
+        }
+    }
+
+    &__section {
+        &__title {
+            font-size: $font_size_base;
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+            margin-bottom: $spacing_md;
+        }
+
+        &__links {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing_sm;
+        }
+
+        &__link {
+            color: $text_secondary;
+            font-size: $font_size_sm;
+            text-decoration: none;
+            transition: color $transition_normal;
+
+            &:hover {
+                color: $brand_primary;
+            }
+        }
+    }
+
+    &__bottom {
+        padding-top: $spacing_lg;
+        border-top: 1px solid $border_light;
+        @include flex_between;
+        align-items: center;
+        gap: $spacing_md;
+
+        @include respond_to_max(sm) {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    &__text {
+        color: $text_secondary;
+        font-size: $font_size_sm;
+        margin: 0;
+    }
+
+}
+
+// ============================================
+// RESPONSIVE FOOTER
+// ============================================
+
+@include respond_to_max(sm) {
+    .footer {
+        padding: $spacing_lg 0;
+
+        &__container {
+            padding: 0 $spacing_md;
+        }
+
+        &__content {
+            margin-bottom: $spacing_md;
+        }
+    }
+}

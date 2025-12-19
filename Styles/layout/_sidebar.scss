@@ -1,0 +1,129 @@
+@use '../abstracts' as *;
+
+// ============================================
+// SIDEBAR COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    background-color: $bg_primary;
+    border-right: 1px solid $border_light;
+    box-shadow: $shadow_sm;
+    z-index: $z_sticky - 1;
+    transform: translateX(-100%);
+    transition: transform $transition_normal;
+    overflow-y: auto;
+    @include custom_scrollbar;
+
+    &--visible {
+        transform: translateX(0);
+    }
+
+    &__header {
+        padding: $spacing_lg;
+        border-bottom: 1px solid $border_light;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__logo {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        text-decoration: none;
+    }
+
+    &__close {
+        @include button_reset;
+        width: 32px;
+        height: 32px;
+        @include flex_center;
+        color: $text_secondary;
+        border-radius: $radius_sm;
+        transition: all $transition_normal;
+
+        &:hover {
+            background-color: $bg_secondary;
+            color: $text_primary;
+        }
+    }
+
+    &__nav {
+        padding: $spacing_md 0;
+    }
+
+    &__nav_item {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+        padding: $spacing_sm $spacing_lg;
+        color: $text_primary;
+        text-decoration: none;
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        transition: all $transition_normal;
+        border-left: 3px solid transparent;
+
+        &:hover {
+            background-color: $bg_secondary;
+            color: $brand_primary;
+        }
+
+        &--active {
+            background-color: $brand_light;
+            color: $brand_primary;
+            border-left-color: $brand_primary;
+            font-weight: $font_weight_semibold;
+        }
+    }
+
+    &__nav_icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    // Desktop'ta sidebar göster
+    @include respond_to(lg) {
+        position: static;
+        transform: translateX(0);
+    }
+}
+
+// Sidebar overlay (mobilde)
+.sidebar_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: $z_sticky - 2;
+    opacity: 0;
+    visibility: hidden;
+    transition: all $transition_normal;
+
+    &--visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @include respond_to(lg) {
+        display: none;
+    }
+}
+
+// Main content with sidebar
+.main_content {
+    &--with_sidebar {
+        @include respond_to(lg) {
+            margin-left: 260px;
+        }
+    }
+}

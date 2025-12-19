@@ -1,0 +1,440 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// ONBOARDING PAGE STYLES
+// ============================================
+
+.onboarding_container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_xl $spacing_lg;
+    background: linear-gradient(135deg, $bg_secondary 0%, $bg_primary 100%);
+}
+
+// ============================================
+// ONBOARDING CARD
+// ============================================
+
+.onboarding_card {
+    @include card_base;
+    width: 100%;
+    max-width: 500px;
+    padding: $spacing_xl;
+    background-color: $bg_primary;
+    box-shadow: $shadow_lg;
+    border: 1px solid $border_light;
+
+    &__header {
+        text-align: center;
+        margin-bottom: $spacing_xl;
+    }
+}
+
+.onboarding_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $brand_primary;
+    margin-bottom: $spacing_sm;
+    line-height: $line_height_tight;
+}
+
+.onboarding_subtitle {
+    font-size: $font_size_base;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+// ============================================
+// ONBOARDING FORM
+// ============================================
+
+.onboarding_form {
+    margin-top: $spacing_xl;
+
+    .form_group {
+        margin-bottom: $spacing_lg;
+    }
+
+    .form_label {
+        font-weight: $font_weight_semibold;
+        margin-bottom: $spacing_sm;
+    }
+
+    .form_input {
+        font-size: $font_size_base;
+        padding: $spacing_md $spacing_lg;
+        border: 2px solid $border_color;
+        transition: all $transition_normal;
+
+        &:focus {
+            border-color: $brand_primary;
+            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+        }
+
+        &[data-mask="tckn"] {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            font-size: $font_size_lg;
+            text-align: center;
+        }
+
+        &[data-mask="phone"] {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            font-size: $font_size_lg;
+            text-align: center;
+        }
+    }
+}
+
+// ============================================
+// ERROR MESSAGE
+// ============================================
+
+.form_error_message {
+    display: flex;
+    align-items: center;
+    gap: $spacing_sm;
+    padding: $spacing_md;
+    background-color: color.mix($error_color, #fff, 55%);
+    border: 1px solid $error_color;
+    border-radius: $radius_md;
+    margin-bottom: $spacing_lg;
+    color: $error_color;
+
+    &__icon {
+        font-size: $font_size_lg;
+        flex-shrink: 0;
+    }
+
+    &__text {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        line-height: $line_height_normal;
+    }
+}
+
+// ============================================
+// ONBOARDING FOOTER
+// ============================================
+
+.onboarding_footer {
+    margin-top: $spacing_xl;
+    padding-top: $spacing_lg;
+    border-top: 1px solid $border_light;
+    text-align: center;
+
+    &__text {
+        font-size: $font_size_sm;
+        color: $text_muted;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing_xs;
+
+        &::before {
+            content: '🔒';
+            font-size: $font_size_base;
+        }
+    }
+}
+
+// ============================================
+// KVKK CONTENT
+// ============================================
+
+.kvkk_content {
+    background-color: $bg_secondary;
+    padding: $spacing_lg;
+    border-radius: $radius_md;
+    margin-bottom: $spacing_lg;
+    max-height: 400px;
+    overflow-y: auto;
+    @include custom_scrollbar;
+    line-height: $line_height_relaxed;
+    color: $text_secondary;
+    font-size: $font_size_sm;
+    border: 1px solid $border_light;
+    position: relative;
+
+    &--scrollable {
+        &::after {
+            content: '↓ Aşağı kaydırın';
+            position: absolute;
+            bottom: $spacing_sm;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: $font_size_xs;
+            color: $text_muted;
+            background-color: rgba($bg_primary, 0.9);
+            padding: $spacing_xs $spacing_sm;
+            border-radius: $radius_sm;
+            pointer-events: none;
+            animation: fadeOut 3s ease-in-out forwards;
+        }
+    }
+}
+
+.kvkk_text {
+    color: $text_primary;
+    font-size: $font_size_base;
+    line-height: $line_height_relaxed;
+    text-align: justify;
+
+    h1, h2, h3, h4, h5, h6 {
+        color: $text_primary;
+        margin-top: $spacing_md;
+        margin-bottom: $spacing_sm;
+        font-weight: $font_weight_semibold;
+    }
+
+    p {
+        margin-bottom: $spacing_md;
+        color: $text_secondary;
+    }
+
+    strong {
+        color: $text_primary;
+        font-weight: $font_weight_bold;
+    }
+
+    ul, ol {
+        margin-left: $spacing_lg;
+        margin-bottom: $spacing_md;
+        padding-left: $spacing_md;
+
+        li {
+            margin-bottom: $spacing_xs;
+            color: $text_secondary;
+        }
+    }
+}
+
+.kvkk_loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_xl;
+    color: $text_muted;
+
+    &__spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid $border_light;
+        border-top-color: $brand_primary;
+        border-radius: $radius_full;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: $spacing_md;
+    }
+
+    p {
+        margin: 0;
+        font-size: $font_size_base;
+    }
+}
+
+.kvkk_error {
+    padding: $spacing_lg;
+    text-align: center;
+    color: $error_color;
+    background-color: color.mix($error_color, #fff, 55%);
+    border: 1px solid $error_color;
+    border-radius: $radius_md;
+}
+
+// Custom checkbox styling for KVKK
+.form_checkbox {
+    &__hint {
+        display: block;
+        font-size: $font_size_sm;
+        color: $text_muted;
+        font-weight: $font_weight_normal;
+        margin-top: $spacing_xs;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+// ============================================
+// OTP VERIFICATION
+// ============================================
+
+.onboarding_phone {
+    font-size: $font_size_lg;
+    font-weight: $font_weight_semibold;
+    color: $brand_primary;
+    margin-top: $spacing_sm;
+    margin-bottom: 0;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.otp_inputs {
+    display: flex;
+    justify-content: center;
+    gap: $spacing_sm;
+    margin-bottom: $spacing_md;
+
+    &--error {
+        .otp_input {
+            border-color: $error_color;
+            background-color: color.mix($error_color, #fff, 55%);
+            animation: shake 0.5s ease-in-out;
+
+            &:focus {
+                box-shadow: 0 0 0 4px rgba($error_color, 0.1);
+            }
+        }
+    }
+
+    &--success {
+        .otp_input {
+            border-color: $success_color;
+            background-color: color.mix($success_color, #fff, 55%);
+        }
+    }
+}
+
+.otp_input {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    font-family: 'Courier New', monospace;
+    border: 2px solid $border_color;
+    border-radius: $radius_md;
+    background-color: $bg_primary;
+    color: $text_primary;
+    transition: all $transition_normal;
+    @include input_reset;
+
+    &:focus {
+        border-color: $brand_primary;
+        box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+        outline: none;
+        transform: scale(1.05);
+    }
+
+    // Filled state
+    &:not(:placeholder-shown) {
+        border-color: $brand_primary;
+        background-color: $brand_light;
+    }
+
+    @include respond_to_max(sm) {
+        width: 45px;
+        height: 55px;
+        font-size: $font_size_xl;
+    }
+}
+
+.otp_timer {
+    text-align: center;
+    margin-bottom: $spacing_md;
+    padding: $spacing_sm;
+    background-color: $bg_secondary;
+    border-radius: $radius_md;
+
+    &__text {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+    }
+
+    &__countdown {
+        font-size: $font_size_base;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        font-family: 'Courier New', monospace;
+        margin-left: $spacing_xs;
+    }
+}
+
+.otp_resend {
+    margin-bottom: $spacing_md;
+    text-align: center;
+}
+
+.form_error_message--warning {
+    background-color: color.mix($warning_color, #fff, 60%);
+    border-color: $warning_color;
+    color: color.mix($warning_color, #000, 80%);
+}
+
+.onboarding_footer__link {
+    color: $brand_primary;
+    text-decoration: underline;
+    font-weight: $font_weight_medium;
+    transition: color $transition_normal;
+
+    &:hover {
+        color: $brand_secondary;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+// ============================================
+// RESPONSIVE ONBOARDING
+// ============================================
+
+@include respond_to_max(sm) {
+    .onboarding_container {
+        padding: $spacing_md;
+        min-height: calc(100vh - 150px);
+    }
+
+    .onboarding_card {
+        padding: $spacing_lg;
+    }
+
+    .onboarding_title {
+        font-size: $font_size_xl;
+    }
+
+    .onboarding_subtitle {
+        font-size: $font_size_sm;
+    }
+
+    .onboarding_form {
+        .form_input {
+            padding: $spacing_sm $spacing_md;
+            font-size: $font_size_base;
+        }
+    }
+}

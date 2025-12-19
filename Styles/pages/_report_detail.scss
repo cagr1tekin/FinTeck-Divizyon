@@ -1,0 +1,339 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// REPORT DETAIL PAGE STYLES
+// ============================================
+
+.report_detail_container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: $spacing_xl $spacing_lg;
+}
+
+// ============================================
+// BACK BUTTON
+// ============================================
+
+.report_detail__back {
+    margin-bottom: $spacing_lg;
+}
+
+// ============================================
+// LOADING STATE
+// ============================================
+
+.report_detail__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_xl * 2;
+    min-height: 400px;
+
+    &__spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid $bg_secondary;
+        border-top-color: $brand_primary;
+        border-radius: $radius_full;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: $spacing_lg;
+    }
+
+    &__text {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        margin: 0;
+    }
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+
+.report_detail__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_xl * 2;
+    text-align: center;
+    min-height: 400px;
+
+    &__icon {
+        width: 80px;
+        height: 80px;
+        color: $text_muted;
+        margin-bottom: $spacing_lg;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_sm;
+    }
+
+    &__text {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        margin: 0;
+        max-width: 400px;
+    }
+}
+
+// ============================================
+// REPORT HEADER
+// ============================================
+
+.report_detail__header {
+    margin-bottom: $spacing_xl;
+    padding-bottom: $spacing_lg;
+    border-bottom: 2px solid $border_light;
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: $spacing_md;
+        margin-top: $spacing_md;
+    }
+}
+
+.report_detail__title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin-bottom: $spacing_sm;
+    line-height: $line_height_tight;
+}
+
+.report_detail__date {
+    font-size: $font_size_base;
+    color: $text_secondary;
+}
+
+.report_detail__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing_xs $spacing_sm;
+    border-radius: $radius_full;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+
+        &--pending {
+            background-color: color.mix($warning_color, #fff, 60%);
+            color: color.mix($warning_color, #000, 80%);
+        }
+
+        &--approved {
+            background-color: color.mix($success_color, #fff, 60%);
+            color: color.mix($success_color, #000, 80%);
+        }
+
+        &--rejected {
+            background-color: color.mix($error_color, #fff, 60%);
+            color: color.mix($error_color, #000, 80%);
+        }
+
+    &--unknown {
+        background-color: $bg_secondary;
+        color: $text_muted;
+    }
+}
+
+// ============================================
+// REPORT CONTENT
+// ============================================
+
+.report_detail__content {
+    @include card_base;
+    padding: $spacing_xl;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    border-radius: $radius_lg;
+    box-shadow: $shadow_sm;
+}
+
+.report_detail__section {
+    margin-bottom: $spacing_xl;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_lg;
+        padding-bottom: $spacing_sm;
+        border-bottom: 1px solid $border_light;
+    }
+}
+
+// ============================================
+// REPORT TABLE (Key-Value List)
+// ============================================
+
+.report_detail__table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid $border_light;
+    border-radius: $radius_md;
+    overflow: hidden;
+    background-color: $bg_primary;
+}
+
+.report_detail__table__row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    border-bottom: 1px solid $border_light;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.report_detail__table__cell {
+    padding: $spacing_md;
+    font-size: $font_size_base;
+    line-height: $line_height_normal;
+
+    &--label {
+        background-color: $bg_secondary;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        border-right: 1px solid $border_light;
+
+        @include respond_to_max(sm) {
+            border-right: none;
+            border-bottom: 1px solid $border_light;
+        }
+    }
+
+    &--value {
+        color: $text_primary;
+        word-break: break-word;
+    }
+}
+
+// ============================================
+// JSON CONTENT
+// ============================================
+
+.report_detail__content__json {
+    background-color: $bg_secondary;
+    border: 1px solid $border_light;
+    border-radius: $radius_md;
+    padding: $spacing_lg;
+    overflow-x: auto;
+    @include custom_scrollbar;
+}
+
+.report_detail__json {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: $font_size_sm;
+    line-height: $line_height_relaxed;
+    color: $text_primary;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+// ============================================
+// ACTIONS
+// ============================================
+
+.report_detail__actions {
+    margin-top: $spacing_xl;
+    padding-top: $spacing_lg;
+    border-top: 2px solid $border_light;
+    display: flex;
+    justify-content: center;
+    gap: $spacing_md;
+}
+
+// ============================================
+// PRINT STYLES
+// ============================================
+
+@media print {
+    .report_detail_container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .report_detail__back,
+    .report_detail__actions {
+        display: none;
+    }
+
+    .report_detail__content {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+    }
+
+    .report_detail__section {
+        page-break-inside: avoid;
+        margin-bottom: $spacing_lg;
+    }
+
+    .report_detail__table {
+        border: 1px solid #000;
+    }
+
+    .report_detail__table__cell {
+        border: 1px solid #000;
+    }
+
+    .report_detail__badge {
+        background-color: transparent !important;
+        border: 1px solid #000;
+        color: #000 !important;
+    }
+}
+
+// ============================================
+// RESPONSIVE REPORT DETAIL
+// ============================================
+
+@include respond_to_max(sm) {
+    .report_detail_container {
+        padding: $spacing_lg $spacing_md;
+    }
+
+    .report_detail__header {
+        &__meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $spacing_sm;
+        }
+    }
+
+    .report_detail__content {
+        padding: $spacing_lg;
+    }
+
+    .report_detail__section {
+        margin-bottom: $spacing_lg;
+    }
+}
+

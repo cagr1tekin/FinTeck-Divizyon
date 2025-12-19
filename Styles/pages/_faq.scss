@@ -1,0 +1,263 @@
+@use '../abstracts' as *;
+
+// ============================================
+// FAQ (SSS) PAGE STYLES
+// ============================================
+
+.faq_container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: $spacing_xl * 2 $spacing_lg;
+}
+
+// ============================================
+// FAQ HEADER
+// ============================================
+
+.faq_header {
+    text-align: center;
+    margin-bottom: $spacing_xl * 2;
+
+    @include respond_to(sm) {
+        text-align: left;
+    }
+}
+
+.faq_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin-bottom: $spacing_sm;
+    line-height: $line_height_tight;
+}
+
+.faq_subtitle {
+    font-size: $font_size_lg;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+// ============================================
+// FAQ LIST
+// ============================================
+
+.faq_list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+}
+
+// ============================================
+// FAQ ITEM (ACCORDION)
+// ============================================
+
+.faq_item {
+    @include card_base;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    border-radius: $radius_lg;
+    overflow: hidden;
+    transition: all $transition_normal;
+
+    &:hover {
+        border-color: $brand_primary;
+        box-shadow: $shadow_md;
+    }
+
+    &--active {
+        border-color: $brand_primary;
+        box-shadow: $shadow_md;
+    }
+
+    &__header {
+        @include button_reset;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing_lg;
+        text-align: left;
+        cursor: pointer;
+        background-color: transparent;
+        transition: background-color $transition_normal;
+        gap: $spacing_md;
+
+        &:hover {
+            background-color: $bg_secondary;
+        }
+
+        &:focus {
+            @include focus_ring($brand_primary);
+            outline: none;
+        }
+
+        &:active {
+            background-color: $border_light;
+        }
+    }
+
+    &__question {
+        flex: 1;
+        font-size: $font_size_lg;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        line-height: $line_height_normal;
+        margin: 0;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        color: $brand_primary;
+        transition: transform $transition_normal;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        &__plus,
+        &__minus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity $transition_normal;
+        }
+
+        &__minus {
+            opacity: 0;
+        }
+    }
+
+    &__content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: $bg_secondary;
+    }
+
+    &__answer {
+        padding: 0 $spacing_lg $spacing_lg $spacing_lg;
+        font-size: $font_size_base;
+        color: $text_secondary;
+        line-height: $line_height_relaxed;
+        margin-top: $spacing_sm;
+
+        // İlk paragraf için margin-top sıfırla
+        &:first-child {
+            margin-top: 0;
+        }
+
+        // Liste stilleri
+        ul, ol {
+            margin: $spacing_sm 0;
+            padding-left: $spacing_lg;
+        }
+
+        li {
+            margin-bottom: $spacing_xs;
+        }
+
+        // Link stilleri
+        a {
+            color: $brand_primary;
+            text-decoration: underline;
+
+            &:hover {
+                color: $brand_secondary;
+            }
+        }
+
+        // Strong ve em stilleri
+        strong {
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+        }
+
+        em {
+            font-style: italic;
+        }
+    }
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+
+.faq_empty {
+    text-align: center;
+    padding: $spacing_xl * 2;
+    color: $text_secondary;
+
+    &__text {
+        font-size: $font_size_base;
+        margin: 0;
+    }
+}
+
+// ============================================
+// RESPONSIVE FAQ
+// ============================================
+
+@include respond_to_max(sm) {
+    .faq_container {
+        padding: $spacing_xl $spacing_md;
+    }
+
+    .faq_header {
+        margin-bottom: $spacing_xl;
+    }
+
+    .faq_title {
+        font-size: $font_size_xl;
+    }
+
+    .faq_subtitle {
+        font-size: $font_size_base;
+    }
+
+    .faq_item {
+        &__header {
+            padding: $spacing_md;
+        }
+
+        &__question {
+            font-size: $font_size_base;
+        }
+
+        &__answer {
+            padding: 0 $spacing_md $spacing_md $spacing_md;
+            font-size: $font_size_sm;
+        }
+    }
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+// Active state için icon transform
+.faq_item--active {
+    .faq_item__icon {
+        &__plus {
+            opacity: 0;
+        }
+
+        &__minus {
+            opacity: 1;
+        }
+    }
+}
+
+// Focus visible için ekstra stil
+.faq_item__header:focus-visible {
+    @include focus_ring($brand_primary);
+}
+

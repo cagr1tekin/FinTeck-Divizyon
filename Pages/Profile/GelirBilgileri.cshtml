@@ -1,0 +1,176 @@
+@page
+@model InteraktifKredi.Pages.Profile.GelirBilgileriModel
+@{
+    ViewData["Title"] = "Gelir Bilgileri";
+}
+
+<div class="profile_container">
+    <div class="profile_header">
+        <h1 class="profile_title">Gelir Bilgileri</h1>
+        <p class="profile_subtitle">Gelir ve varlık bilgilerinizi güncelleyin</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="form_success_message">
+            <span class="form_success_message__icon">✓</span>
+            <span class="form_success_message__text">@Model.SuccessMessage</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="form_error_message">
+            <span class="form_error_message__icon">⚠</span>
+            <span class="form_error_message__text">@Model.ErrorMessage</span>
+        </div>
+    }
+
+    <form id="gelir_form" method="post" class="profile_form" novalidate>
+        <!-- Aylık Net Maaş -->
+        <div class="form_group">
+            <label asp-for="SalaryAmount" class="form_label form_label--required">Aylık Net Maaş</label>
+            <div class="form_input_wrapper">
+                <input 
+                    asp-for="SalaryAmount" 
+                    id="salary_amount_input"
+                    class="form_input" 
+                    type="text" 
+                    data-mask="currency"
+                    placeholder="10.000,00"
+                    inputmode="decimal"
+                    required />
+                <span class="form_input_wrapper__icon form_input_wrapper__icon--right">₺</span>
+            </div>
+            <span asp-validation-for="SalaryAmount" class="form_error"></span>
+            <span class="form_hint">Net maaşınızı girin (brüt değil)</span>
+        </div>
+
+        <!-- Maaş Bankası -->
+        <div class="form_group">
+            <label asp-for="SalaryBank" class="form_label form_label--required">Maaş Bankası</label>
+            <select asp-for="SalaryBank" asp-items="Model.Banks" id="salary_bank_select" class="form_select" required>
+            </select>
+            <span asp-validation-for="SalaryBank" class="form_error"></span>
+        </div>
+
+        <!-- Çalışma Sektörü -->
+        <div class="form_group">
+            <label asp-for="WorkSector" class="form_label form_label--required">Çalışma Sektörü</label>
+            <select asp-for="WorkSector" asp-items="Model.Sectors" id="work_sector_select" class="form_select" required>
+            </select>
+            <span asp-validation-for="WorkSector" class="form_error"></span>
+        </div>
+
+        <!-- Varlıklar -->
+        <div class="form_group">
+            <label class="form_label">Varlıklar</label>
+            <div class="form_checkbox_group">
+                <label class="form_checkbox">
+                    <input 
+                        type="checkbox" 
+                        asp-for="CarStatus" 
+                        id="car_status_checkbox"
+                        class="form_checkbox__input" />
+                    <span class="form_checkbox__label">Arabam var</span>
+                </label>
+                <label class="form_checkbox">
+                    <input 
+                        type="checkbox" 
+                        asp-for="HouseStatus" 
+                        id="house_status_checkbox"
+                        class="form_checkbox__input" />
+                    <span class="form_checkbox__label">Evim var</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form_group">
+            <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                <span class="btn_primary__text">Kaydet</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#gelir_form');
+            var $salaryInput = $('#salary_amount_input');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+
+            // Para input maskesi (10.000,00 ₺ formatı)
+            $salaryInput.on('input', function() {
+                var value = $(this).val().replace(/[^\d,]/g, '');
+                
+                // Virgül kontrolü (sadece bir virgül)
+                var commaIndex = value.indexOf(',');
+                if (commaIndex !== -1) {
+                    // Virgülden sonra maksimum 2 rakam
+                    var parts = value.split(',');
+                    if (parts[1] && parts[1].length > 2) {
+                        parts[1] = parts[1].substring(0, 2);
+                    }
+                    value = parts[0] + (parts[1] ? ',' + parts[1] : '');
+                }
+                
+                // Binlik ayırıcı ekle
+                var parts = value.split(',');
+                var integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                var formattedValue = integerPart + (parts[1] ? ',' + parts[1] : '');
+                
+                $(this).val(formattedValue);
+            });
+
+            // Form submit - Decimal'e çevir
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Para değerini decimal'e çevir
+                var salaryValue = $salaryInput.val().replace(/\./g, '').replace(',', '.');
+                var salaryDecimal = parseFloat(salaryValue) || 0;
+                
+                // Hidden input oluştur ve decimal değeri gönder
+                var $hiddenInput = $('<input>', {
+                    type: 'hidden',
+                    name: 'SalaryAmount',
+                    value: salaryDecimal.toFixed(2)
+                });
+                
+                $form.append($hiddenInput);
+                $salaryInput.prop('disabled', true);
+
+                // Client-side validation
+                if (salaryDecimal <= 0) {
+                    show_toast('Aylık net maaş 0\'dan büyük olmalıdır.', 'error');
+                    $salaryInput.prop('disabled', false);
+                    $hiddenInput.remove();
+                    return false;
+                }
+
+                // Double submit prevention
+                if ($form.data('submitting')) {
+                    return false;
+                }
+
+                // Butonu disable et
+                $form.data('submitting', true);
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Kaydediliyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // Focus'ta tüm metni seç
+            $salaryInput.on('focus', function() {
+                $(this).select();
+            });
+        });
+    </script>
+}

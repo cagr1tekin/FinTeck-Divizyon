@@ -1,0 +1,362 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// MODAL COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+// ============================================
+// MODAL OVERLAY
+// ============================================
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: $z_modal;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    // Visible state
+    &--visible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: $spacing_lg;
+    }
+
+    &__overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        animation: fadeIn $transition_normal;
+    }
+
+    &__container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        margin: auto;
+        background-color: $bg_primary;
+        border-radius: $radius_lg;
+        box-shadow: $shadow_lg;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: slideUp $transition_slow;
+        z-index: 1;
+
+        // Modal sizes
+        &--sm {
+            max-width: 400px;
+        }
+
+        &--lg {
+            max-width: 800px;
+        }
+
+        &--xl {
+            max-width: 1200px;
+        }
+
+        // Full screen on mobile
+        @include respond_to_max(sm) {
+            max-width: 100%;
+            max-height: 100vh;
+            border-radius: 0;
+            margin: 0;
+        }
+    }
+
+    &__header {
+        padding: $spacing_lg;
+        padding-bottom: $spacing_md;
+        border-bottom: 1px solid $border_light;
+        flex-shrink: 0;
+        @include flex_between;
+        align-items: flex-start;
+        gap: $spacing_md;
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin: 0;
+        line-height: $line_height_tight;
+        flex: 1 1 auto;
+    }
+
+    &__subtitle {
+        font-size: $font_size_sm;
+        font-weight: $font_weight_normal;
+        color: $text_secondary;
+        margin-top: $spacing_xs;
+        line-height: $line_height_normal;
+    }
+
+    &__body {
+        padding: $spacing_lg;
+        flex: 1 1 auto;
+        overflow-y: auto;
+        color: $text_secondary;
+        line-height: $line_height_normal;
+        @include custom_scrollbar;
+
+        // Body without padding
+        .modal__container--no_padding & {
+            padding: 0;
+        }
+    }
+
+    &__footer {
+        padding: $spacing_lg;
+        padding-top: $spacing_md;
+        border-top: 1px solid $border_light;
+        flex-shrink: 0;
+        @include flex_between;
+        gap: $spacing_md;
+
+        // Footer centered
+        &--center {
+            justify-content: center;
+        }
+
+        // Footer right aligned
+        &--right {
+            justify-content: flex-end;
+        }
+
+        // Footer without border
+        .modal__container--no_border & {
+            border-top: none;
+            padding-top: $spacing_lg;
+        }
+    }
+
+    // Modal without header
+    &--no_header {
+        .modal__header {
+            display: none;
+        }
+
+        .modal__body {
+            padding-top: $spacing_lg;
+        }
+    }
+
+    // Modal without footer
+    &--no_footer {
+        .modal__footer {
+            display: none;
+        }
+    }
+}
+
+// ============================================
+// MODAL CLOSE BUTTON
+// ============================================
+
+.modal_close {
+    @include button_reset;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius_full;
+    @include flex_center;
+    color: $text_secondary;
+    background-color: transparent;
+    transition: all $transition_normal;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $bg_secondary;
+        color: $text_primary;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:active {
+        background-color: $border_light;
+    }
+
+    // Icon
+    svg,
+    &::before {
+        width: 20px;
+        height: 20px;
+        display: block;
+    }
+
+    // X icon with ::before
+    &::before {
+        content: '×';
+        font-size: 24px;
+        line-height: 1;
+        font-weight: $font_weight_normal;
+    }
+
+    // Close button in header
+    .modal__header & {
+        margin-left: auto;
+    }
+}
+
+// ============================================
+// MODAL SIZES (Legacy - use container modifiers)
+// ============================================
+
+.modal--sm {
+    .modal__container {
+        max-width: 400px;
+    }
+}
+
+.modal--lg {
+    .modal__container {
+        max-width: 800px;
+    }
+}
+
+// ============================================
+// MODAL ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+// ============================================
+// MODAL BACKDROP CLICK
+// ============================================
+
+// Backdrop click için JavaScript ile kontrol edilir
+// CSS'de sadece görsel stil var
+
+// ============================================
+// CONFIRM MODAL (Özel modal tipi)
+// ============================================
+
+.modal_confirm {
+    .modal__container {
+        max-width: 400px;
+    }
+
+    .modal__body {
+        text-align: center;
+        padding: $spacing_xl $spacing_lg;
+    }
+
+    .modal__icon {
+        width: 64px;
+        height: 64px;
+        border-radius: $radius_full;
+        @include flex_center;
+        margin: 0 auto $spacing_lg;
+        font-size: 32px;
+
+        &--warning {
+            background-color: color.mix($warning_color, #fff, 60%);
+            color: $warning_color;
+        }
+
+        &--error {
+            background-color: color.mix($error_color, #fff, 60%);
+            color: $error_color;
+        }
+
+        &--info {
+            background-color: color.mix($info_color, #fff, 60%);
+            color: $info_color;
+        }
+    }
+
+    .modal__message {
+        font-size: $font_size_base;
+        color: $text_primary;
+        margin-bottom: $spacing_lg;
+        line-height: $line_height_normal;
+    }
+
+    .modal__footer {
+        justify-content: center;
+        gap: $spacing_sm;
+    }
+}
+
+// ============================================
+// RESPONSIVE MODALS
+// ============================================
+
+@include respond_to_max(sm) {
+    .modal {
+        &--visible {
+            padding: 0;
+            align-items: flex-end;
+        }
+
+        &__container {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: $radius_lg $radius_lg 0 0;
+            margin-bottom: 0;
+        }
+
+        &__header,
+        &__body,
+        &__footer {
+            padding: $spacing_md;
+        }
+    }
+}
+
+// ============================================
+// MODAL SCROLL LOCK
+// ============================================
+
+// Body scroll lock için JavaScript gerekli
+// CSS'de sadece görsel stil var
+
+body.modal_open {
+    overflow: hidden;
+    padding-right: 0; // Scrollbar width için JavaScript ile ayarlanır
+}

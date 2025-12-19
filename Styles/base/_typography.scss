@@ -1,0 +1,333 @@
+@use '../abstracts' as *;
+
+// ============================================
+// BODY FONT AYARLARI
+// ============================================
+
+body {
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    font-weight: $font_weight_normal;
+    line-height: $line_height_normal;
+    color: $text_primary;
+}
+
+// ============================================
+// HEADING STYLES (h1-h6)
+// ============================================
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font_primary;
+    font-weight: $font_weight_semibold;
+    line-height: $line_height_tight;
+    margin-bottom: $spacing_md;
+    color: $text_primary;
+}
+
+h1 {
+    font-size: $font_size_h1;
+    font-weight: $font_weight_bold;
+    line-height: $line_height_tight;
+    margin-bottom: $spacing_lg;
+}
+
+h2 {
+    font-size: $font_size_h2;
+    margin-bottom: $spacing_md;
+}
+
+h3 {
+    font-size: $font_size_h3;
+    margin-bottom: $spacing_md;
+}
+
+h4 {
+    font-size: $font_size_lg;
+    margin-bottom: $spacing_sm;
+}
+
+h5 {
+    font-size: $font_size_base;
+    margin-bottom: $spacing_sm;
+}
+
+h6 {
+    font-size: $font_size_sm;
+    margin-bottom: $spacing_sm;
+}
+
+// ============================================
+// PARAGRAPH STYLES
+// ============================================
+
+p {
+    margin-bottom: $spacing_md;
+    color: $text_secondary;
+    line-height: $line_height_normal;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// ============================================
+// LINK STYLES
+// ============================================
+
+a {
+    color: $brand_primary;
+    text-decoration: none;
+    @include transition(color);
+
+    &:hover {
+        color: $brand_secondary;
+        text-decoration: underline;
+    }
+
+    &:focus {
+        @include focus_ring;
+    }
+
+    &:active {
+        color: $brand_dark;
+    }
+}
+
+// ============================================
+// TEXT ELEMENTS
+// ============================================
+
+// Small text
+small {
+    font-size: $font_size_sm;
+    color: $text_muted;
+}
+
+// Strong and Bold
+strong,
+b {
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+}
+
+// Emphasis and Italic
+em,
+i {
+    font-style: italic;
+}
+
+// Code
+code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    background-color: $bg_secondary;
+    padding: 2px 6px;
+    border-radius: $radius_sm;
+    color: $error_color;
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: $bg_secondary;
+    padding: $spacing_md;
+    border-radius: $radius_md;
+    overflow-x: auto;
+    margin-bottom: $spacing_md;
+
+    code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+    }
+}
+
+// ============================================
+// TEXT COLOR UTILITY CLASSES
+// ============================================
+
+.text_primary {
+    color: $text_primary;
+}
+
+.text_secondary {
+    color: $text_secondary;
+}
+
+.text_muted {
+    color: $text_muted;
+}
+
+.text_white {
+    color: $text_white;
+}
+
+.text_success {
+    color: $success_color;
+}
+
+.text_error {
+    color: $error_color;
+}
+
+.text_warning {
+    color: $warning_color;
+}
+
+.text_info {
+    color: $info_color;
+}
+
+.text_brand {
+    color: $brand_primary;
+}
+
+// ============================================
+// TEXT ALIGNMENT UTILITY CLASSES
+// ============================================
+
+.text_center {
+    text-align: center;
+}
+
+.text_left {
+    text-align: left;
+}
+
+.text_right {
+    text-align: right;
+}
+
+.text_justify {
+    text-align: justify;
+}
+
+// ============================================
+// FONT WEIGHT UTILITY CLASSES
+// ============================================
+
+.font_normal {
+    font-weight: $font_weight_normal;
+}
+
+.font_medium {
+    font-weight: $font_weight_medium;
+}
+
+.font_semibold {
+    font-weight: $font_weight_semibold;
+}
+
+.font_bold {
+    font-weight: $font_weight_bold;
+}
+
+// ============================================
+// FONT SIZE UTILITY CLASSES
+// ============================================
+
+.font_xs {
+    font-size: $font_size_xs;
+}
+
+.font_sm {
+    font-size: $font_size_sm;
+}
+
+.font_base {
+    font-size: $font_size_base;
+}
+
+.font_lg {
+    font-size: $font_size_lg;
+}
+
+.font_xl {
+    font-size: $font_size_xl;
+}
+
+.font_2xl {
+    font-size: $font_size_2xl;
+}
+
+// ============================================
+// LINE HEIGHT UTILITY CLASSES
+// ============================================
+
+.leading_tight {
+    line-height: $line_height_tight;
+}
+
+.leading_normal {
+    line-height: $line_height_normal;
+}
+
+.leading_relaxed {
+    line-height: $line_height_relaxed;
+}
+
+// ============================================
+// TEXT TRANSFORM UTILITY CLASSES
+// ============================================
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+// ============================================
+// TEXT DECORATION UTILITY CLASSES
+// ============================================
+
+.underline {
+    text-decoration: underline;
+}
+
+.no_underline {
+    text-decoration: none;
+}
+
+.line_through {
+    text-decoration: line-through;
+}
+
+// ============================================
+// TEXT TRUNCATE UTILITY CLASSES
+// ============================================
+
+.truncate {
+    @include truncate;
+}
+
+.truncate_2 {
+    @include truncate_lines(2);
+}
+
+.truncate_3 {
+    @include truncate_lines(3);
+}
+
+// ============================================
+// RESPONSIVE TYPOGRAPHY
+// ============================================
+
+@include respond_to(md) {
+    h1 {
+        font-size: 36px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+}

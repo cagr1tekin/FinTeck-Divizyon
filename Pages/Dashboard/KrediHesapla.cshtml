@@ -1,0 +1,213 @@
+@page
+@model InteraktifKredi.Pages.Dashboard.KrediHesaplaModel
+@{
+    ViewData["Title"] = "Kredi Hesaplama";
+}
+
+<div class="dashboard_container">
+    <div class="dashboard_header">
+        <div class="dashboard_header__content">
+            <h1 class="dashboard_title">Kredi Hesaplama</h1>
+            <p class="dashboard_subtitle">Kredi tutarınızı ve vade seçeneklerini hesaplayın</p>
+        </div>
+    </div>
+
+    <div class="loan_calculator">
+        <div class="loan_calculator__card">
+            <!-- Kredi Tutarı -->
+            <div class="loan_calculator__section">
+                <label class="loan_calculator__label">
+                    <span class="loan_calculator__label__text">Kredi Tutarı</span>
+                    <span class="loan_calculator__label__hint">5.000 ₺ - 500.000 ₺</span>
+                </label>
+                <div class="loan_calculator__amount_wrapper">
+                    <input 
+                        type="range" 
+                        id="loan_amount_slider"
+                        class="loan_calculator__slider"
+                        min="5000" 
+                        max="500000" 
+                        step="1000" 
+                        value="100000" />
+                    <div class="loan_calculator__amount_input_wrapper">
+                        <input 
+                            type="text" 
+                            id="loan_amount_input"
+                            class="loan_calculator__amount_input"
+                            value="100.000" 
+                            data-mask="currency" />
+                        <span class="loan_calculator__amount_currency">₺</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vade Seçimi -->
+            <div class="loan_calculator__section">
+                <label class="loan_calculator__label">
+                    <span class="loan_calculator__label__text">Vade</span>
+                    <span class="loan_calculator__label__hint">Ay cinsinden</span>
+                </label>
+                <div class="loan_calculator__term_buttons" id="term_buttons">
+                    <button type="button" class="loan_calculator__term_button loan_calculator__term_button--active" data-term="12">
+                        12 Ay
+                    </button>
+                    <button type="button" class="loan_calculator__term_button" data-term="24">
+                        24 Ay
+                    </button>
+                    <button type="button" class="loan_calculator__term_button" data-term="36">
+                        36 Ay
+                    </button>
+                    <button type="button" class="loan_calculator__term_button" data-term="48">
+                        48 Ay
+                    </button>
+                    <button type="button" class="loan_calculator__term_button" data-term="60">
+                        60 Ay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Faiz Oranı -->
+            <div class="loan_calculator__section">
+                <label class="loan_calculator__label">
+                    <span class="loan_calculator__label__text">Faiz Oranı (Aylık)</span>
+                </label>
+                <div class="loan_calculator__rate_display">
+                    <span class="loan_calculator__rate_value" id="interest_rate">2,5</span>
+                    <span class="loan_calculator__rate_unit">%</span>
+                </div>
+            </div>
+
+            <!-- Sonuçlar -->
+            <div class="loan_calculator__results">
+                <div class="loan_calculator__result_item">
+                    <div class="loan_calculator__result_label">Aylık Taksit</div>
+                    <div class="loan_calculator__result_value" id="monthly_payment">0,00 ₺</div>
+                </div>
+                <div class="loan_calculator__result_item">
+                    <div class="loan_calculator__result_label">Toplam Geri Ödeme</div>
+                    <div class="loan_calculator__result_value" id="total_payment">0,00 ₺</div>
+                </div>
+                <div class="loan_calculator__result_item">
+                    <div class="loan_calculator__result_label">Toplam Faiz</div>
+                    <div class="loan_calculator__result_value loan_calculator__result_value--secondary" id="total_interest">0,00 ₺</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var $slider = $('#loan_amount_slider');
+            var $input = $('#loan_amount_input');
+            var $termButtons = $('.loan_calculator__term_button');
+            var $rateValue = $('#interest_rate');
+            var $monthlyPayment = $('#monthly_payment');
+            var $totalPayment = $('#total_payment');
+            var $totalInterest = $('#total_interest');
+
+            var loanAmount = 100000;
+            var termMonths = 12;
+            var monthlyRate = 0.025; // 2.5% aylık faiz
+
+            // Slider değişikliği
+            $slider.on('input', function() {
+                loanAmount = parseInt($(this).val());
+                $input.val(format_currency(loanAmount));
+                calculateLoan();
+            });
+
+            // Input değişikliği
+            $input.on('input', function() {
+                var value = $(this).val().replace(/[^\d]/g, '');
+                if (value === '') value = '0';
+                loanAmount = parseInt(value);
+                
+                // Min/Max kontrolü
+                if (loanAmount < 5000) loanAmount = 5000;
+                if (loanAmount > 500000) loanAmount = 500000;
+                
+                $slider.val(loanAmount);
+                $input.val(format_currency(loanAmount));
+                calculateLoan();
+            });
+
+            // Vade butonları
+            $termButtons.on('click', function() {
+                $termButtons.removeClass('loan_calculator__term_button--active');
+                $(this).addClass('loan_calculator__term_button--active');
+                termMonths = parseInt($(this).data('term'));
+                calculateLoan();
+            });
+
+            // Kredi hesaplama fonksiyonu
+            function calculateLoan() {
+                if (loanAmount <= 0 || termMonths <= 0) {
+                    $monthlyPayment.text('0,00 ₺');
+                    $totalPayment.text('0,00 ₺');
+                    $totalInterest.text('0,00 ₺');
+                    return;
+                }
+
+                // Basit faiz hesaplama formülü: Aylık Taksit = (Ana Para * (1 + Faiz Oranı)^Vade) / Vade
+                // Veya daha basit: Aylık Taksit = Ana Para * (Faiz Oranı * (1 + Faiz Oranı)^Vade) / ((1 + Faiz Oranı)^Vade - 1)
+                
+                // Basit formül (yaklaşık)
+                var monthlyPaymentAmount = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / 
+                                          (Math.pow(1 + monthlyRate, termMonths) - 1);
+                
+                var totalPaymentAmount = monthlyPaymentAmount * termMonths;
+                var totalInterestAmount = totalPaymentAmount - loanAmount;
+
+                // Animasyonlu güncelleme
+                animateValue($monthlyPayment, monthlyPaymentAmount, format_currency);
+                animateValue($totalPayment, totalPaymentAmount, format_currency);
+                animateValue($totalInterest, totalInterestAmount, format_currency);
+            }
+
+            // Değer animasyonu
+            function animateValue($element, targetValue, formatter) {
+                var currentText = $element.text().replace(/[^\d,]/g, '').replace(',', '.');
+                var currentValue = parseFloat(currentText) || 0;
+                var startValue = currentValue;
+                var duration = 300;
+                var startTime = null;
+
+                function animate(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    var progress = Math.min((currentTime - startTime) / duration, 1);
+                    
+                    // Easing function (ease-out)
+                    progress = 1 - Math.pow(1 - progress, 3);
+                    
+                    var current = startValue + (targetValue - startValue) * progress;
+                    $element.text(formatter(current));
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        $element.text(formatter(targetValue));
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // Para formatı (10.000 ₺)
+            window.format_currency = function(amount) {
+                if (typeof amount === 'string') {
+                    amount = parseFloat(amount.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                }
+                return new Intl.NumberFormat('tr-TR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(amount) + ' ₺';
+            };
+
+            // İlk hesaplama
+            calculateLoan();
+        });
+    </script>
+}
+

@@ -1,0 +1,26 @@
+@page
+@{
+    ViewData["Title"] = "Sayfa Bulunamadı";
+    Response.StatusCode = 404;
+}
+
+<div class="error_container">
+    <div class="error_content">
+        <div class="error_icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </div>
+        <h1 class="error_title">404 - Sayfa Bulunamadı</h1>
+        <p class="error_message">
+            Aradığınız sayfa mevcut değil veya taşınmış olabilir. 
+            Lütfen URL'yi kontrol edin veya ana sayfaya dönün.
+        </p>
+
+        <div class="error_actions">
+            <a href="/Dashboard" class="btn_primary">Ana Sayfaya Dön</a>
+            <a href="/SSS" class="btn_secondary">Yardım Merkezi</a>
+        </div>
+    </div>
+</div>
+

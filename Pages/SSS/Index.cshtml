@@ -1,0 +1,111 @@
+@page
+@model InteraktifKredi.Pages.SSS.IndexModel
+@{
+    ViewData["Title"] = "Sık Sorulan Sorular";
+}
+
+<div class="faq_container">
+    <div class="faq_header">
+        <h1 class="faq_title">Sık Sorulan Sorular</h1>
+        <p class="faq_subtitle">Merak ettiğiniz soruların cevaplarını burada bulabilirsiniz.</p>
+    </div>
+
+    @if (Model.FaqItems != null && Model.FaqItems.Any())
+    {
+        <div class="faq_list" id="faq_list">
+            @foreach (var faq in Model.FaqItems.OrderBy(f => f.Order))
+            {
+                <div class="faq_item" data-faq-id="@faq.Id">
+                    <button type="button" class="faq_item__header" aria-expanded="false" aria-controls="faq_answer_@faq.Id">
+                        <span class="faq_item__question">@faq.Question</span>
+                        <span class="faq_item__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="faq_item__icon__plus">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="faq_item__icon__minus" style="display: none;">
+                                <path d="M19 13H5v-2h14v2z"/>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq_item__content" id="faq_answer_@faq.Id" aria-hidden="true">
+                        <div class="faq_item__answer">
+                            @faq.Answer
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="faq_empty">
+            <p class="faq_empty__text">Henüz soru bulunmuyor.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var $faqItems = $('.faq_item');
+            var $faqHeaders = $('.faq_item__header');
+
+            // Accordion işlevselliği
+            $faqHeaders.on('click', function() {
+                var $header = $(this);
+                var $item = $header.closest('.faq_item');
+                var $content = $item.find('.faq_item__content');
+                var $iconPlus = $header.find('.faq_item__icon__plus');
+                var $iconMinus = $header.find('.faq_item__icon__minus');
+                var isExpanded = $header.attr('aria-expanded') === 'true';
+
+                // Eğer açıksa kapat
+                if (isExpanded) {
+                    $content.slideUp(300, function() {
+                        $header.attr('aria-expanded', 'false');
+                        $content.attr('aria-hidden', 'true');
+                        $item.removeClass('faq_item--active');
+                        $iconPlus.css('opacity', '1');
+                        $iconMinus.css('opacity', '0');
+                    });
+                } else {
+                    // Diğer tüm item'ları kapat
+                    $faqItems.not($item).each(function() {
+                        var $otherItem = $(this);
+                        var $otherHeader = $otherItem.find('.faq_item__header');
+                        var $otherContent = $otherItem.find('.faq_item__content');
+                        var $otherIconPlus = $otherHeader.find('.faq_item__icon__plus');
+                        var $otherIconMinus = $otherHeader.find('.faq_item__icon__minus');
+
+                        if ($otherHeader.attr('aria-expanded') === 'true') {
+                            $otherContent.slideUp(300, function() {
+                                $otherHeader.attr('aria-expanded', 'false');
+                                $otherContent.attr('aria-hidden', 'true');
+                        $otherItem.removeClass('faq_item--active');
+                        $otherIconPlus.css('opacity', '1');
+                        $otherIconMinus.css('opacity', '0');
+                            });
+                        }
+                    });
+
+                    // Bu item'ı aç
+                    $content.slideDown(300, function() {
+                        $header.attr('aria-expanded', 'true');
+                        $content.attr('aria-hidden', 'false');
+                        $item.addClass('faq_item--active');
+                        $iconPlus.css('opacity', '0');
+                        $iconMinus.css('opacity', '1');
+                    });
+                }
+            });
+
+            // Keyboard navigation (Enter ve Space)
+            $faqHeaders.on('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    $(this).trigger('click');
+                }
+            });
+        });
+    </script>
+}

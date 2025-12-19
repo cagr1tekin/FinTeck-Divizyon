@@ -1,0 +1,509 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// BUTTON COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+// Base button styles
+.btn {
+    @include button_base;
+    position: relative;
+    white-space: nowrap;
+    user-select: none;
+    vertical-align: middle;
+    touch-action: manipulation;
+}
+
+// ============================================
+// PRIMARY BUTTON
+// ============================================
+
+.btn_primary {
+    @extend .btn;
+    background-color: $brand_primary;
+    color: $text_white;
+    border: 1px solid $brand_primary;
+
+    &:hover:not(:disabled) {
+        background-color: color.mix($brand_primary, #000, 95%);
+        border-color: color.mix($brand_primary, #000, 95%);
+        transform: translateY(-1px);
+        box-shadow: $shadow_md;
+    }
+
+    &:active:not(:disabled) {
+        background-color: color.mix($brand_primary, #000, 90%);
+        border-color: color.mix($brand_primary, #000, 90%);
+        transform: translateY(0);
+        box-shadow: $shadow_sm;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:disabled {
+        background-color: $border_color;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    // Full width variation
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+
+    // Loading state
+    &--loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid $text_white;
+            border-top-color: transparent;
+            border-radius: $radius_full;
+            animation: spin 0.6s linear infinite;
+        }
+    }
+
+    // Size variations
+    &--sm {
+        padding: $spacing_xs $spacing_md;
+        font-size: $font_size_sm;
+        border-radius: $radius_sm;
+    }
+
+    &--lg {
+        padding: $spacing_md $spacing_xl;
+        font-size: $font_size_lg;
+        border-radius: $radius_lg;
+    }
+}
+
+// ============================================
+// SECONDARY BUTTON
+// ============================================
+
+.btn_secondary {
+    @extend .btn;
+    background-color: $bg_secondary;
+    color: $text_primary;
+    border: 1px solid $border_color;
+
+    &:hover:not(:disabled) {
+        background-color: $border_light;
+        border-color: $border_dark;
+        color: $text_primary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $border_color;
+        border-color: $border_dark;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:disabled {
+        background-color: $bg_secondary;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+
+    &--loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid $text_primary;
+            border-top-color: transparent;
+            border-radius: $radius_full;
+            animation: spin 0.6s linear infinite;
+        }
+    }
+}
+
+// ============================================
+// OUTLINE BUTTON
+// ============================================
+
+.btn_outline {
+    @extend .btn;
+    background-color: transparent;
+    color: $brand_primary;
+    border: 1px solid $brand_primary;
+
+    &:hover:not(:disabled) {
+        background-color: $brand_primary;
+        color: $text_white;
+        border-color: $brand_primary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: color.mix($brand_primary, #000, 95%);
+        border-color: color.mix($brand_primary, #000, 95%);
+        color: $text_white;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:disabled {
+        background-color: transparent;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+
+    &--loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid $brand_primary;
+            border-top-color: transparent;
+            border-radius: $radius_full;
+            animation: spin 0.6s linear infinite;
+        }
+
+        &:hover {
+            color: transparent;
+        }
+    }
+}
+
+// ============================================
+// GHOST BUTTON (Text Button)
+// ============================================
+
+.btn_ghost {
+    @extend .btn;
+    background-color: transparent;
+    color: $brand_primary;
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+        background-color: $brand_light;
+        color: $brand_secondary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: color.mix($brand_light, #000, 95%);
+        color: $brand_dark;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:disabled {
+        background-color: transparent;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+
+    &--loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid $brand_primary;
+            border-top-color: transparent;
+            border-radius: $radius_full;
+            animation: spin 0.6s linear infinite;
+        }
+    }
+}
+
+// ============================================
+// DANGER BUTTON
+// ============================================
+
+.btn_danger {
+    @extend .btn;
+    background-color: $error_color;
+    color: $text_white;
+    border: 1px solid $error_color;
+
+    &:hover:not(:disabled) {
+        background-color: color.mix($error_color, #000, 95%);
+        border-color: color.mix($error_color, #000, 95%);
+        transform: translateY(-1px);
+        box-shadow: $shadow_md;
+    }
+
+    &:active:not(:disabled) {
+        background-color: color.mix($error_color, #000, 90%);
+        border-color: color.mix($error_color, #000, 90%);
+        transform: translateY(0);
+        box-shadow: $shadow_sm;
+    }
+
+    &:focus {
+        @include focus_ring($error_color);
+    }
+
+    &:disabled {
+        background-color: $border_color;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+
+    &--loading {
+        color: transparent;
+        pointer-events: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid $text_white;
+            border-top-color: transparent;
+            border-radius: $radius_full;
+            animation: spin 0.6s linear infinite;
+        }
+    }
+}
+
+// ============================================
+// ICON BUTTON
+// ============================================
+
+.btn_icon {
+    @extend .btn;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius_full;
+    background-color: transparent;
+    color: $text_secondary;
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+        background-color: $bg_secondary;
+        color: $text_primary;
+    }
+
+    &:active:not(:disabled) {
+        background-color: $border_light;
+        color: $text_primary;
+    }
+
+    &:focus {
+        @include focus_ring($brand_primary);
+    }
+
+    &:disabled {
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    // Icon button sizes
+    &--sm {
+        width: 32px;
+        height: 32px;
+    }
+
+    &--lg {
+        width: 48px;
+        height: 48px;
+    }
+
+    // Icon button with background
+    &--filled {
+        background-color: $bg_secondary;
+        border-color: $border_color;
+
+        &:hover:not(:disabled) {
+            background-color: $border_light;
+        }
+    }
+}
+
+// ============================================
+// BUTTON SIZES
+// ============================================
+
+// Small size
+.btn--sm {
+    padding: $spacing_xs $spacing_md;
+    font-size: $font_size_sm;
+    border-radius: $radius_sm;
+}
+
+// Medium size (default)
+.btn--md {
+    padding: $spacing_sm $spacing_lg;
+    font-size: $font_size_base;
+    border-radius: $radius_md;
+}
+
+// Large size
+.btn--lg {
+    padding: $spacing_md $spacing_xl;
+    font-size: $font_size_lg;
+    border-radius: $radius_lg;
+}
+
+// ============================================
+// BUTTON GROUP
+// ============================================
+
+.btn_group {
+    display: inline-flex;
+    vertical-align: middle;
+
+    .btn {
+        position: relative;
+        flex: 1 1 auto;
+
+        // İlk buton
+        &:first-child:not(:last-child) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        // Son buton
+        &:last-child:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        // Ortadaki butonlar
+        &:not(:first-child):not(:last-child) {
+            border-radius: 0;
+        }
+
+        // Tek buton
+        &:first-child:last-child {
+            border-radius: $radius_md;
+        }
+
+        // Hover state - komşu butonlarla border paylaşımı
+        &:hover {
+            z-index: 1;
+        }
+
+        // Focus state
+        &:focus {
+            z-index: 2;
+        }
+    }
+
+    // Vertical button group
+    &--vertical {
+        flex-direction: column;
+
+        .btn {
+            width: 100%;
+
+            &:first-child:not(:last-child) {
+                border-top-right-radius: $radius_md;
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            &:last-child:not(:first-child) {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                border-bottom-left-radius: $radius_md;
+            }
+
+            &:not(:first-child):not(:last-child) {
+                border-radius: 0;
+            }
+        }
+    }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+// ============================================
+// RESPONSIVE BUTTONS
+// ============================================
+
+@include respond_to(sm) {
+    .btn--full_width {
+        @include respond_to(md) {
+            width: auto;
+            display: inline-block;
+        }
+    }
+}

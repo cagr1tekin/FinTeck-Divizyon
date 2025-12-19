@@ -1,0 +1,477 @@
+# İnteraktif Kredi - Web Şube 2.0 Cursor Rules
+
+## 🎯 Proje Özeti
+Bu proje bir FinTech Web Şube uygulamasıdır. Kullanıcıların interaktif bir şekilde kredi başvurusu yapabildiği, dijital şube deneyimi sunan bir platform geliştirilecektir.
+
+---
+
+## 📋 Genel Kurallar
+
+### Dil ve İletişim
+- Tüm kod yorumları Türkçe yazılmalıdır
+- Değişken ve fonksiyon isimleri İngilizce olmalıdır
+- Kullanıcıya gösterilecek metinler Türkçe olmalıdır
+
+### Öncelikler
+1. Güvenlik (Finansal veri koruması)
+2. Performans (Page Speed optimizasyonu)
+3. Kullanıcı Deneyimi (Modern, interaktif tasarım)
+4. Kod Okunabilirliği
+
+---
+
+## 🔧 Teknoloji Yığını
+
+### ZORUNLU Teknolojiler
+- **Backend:** C# .NET Core 8+ (Razor Pages)
+- **Frontend Styling:** SCSS (Custom, framework-free)
+- **JavaScript:** Vanilla JS + jQuery
+- **Para Hesaplamaları:** decimal tipi (float/double YASAK)
+
+### YASAK Teknolojiler
+- ❌ Bootstrap, Tailwind veya herhangi bir CSS framework
+- ❌ React, Vue, Angular (sadece Razor Pages)
+- ❌ !important kullanımı
+- ❌ @Html.Raw() kullanımı (XSS riski)
+
+---
+
+## 📁 Klasör Yapısı
+
+```
+ProjectRoot/
+├── Pages/                  # Razor Sayfaları (.cshtml)
+│   ├── Shared/             # Layout, Partial View
+│   ├── Onboarding/         # Giriş modülü
+│   ├── Dashboard/          # Ana panel
+│   └── Profile/            # Profil yönetimi
+├── Styles/                 # Ham SCSS Dosyaları
+│   ├── abstracts/          # _variables.scss, _mixins.scss
+│   ├── base/               # Reset, Typography
+│   ├── components/         # Butonlar, Kartlar, Formlar
+│   ├── pages/              # Sayfaya özel stiller
+│   └── main.scss           # Ana import dosyası
+├── wwwroot/                # Statik dosyalar
+│   ├── css/                # Derlenmiş CSS
+│   ├── js/                 # JavaScript dosyaları
+│   └── img/                # Görseller
+├── Services/               # API servisleri
+└── Models/                 # Data modelleri
+```
+
+---
+
+## 🎨 CSS/SCSS Kuralları
+
+### İsimlendirme: BEM + snake_case
+```scss
+// ✅ DOĞRU
+.loan_card { }
+.loan_card__header { }
+.loan_card__title { }
+.loan_card--approved { }
+.loan_card--rejected { }
+
+// ❌ YANLIŞ
+.loanCard { }           // camelCase yasak
+.loan-card { }          // kebab-case yasak
+.LoanCard { }           // PascalCase yasak
+```
+
+### SCSS Değişkenleri
+```scss
+// Styles/abstracts/_variables.scss
+$brand_color: #YOUR_COLOR;
+$brand_secondary: #YOUR_COLOR;
+$text_primary: #333333;
+$text_secondary: #666666;
+$error_color: #DC3545;
+$success_color: #28A745;
+$warning_color: #FFC107;
+
+$font_primary: 'Inter', sans-serif;
+$font_size_base: 16px;
+$border_radius: 8px;
+$spacing_unit: 8px;
+```
+
+### Yasaklar
+```scss
+// ❌ YASAKLAR
+div { }                 // Tag selector (reset hariç)
+.class { !important; }  // !important kullanımı
+.a { .b { .c { .d { } } } }  // 3+ seviye nesting
+```
+
+### Component Örneği
+```scss
+// Styles/components/_buttons.scss
+.btn_primary {
+    background-color: $brand_color;
+    color: white;
+    padding: $spacing_unit * 1.5 $spacing_unit * 3;
+    border-radius: $border_radius;
+    border: none;
+    cursor: pointer;
+    font-family: $font_primary;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+        background-color: darken($brand_color, 10%);
+    }
+    
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    &--full_width {
+        width: 100%;
+        display: block;
+    }
+    
+    &--loading {
+        position: relative;
+        color: transparent;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            // Loading spinner styles
+        }
+    }
+}
+```
+
+---
+
+## 📝 JavaScript/jQuery Kuralları
+
+### Selector Caching (ZORUNLU)
+```javascript
+// ✅ DOĞRU - Selector bir kez cache'lenir
+var $submit_btn = $('#submit_btn');
+var $loan_form = $('#loan_form');
+
+$submit_btn.prop('disabled', true);
+$submit_btn.text('İşleniyor...');
+
+// ❌ YANLIŞ - Her seferinde DOM taranır
+$('#submit_btn').prop('disabled', true);
+$('#submit_btn').text('İşleniyor...');
+```
+
+### Event Delegation
+```javascript
+// ✅ Dinamik elementler için
+$(document).on('click', '.dynamic_element', function() {
+    // İşlemler
+});
+
+// ✅ Statik elementler için
+$('#static_element').on('click', function() {
+    // İşlemler
+});
+```
+
+### Double Submit Prevention (ZORUNLU)
+```javascript
+// Form gönderiminde buton kilitleme
+$('#loan_form').on('submit', function(e) {
+    var $form = $(this);
+    var $btn = $form.find('.btn_submit');
+    
+    // Zaten gönderiliyorsa engelle
+    if ($form.data('submitting')) {
+        e.preventDefault();
+        return false;
+    }
+    
+    // Gönderim işaretle ve butonu kilitle
+    $form.data('submitting', true);
+    $btn.prop('disabled', true)
+        .addClass('btn_primary--loading')
+        .text('İşleniyor...');
+});
+```
+
+### Input Masking
+```javascript
+// TCKN Maskeleme (5XX...XX formatı)
+function mask_tckn(tckn) {
+    if (!tckn || tckn.length < 11) return tckn;
+    return tckn.substring(0, 1) + '*'.repeat(8) + tckn.substring(9);
+}
+
+// Telefon Maskeleme
+function mask_phone(phone) {
+    if (!phone || phone.length < 10) return phone;
+    return phone.substring(0, 3) + '****' + phone.substring(7);
+}
+
+// Para Formatı (10000 -> 10.000 ₺)
+function format_currency(amount) {
+    return new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: 'TRY',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+```
+
+### AJAX İstekleri
+```javascript
+// API çağrısı örneği
+function validate_customer(tckn, gsm) {
+    var $btn = $('#validate_btn');
+    
+    $btn.prop('disabled', true).text('Doğrulanıyor...');
+    
+    $.ajax({
+        url: '/api/customer/tckn-gsm',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ TCKN: tckn, GSM: gsm }),
+        success: function(response) {
+            if (response.success) {
+                show_toast('Doğrulama başarılı!', 'success');
+                // Sonraki adıma geç
+            } else {
+                show_toast(response.message, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            show_toast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+            console.error('API Error:', status, error);
+        },
+        complete: function() {
+            $btn.prop('disabled', false).text('Doğrula');
+        }
+    });
+}
+```
+
+---
+
+## 🔒 Güvenlik Kuralları
+
+### Veri Tipleri
+```csharp
+// ✅ DOĞRU - Parasal değerler için decimal
+public decimal LoanAmount { get; set; }
+public decimal InterestRate { get; set; }
+public decimal MonthlyPayment { get; set; }
+
+// ❌ YANLIŞ - float/double kullanımı
+public double LoanAmount { get; set; }  // YASAK!
+public float InterestRate { get; set; }  // YASAK!
+```
+
+### Log Maskeleme
+```csharp
+// ✅ DOĞRU - Hassas veriler maskelenir
+_logger.LogInformation("Müşteri doğrulandı: TCKN={MaskedTckn}", MaskTckn(tckn));
+
+// ❌ YANLIŞ - Açık metin loglama
+_logger.LogInformation("Müşteri doğrulandı: TCKN={Tckn}", tckn);  // YASAK!
+```
+
+### XSS Koruması
+```csharp
+// ❌ YASAK - Html.Raw kullanımı
+@Html.Raw(userInput)
+
+// ✅ DOĞRU - Encoded output
+@Model.UserInput
+@Html.Encode(Model.UserInput)
+```
+
+---
+
+## 🏗️ Razor Pages Kuralları
+
+### Logic Ayrımı
+```csharp
+// Views (.cshtml) - SADECE görüntüleme
+@model LoanApplicationModel
+
+<div class="loan_form">
+    <input asp-for="Amount" class="form_input" />
+    <span asp-validation-for="Amount" class="form_error"></span>
+</div>
+
+// PageModel (.cshtml.cs) - TÜM iş mantığı
+public class LoanApplicationModel : PageModel
+{
+    [BindProperty]
+    public decimal Amount { get; set; }
+    
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+            return Page();
+            
+        // API çağrıları ve iş mantığı BURADA
+        var result = await _apiService.SubmitLoanApplication(Amount);
+        return RedirectToPage("/Dashboard");
+    }
+}
+```
+
+### Tag Helpers
+```html
+<!-- ✅ DOĞRU - Tag Helpers kullan -->
+<input asp-for="LoanAmount" class="form_input" />
+<select asp-for="OccupationId" asp-items="Model.Occupations" class="form_select"></select>
+<button type="submit" class="btn_primary">Gönder</button>
+
+<!-- ❌ YANLIŞ - Inline event handlers -->
+<button onclick="submitForm()">Gönder</button>
+```
+
+---
+
+## 📱 UI States
+
+### Input States
+```scss
+.form_input {
+    border: 1px solid #ddd;
+    padding: 12px 16px;
+    border-radius: $border_radius;
+    transition: all 0.2s ease;
+    
+    // Default
+    &::placeholder {
+        color: #999;
+    }
+    
+    // Focus/Active
+    &:focus {
+        border-color: $brand_color;
+        box-shadow: 0 0 0 3px rgba($brand_color, 0.1);
+        outline: none;
+    }
+    
+    // Error
+    &--error {
+        border-color: $error_color;
+        
+        &:focus {
+            box-shadow: 0 0 0 3px rgba($error_color, 0.1);
+        }
+    }
+    
+    // Disabled
+    &:disabled {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+}
+```
+
+### Toast Notifications
+```javascript
+// Toast bildirimi göster
+function show_toast(message, type) {
+    var $toast = $('<div>', {
+        class: 'toast toast--' + type,
+        text: message
+    });
+    
+    $('body').append($toast);
+    
+    setTimeout(function() {
+        $toast.addClass('toast--visible');
+    }, 10);
+    
+    setTimeout(function() {
+        $toast.removeClass('toast--visible');
+        setTimeout(function() {
+            $toast.remove();
+        }, 300);
+    }, 3000);
+}
+```
+
+---
+
+## 🔌 API Entegrasyonu
+
+### Base URL'ler
+```csharp
+public static class ApiEndpoints
+{
+    public const string CUSTOMERS_API = "https://customers-api.azurewebsites.net";
+    public const string IDC_API = "https://api-idc.azurewebsites.net";
+    public const string DEFAULT_TOKEN = "fe7vSdh1QqqcdRzZO4HqG7TvDL5zEoF2bwKzOzAGJE67s";
+}
+```
+
+### Service Pattern
+```csharp
+public interface ICustomerApiService
+{
+    Task<ApiResponse<CustomerInfo>> ValidateTcknGsm(string tckn, string gsm);
+    Task<ApiResponse<AddressInfo>> GetCustomerAddress(long customerId);
+    Task<ApiResponse<bool>> SaveJobProfile(JobProfileRequest request);
+}
+
+public class CustomerApiService : ICustomerApiService
+{
+    private readonly HttpClient _httpClient;
+    
+    public CustomerApiService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+        _httpClient.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer", ApiEndpoints.DEFAULT_TOKEN);
+    }
+    
+    // Implementasyon...
+}
+```
+
+---
+
+## ✅ Code Review Checklist
+
+Kod gönderilmeden önce kontrol edilmesi gerekenler:
+
+### CSS/SCSS
+- [ ] Class isimleri snake_case mi?
+- [ ] BEM metodolojisi uygulandı mı?
+- [ ] !important kullanılmadı mı?
+- [ ] Nesting 3 seviyeyi geçmiyor mu?
+- [ ] Tag selector kullanılmadı mı?
+
+### JavaScript
+- [ ] jQuery selector'ları cache'lendi mi?
+- [ ] Form submit'te buton kilitleniyor mu?
+- [ ] console.log/debugger temizlendi mi?
+- [ ] Error handling yapıldı mı?
+
+### C# / Razor
+- [ ] Parasal değerler decimal mi?
+- [ ] .cshtml'de iş mantığı yok mu?
+- [ ] Html.Raw kullanılmadı mı?
+- [ ] Hassas veriler maskelendi mi?
+
+### Genel
+- [ ] Türkçe karakter desteği düzgün mü?
+- [ ] Responsive tasarım çalışıyor mu?
+- [ ] Erişilebilirlik (a11y) kontrol edildi mi?
+- [ ] Performans optimize mi?
+
+---
+
+## 📚 Referans Dosyalar
+
+- **Figma:** https://www.figma.com/design/7RZjOHyoXFUfzRabFCHqJk
+- **Case Brief:** `1. Case Brief_i - Web Şube 2.0 - İnteraktif Kredi.docx`
+- **Geliştirme Standartları:** `2. Geliştirme Standartları - İnteraktif Kredi.docx`
+- **API Demo Panel:** `WebSube-API-extracted/WebSube-API/`
+- **Meslek Listesi:** `Müşteri İş - Sektör Profili Bilgileri/job_id.json`
+- **Sektör Listesi:** `Müşteri İş - Sektör Profili Bilgileri/sektor_id.json`

@@ -1,0 +1,21 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ApiSettings": {
+    "CustomersApiUrl": "https://customers-api.azurewebsites.net",
+    "IdcApiUrl": "https://api-idc.azurewebsites.net",
+    "CustomersApiCode": "YOUR_DEVELOPMENT_CUSTOMERS_API_CODE",
+    "IdcApiGenerateOtpCode": "YOUR_DEVELOPMENT_GENERATE_OTP_CODE",
+    "IdcApiSendOtpSmsCode": "YOUR_DEVELOPMENT_SEND_OTP_SMS_CODE",
+    "IdcApiVerifyOtpCode": "YOUR_DEVELOPMENT_VERIFY_OTP_CODE",
+    "IdcApiKvkkTextCode": "YOUR_DEVELOPMENT_KVKK_TEXT_CODE",
+    "IdcApiKvkkOnayCode": "YOUR_DEVELOPMENT_KVKK_ONAY_CODE",
+    "DefaultToken": "YOUR_DEVELOPMENT_SECRET_TOKEN",
+    "UtmId": "5"
+  }
+}
+

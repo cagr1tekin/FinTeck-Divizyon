@@ -1,0 +1,289 @@
+@page
+@model InteraktifKredi.Pages.Onboarding.OtpDogrulaModel
+@{
+    ViewData["Title"] = "OTP Doğrulama";
+}
+
+<div class="onboarding_container">
+    <div class="onboarding_card">
+        <div class="onboarding_card__header">
+            <h1 class="onboarding_title">Doğrulama Kodu</h1>
+            <p class="onboarding_subtitle">SMS ile gönderilen 6 haneli kodu girin</p>
+            @if (!string.IsNullOrEmpty(Model.MaskedGsm))
+            {
+                <p class="onboarding_phone">@Model.MaskedGsm</p>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="form_error_message @(Model.RetryCount >= 3 ? "form_error_message--warning" : "")">
+                <span class="form_error_message__icon">⚠</span>
+                <span class="form_error_message__text">@Model.ErrorMessage</span>
+            </div>
+        }
+
+        <form id="otp_form" method="post" class="onboarding_form" novalidate>
+            <div class="form_group">
+                <div class="otp_inputs" id="otp_inputs">
+                    <input type="text" class="otp_input" id="otp_1" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_2" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_3" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_4" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_5" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_6" maxlength="1" inputmode="numeric" autocomplete="off" />
+                </div>
+                <input type="hidden" asp-for="OtpCode" id="otp_code_hidden" />
+                <span asp-validation-for="OtpCode" class="form_error"></span>
+            </div>
+
+            <div class="otp_timer" id="otp_timer">
+                <span class="otp_timer__text">Kod tekrar gönderilebilir:</span>
+                <span class="otp_timer__countdown" id="timer_countdown">2:00</span>
+            </div>
+
+            <div class="otp_resend" id="otp_resend" style="display: none;">
+                <a href="#" id="resend_otp_link" class="onboarding_footer__link">Kodu Tekrar Gönder</a>
+            </div>
+
+            <div class="form_group">
+                <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                    <span class="btn_primary__text">Doğrula</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="onboarding_footer">
+            <p class="onboarding_footer__text">
+                SMS gelmedi mi? <a href="#" id="resend_otp_link_footer" class="onboarding_footer__link" style="display: none;">Tekrar gönder</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#otp_form');
+            var $otpInputs = $('.otp_input');
+            var $otpCodeHidden = $('#otp_code_hidden');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+            var $timer = $('#otp_timer');
+            var $timerCountdown = $('#timer_countdown');
+            var $resendLink = $('#resend_otp_link');
+            var $resendLinkFooter = $('#resend_otp_link_footer');
+            var $resendContainer = $('#otp_resend');
+            var $otpInputsContainer = $('#otp_inputs');
+            
+            var timerSeconds = 120; // 2 dakika
+            var timerInterval = null;
+            var retryCount = @Model.RetryCount;
+
+            // Timer başlat
+            startTimer();
+
+            // OTP input focus geçişi
+            $otpInputs.on('input', function() {
+                var $this = $(this);
+                var value = $this.val().replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    $this.val(value.charAt(0));
+                    
+                    // Sonraki input'a geç
+                    var index = $otpInputs.index($this);
+                    if (index < $otpInputs.length - 1) {
+                        $otpInputs.eq(index + 1).focus();
+                    } else {
+                        // Son input dolduruldu, form'u submit et
+                        updateOtpCode();
+                        $form.submit();
+                    }
+                } else {
+                    $this.val('');
+                }
+                
+                updateOtpCode();
+            });
+
+            // Backspace ile geri gitme
+            $otpInputs.on('keydown', function(e) {
+                var $this = $(this);
+                var index = $otpInputs.index($this);
+                
+                if (e.key === 'Backspace' && $this.val() === '' && index > 0) {
+                    $otpInputs.eq(index - 1).focus().val('');
+                    updateOtpCode();
+                }
+            });
+
+            // Paste desteği
+            $otpInputs.on('paste', function(e) {
+                e.preventDefault();
+                var pasteData = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+                pasteData = pasteData.replace(/\D/g, '').substring(0, 6);
+                
+                if (pasteData.length > 0) {
+                    var index = $otpInputs.index($(this));
+                    for (var i = 0; i < pasteData.length && (index + i) < $otpInputs.length; i++) {
+                        $otpInputs.eq(index + i).val(pasteData.charAt(i));
+                    }
+                    updateOtpCode();
+                    
+                    // Son input'a focus
+                    var lastIndex = Math.min(index + pasteData.length - 1, $otpInputs.length - 1);
+                    $otpInputs.eq(lastIndex).focus();
+                }
+            });
+
+            // OTP kodunu hidden input'a yaz
+            function updateOtpCode() {
+                var otpCode = '';
+                $otpInputs.each(function() {
+                    otpCode += $(this).val() || '';
+                });
+                $otpCodeHidden.val(otpCode);
+                
+                // 6 karakter dolduysa success state
+                if (otpCode.length === 6) {
+                    $otpInputsContainer.addClass('otp_inputs--success');
+                } else {
+                    $otpInputsContainer.removeClass('otp_inputs--success');
+                }
+            }
+
+            // Timer başlat
+            function startTimer() {
+                timerSeconds = 120;
+                updateTimerDisplay();
+                
+                $timer.show();
+                $resendContainer.hide();
+                $resendLinkFooter.hide();
+                $resendLink.prop('disabled', true);
+                
+                timerInterval = setInterval(function() {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        $timer.hide();
+                        $resendContainer.show();
+                        $resendLinkFooter.show();
+                        $resendLink.prop('disabled', false);
+                    }
+                }, 1000);
+            }
+
+            // Timer görünümünü güncelle
+            function updateTimerDisplay() {
+                var minutes = Math.floor(timerSeconds / 60);
+                var seconds = timerSeconds % 60;
+                $timerCountdown.text(minutes + ':' + (seconds < 10 ? '0' : '') + seconds);
+            }
+
+            // Tekrar gönder
+            $resendLink.on('click', function(e) {
+                e.preventDefault();
+                resendOtp();
+            });
+
+            $resendLinkFooter.on('click', function(e) {
+                e.preventDefault();
+                resendOtp();
+            });
+
+            function resendOtp() {
+                var tckn = '@Model.Tckn';
+                var gsm = '@Model.Gsm';
+                
+                if (!tckn || !gsm) {
+                    show_toast('Bilgiler bulunamadı. Lütfen tekrar giriş yapın.', 'error');
+                    return;
+                }
+
+                $resendLink.prop('disabled', true).text('Gönderiliyor...');
+                
+                // OTP oluştur ve SMS gönder
+                $.ajax({
+                    url: '/api/otp/generate',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ TCKN: tckn, GSM: gsm }),
+                    success: function(response) {
+                        if (response.success && response.value) {
+                            // SMS gönder
+                            $.ajax({
+                                url: '/api/otp/send-sms',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ 
+                                    GSM: gsm, 
+                                    OtpCode: response.value.otpCode 
+                                }),
+                                success: function(smsResponse) {
+                                    if (smsResponse.success) {
+                                        show_toast('Yeni kod gönderildi.', 'success');
+                                        // Input'ları temizle
+                                        $otpInputs.val('').first().focus();
+                                        updateOtpCode();
+                                        // Timer'ı yeniden başlat
+                                        startTimer();
+                                    } else {
+                                        show_toast(smsResponse.message || 'SMS gönderilemedi.', 'error');
+                                    }
+                                },
+                                error: function() {
+                                    show_toast('SMS gönderilirken bir hata oluştu.', 'error');
+                                },
+                                complete: function() {
+                                    $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                                }
+                            });
+                        } else {
+                            show_toast(response.message || 'OTP oluşturulamadı.', 'error');
+                            $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                        }
+                    },
+                    error: function() {
+                        show_toast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+                        $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                    }
+                });
+            }
+
+            // Form submit
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                updateOtpCode();
+                var otpCode = $otpCodeHidden.val();
+
+                if (otpCode.length !== 6) {
+                    show_toast('Lütfen 6 haneli kodu girin.', 'error');
+                    $otpInputsContainer.addClass('otp_inputs--error');
+                    setTimeout(function() {
+                        $otpInputsContainer.removeClass('otp_inputs--error');
+                    }, 2000);
+                    return false;
+                }
+
+                // Butonu disable et
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Doğrulanıyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // İlk input'a focus
+            $otpInputs.first().focus();
+        });
+    </script>
+}

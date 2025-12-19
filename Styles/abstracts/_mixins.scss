@@ -1,0 +1,325 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+// ============================================
+// RESPONSIVE BREAKPOINT MIXINS
+// ============================================
+
+@mixin respond_to($breakpoint) {
+    @if $breakpoint == sm {
+        @media (min-width: $breakpoint_sm) {
+            @content;
+        }
+    } @else if $breakpoint == md {
+        @media (min-width: $breakpoint_md) {
+            @content;
+        }
+    } @else if $breakpoint == lg {
+        @media (min-width: $breakpoint_lg) {
+            @content;
+        }
+    } @else if $breakpoint == xl {
+        @media (min-width: $breakpoint_xl) {
+            @content;
+        }
+    }
+}
+
+// Max-width breakpoint (mobil-first değil, desktop-first için)
+@mixin respond_to_max($breakpoint) {
+    @if $breakpoint == sm {
+        @media (max-width: $breakpoint_sm - 1px) {
+            @content;
+        }
+    } @else if $breakpoint == md {
+        @media (max-width: $breakpoint_md - 1px) {
+            @content;
+        }
+    } @else if $breakpoint == lg {
+        @media (max-width: $breakpoint_lg - 1px) {
+            @content;
+        }
+    } @else if $breakpoint == xl {
+        @media (max-width: $breakpoint_xl - 1px) {
+            @content;
+        }
+    }
+}
+
+// ============================================
+// FLEXBOX HELPER MIXINS
+// ============================================
+
+@mixin flex_center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex_between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex_column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex_start {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@mixin flex_end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+@mixin flex_wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+// ============================================
+// BUTTON BASE MIXIN
+// ============================================
+
+@mixin button_base {
+    @include button_reset;
+    display: inline-block;
+    padding: $spacing_sm $spacing_lg;
+    border-radius: $radius_md;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    text-align: center;
+    cursor: pointer;
+    transition: all $transition_normal;
+    line-height: $line_height_normal;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    &:focus {
+        @include focus_ring;
+    }
+}
+
+// ============================================
+// INPUT BASE MIXIN
+// ============================================
+
+@mixin input_base {
+    @include input_reset;
+    width: 100%;
+    padding: $spacing_sm $spacing_md;
+    border: 1px solid $border_color;
+    border-radius: $radius_md;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    color: $text_primary;
+    background-color: $bg_primary;
+    transition: all $transition_normal;
+    line-height: $line_height_normal;
+
+    &::placeholder {
+        color: $text_muted;
+    }
+
+    &:focus {
+        border-color: $brand_primary;
+        @include focus_ring;
+        outline: none;
+    }
+
+    &:disabled {
+        background-color: $bg_secondary;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    &--error {
+        border-color: $error_color;
+
+        &:focus {
+            border-color: $error_color;
+            box-shadow: 0 0 0 3px rgba($error_color, 0.1);
+        }
+    }
+}
+
+// ============================================
+// CARD BASE MIXIN
+// ============================================
+
+@mixin card_base {
+    background-color: $bg_primary;
+    border-radius: $radius_md;
+    padding: $spacing_lg;
+    box-shadow: $shadow_sm;
+    transition: box-shadow $transition_normal;
+
+    &:hover {
+        box-shadow: $shadow_md;
+    }
+}
+
+// ============================================
+// TRUNCATE TEXT MIXIN
+// ============================================
+
+@mixin truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Multi-line truncate (satır sayısı belirterek)
+@mixin truncate_lines($lines: 2) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// ============================================
+// TRANSITION MIXIN
+// ============================================
+
+@mixin transition($property: all, $duration: $transition_normal, $timing: ease) {
+    transition: $property $duration $timing;
+}
+
+// ============================================
+// FOCUS RING MIXIN
+// ============================================
+
+@mixin focus_ring($color: $brand_primary, $width: 3px) {
+    box-shadow: 0 0 0 $width rgba($color, 0.2);
+    outline: none;
+}
+
+// ============================================
+// VISUALLY HIDDEN (ACCESSIBILITY)
+// ============================================
+
+@mixin visually_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+// Visually hidden ama focus olduğunda görünür (skip link için)
+@mixin visually_hidden_focusable {
+    @include visually_hidden;
+
+    &:focus {
+        position: static;
+        width: auto;
+        height: auto;
+        padding: inherit;
+        margin: inherit;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+    }
+}
+
+// ============================================
+// RESET MIXINS
+// ============================================
+
+// Button Reset
+@mixin button_reset {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+// Input Reset
+@mixin input_reset {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    outline: none;
+}
+
+// List Reset
+@mixin list_reset {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// ============================================
+// UTILITY MIXINS
+// ============================================
+
+// Clearfix
+@mixin clearfix {
+    &::after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+}
+
+// Aspect Ratio
+@mixin aspect_ratio($width: 16, $height: 9) {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        display: block;
+        padding-bottom: percentage($height / $width);
+    }
+
+    > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// Scrollbar Styling (Webkit)
+@mixin custom_scrollbar($thumb-color: $border_dark, $track-color: $bg_secondary) {
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $track-color;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $thumb-color;
+        border-radius: $radius_full;
+
+        &:hover {
+            background: color.mix($thumb-color, #000, 90%);
+        }
+    }
+}

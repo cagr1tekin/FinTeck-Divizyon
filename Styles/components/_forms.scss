@@ -1,0 +1,726 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// FORM COMPONENT
+// BEM + snake_case metodolojisi
+// ============================================
+
+// ============================================
+// FORM GROUP
+// ============================================
+
+.form_group {
+    margin-bottom: $spacing_lg;
+    position: relative;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// ============================================
+// FORM LABEL
+// ============================================
+
+.form_label {
+    display: block;
+    margin-bottom: $spacing_xs;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    line-height: $line_height_normal;
+
+    // Required indicator
+    &--required {
+        &::after {
+            content: ' *';
+            color: $error_color;
+            font-weight: $font_weight_bold;
+        }
+    }
+
+    // Optional indicator
+    &--optional {
+        &::after {
+            content: ' (Opsiyonel)';
+            color: $text_muted;
+            font-weight: $font_weight_normal;
+            font-size: $font_size_sm;
+        }
+    }
+}
+
+// ============================================
+// FORM INPUT (Text Input)
+// ============================================
+
+.form_input {
+    @include input_base;
+    width: 100%;
+    padding: $spacing_sm $spacing_md;
+    border: 1px solid $border_color;
+    border-radius: $radius_md;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    color: $text_primary;
+    background-color: $bg_primary;
+    transition: all $transition_normal;
+    line-height: $line_height_normal;
+
+    &::placeholder {
+        color: $text_muted;
+        opacity: 1;
+    }
+
+    // Focus state
+    &:focus {
+        border-color: $brand_primary;
+        @include focus_ring($brand_primary);
+        outline: none;
+    }
+
+    // Disabled state
+    &:disabled {
+        background-color: $bg_secondary;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.7;
+
+        &::placeholder {
+            color: $text_muted;
+        }
+    }
+
+    // Read-only state
+    &:read-only {
+        background-color: $bg_secondary;
+        cursor: default;
+    }
+
+    // Error state
+    &--error {
+        border-color: $error_color;
+        background-color: color.mix($error_color, #fff, 55%);
+
+        &:focus {
+            border-color: $error_color;
+            @include focus_ring($error_color);
+        }
+
+        &::placeholder {
+            color: color.mix($error_color, #fff, 80%);
+        }
+    }
+
+    // Success state
+    &--success {
+        border-color: $success_color;
+        background-color: color.mix($success_color, #fff, 55%);
+
+        &:focus {
+            border-color: $success_color;
+            @include focus_ring($success_color);
+        }
+    }
+
+    // Input sizes
+    &--sm {
+        padding: $spacing_xs $spacing_sm;
+        font-size: $font_size_sm;
+        border-radius: $radius_sm;
+    }
+
+    &--lg {
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_lg;
+        border-radius: $radius_lg;
+    }
+}
+
+// ============================================
+// FORM SELECT (Dropdown)
+// ============================================
+
+.form_select {
+    @include input_base;
+    width: 100%;
+    padding: $spacing_sm $spacing_md;
+    padding-right: $spacing_xl + $spacing_sm; // Ok için alan
+    border: 1px solid $border_color;
+    border-radius: $radius_md;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    color: $text_primary;
+    background-color: $bg_primary;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $spacing_sm center;
+    background-size: 12px;
+    cursor: pointer;
+    transition: all $transition_normal;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    line-height: $line_height_normal;
+
+    // Focus state
+    &:focus {
+        border-color: $brand_primary;
+        @include focus_ring($brand_primary);
+        outline: none;
+    }
+
+    // Disabled state
+    &:disabled {
+        background-color: $bg_secondary;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.7;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    }
+
+    // Error state
+    &--error {
+        border-color: $error_color;
+        background-color: color.mix($error_color, #fff, 55%);
+
+        &:focus {
+            border-color: $error_color;
+            @include focus_ring($error_color);
+        }
+    }
+
+    // Success state
+    &--success {
+        border-color: $success_color;
+        background-color: color.mix($success_color, #fff, 55%);
+
+        &:focus {
+            border-color: $success_color;
+            @include focus_ring($success_color);
+        }
+    }
+
+    // Select sizes
+    &--sm {
+        padding: $spacing_xs $spacing_sm;
+        padding-right: $spacing_lg + $spacing_xs;
+        font-size: $font_size_sm;
+        border-radius: $radius_sm;
+    }
+
+    &--lg {
+        padding: $spacing_md $spacing_lg;
+        padding-right: $spacing_2xl + $spacing_md;
+        font-size: $font_size_lg;
+        border-radius: $radius_lg;
+    }
+}
+
+// ============================================
+// FORM TEXTAREA
+// ============================================
+
+.form_textarea {
+    @include input_base;
+    width: 100%;
+    min-height: 120px;
+    padding: $spacing_sm $spacing_md;
+    border: 1px solid $border_color;
+    border-radius: $radius_md;
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    color: $text_primary;
+    background-color: $bg_primary;
+    resize: vertical;
+    transition: all $transition_normal;
+    line-height: $line_height_normal;
+
+    &::placeholder {
+        color: $text_muted;
+        opacity: 1;
+    }
+
+    // Focus state
+    &:focus {
+        border-color: $brand_primary;
+        @include focus_ring($brand_primary);
+        outline: none;
+    }
+
+    // Disabled state
+    &:disabled {
+        background-color: $bg_secondary;
+        border-color: $border_color;
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.7;
+        resize: none;
+    }
+
+    // Error state
+    &--error {
+        border-color: $error_color;
+        background-color: color.mix($error_color, #fff, 55%);
+
+        &:focus {
+            border-color: $error_color;
+            @include focus_ring($error_color);
+        }
+    }
+
+    // Success state
+    &--success {
+        border-color: $success_color;
+        background-color: color.mix($success_color, #fff, 55%);
+
+        &:focus {
+            border-color: $success_color;
+            @include focus_ring($success_color);
+        }
+    }
+
+    // Textarea sizes
+    &--sm {
+        min-height: 80px;
+        padding: $spacing_xs $spacing_sm;
+        font-size: $font_size_sm;
+        border-radius: $radius_sm;
+    }
+
+    &--lg {
+        min-height: 160px;
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_lg;
+        border-radius: $radius_lg;
+    }
+}
+
+// ============================================
+// FORM CHECKBOX
+// ============================================
+
+.form_checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing_sm;
+    cursor: pointer;
+    position: relative;
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        // Custom checkbox görünümü
+        + .form_checkbox__label {
+            position: relative;
+            padding-left: $spacing_lg + $spacing_sm;
+            cursor: pointer;
+            user-select: none;
+
+            // Checkbox box
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 2px;
+                width: 20px;
+                height: 20px;
+                border: 2px solid $border_color;
+                border-radius: $radius_sm;
+                background-color: $bg_primary;
+                transition: all $transition_normal;
+            }
+
+            // Checkmark
+            &::after {
+                content: '';
+                position: absolute;
+                left: 6px;
+                top: 6px;
+                width: 8px;
+                height: 12px;
+                border: solid $text_white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg) scale(0);
+                transition: transform $transition_normal;
+            }
+        }
+
+        // Checked state
+        &:checked + .form_checkbox__label {
+            &::before {
+                background-color: $brand_primary;
+                border-color: $brand_primary;
+            }
+
+            &::after {
+                transform: rotate(45deg) scale(1);
+            }
+        }
+
+        // Focus state
+        &:focus + .form_checkbox__label {
+            &::before {
+                @include focus_ring($brand_primary);
+            }
+        }
+
+        // Disabled state
+        &:disabled + .form_checkbox__label {
+            cursor: not-allowed;
+            opacity: 0.6;
+
+            &::before {
+                background-color: $bg_secondary;
+                border-color: $border_color;
+            }
+        }
+
+        // Error state
+        &.form_checkbox__input--error + .form_checkbox__label {
+            &::before {
+                border-color: $error_color;
+            }
+        }
+    }
+
+    &__label {
+        font-family: $font_primary;
+        font-size: $font_size_base;
+        color: $text_primary;
+        line-height: $line_height_normal;
+        margin: 0;
+    }
+}
+
+// ============================================
+// FORM RADIO
+// ============================================
+
+.form_radio {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing_sm;
+    cursor: pointer;
+    position: relative;
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        // Custom radio görünümü
+        + .form_radio__label {
+            position: relative;
+            padding-left: $spacing_lg + $spacing_sm;
+            cursor: pointer;
+            user-select: none;
+
+            // Radio circle
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 2px;
+                width: 20px;
+                height: 20px;
+                border: 2px solid $border_color;
+                border-radius: $radius_full;
+                background-color: $bg_primary;
+                transition: all $transition_normal;
+            }
+
+            // Radio dot
+            &::after {
+                content: '';
+                position: absolute;
+                left: 6px;
+                top: 8px;
+                width: 8px;
+                height: 8px;
+                border-radius: $radius_full;
+                background-color: $text_white;
+                transform: scale(0);
+                transition: transform $transition_normal;
+            }
+        }
+
+        // Checked state
+        &:checked + .form_radio__label {
+            &::before {
+                background-color: $brand_primary;
+                border-color: $brand_primary;
+            }
+
+            &::after {
+                transform: scale(1);
+            }
+        }
+
+        // Focus state
+        &:focus + .form_radio__label {
+            &::before {
+                @include focus_ring($brand_primary);
+            }
+        }
+
+        // Disabled state
+        &:disabled + .form_radio__label {
+            cursor: not-allowed;
+            opacity: 0.6;
+
+            &::before {
+                background-color: $bg_secondary;
+                border-color: $border_color;
+            }
+        }
+
+        // Error state
+        &.form_radio__input--error + .form_radio__label {
+            &::before {
+                border-color: $error_color;
+            }
+        }
+    }
+
+    &__label {
+        font-family: $font_primary;
+        font-size: $font_size_base;
+        color: $text_primary;
+        line-height: $line_height_normal;
+        margin: 0;
+    }
+}
+
+// Radio group
+.form_radio_group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+    padding: $spacing_md;
+    background-color: $bg_secondary;
+    border-radius: $radius_md;
+    border: 1px solid $border_light;
+
+    &--horizontal {
+        flex-direction: row;
+        gap: $spacing_lg;
+        flex-wrap: wrap;
+    }
+}
+
+// Conditional fields (gizlenebilir alanlar)
+.conditional_fields {
+    transition: all $transition_normal;
+    overflow: hidden;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+// Inline label (form_row içinde kullanım için)
+.form_label--inline {
+    display: inline-block;
+    margin-bottom: $spacing_xs;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+}
+
+// Form row item
+.form_row__item {
+    flex: 1 1 0;
+    min-width: 150px;
+
+    @include respond_to_max(sm) {
+        min-width: 100%;
+    }
+}
+
+// ============================================
+// FORM ERROR MESSAGE
+// ============================================
+
+.form_error {
+    display: block;
+    margin-top: $spacing_xs;
+    font-family: $font_primary;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+    color: $error_color;
+    line-height: $line_height_normal;
+
+    // Icon ile birlikte (opsiyonel)
+    &::before {
+        content: '⚠ ';
+        margin-right: $spacing_xs;
+    }
+}
+
+// ============================================
+// FORM HINT (Yardımcı Metin)
+// ============================================
+
+.form_hint {
+    display: block;
+    margin-top: $spacing_xs;
+    font-family: $font_primary;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_normal;
+    color: $text_muted;
+    line-height: $line_height_normal;
+}
+
+// ============================================
+// FORM ROW (Yatay Form Satırı)
+// ============================================
+
+.form_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing_md;
+    margin-bottom: $spacing_lg;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .form_group {
+        flex: 1 1 0;
+        min-width: 200px;
+        margin-bottom: 0;
+    }
+
+    // Responsive
+    @include respond_to_max(sm) {
+        flex-direction: column;
+
+        .form_group {
+            min-width: 100%;
+        }
+    }
+}
+
+// ============================================
+// INPUT WITH ICON
+// ============================================
+
+.form_input_wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .form_input {
+        padding-left: $spacing_xl + $spacing_sm;
+
+        &--with_icon_right {
+            padding-left: $spacing_sm;
+            padding-right: $spacing_xl + $spacing_sm;
+        }
+    }
+
+    &__icon {
+        position: absolute;
+        left: $spacing_sm;
+        width: 20px;
+        height: 20px;
+        color: $text_muted;
+        pointer-events: none;
+        z-index: 1;
+        font-weight: $font_weight_semibold;
+        font-size: $font_size_base;
+
+        &--right {
+            left: auto;
+            right: $spacing_md;
+            color: $brand_primary;
+        }
+    }
+}
+
+// Checkbox group
+.form_checkbox_group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+    padding: $spacing_md;
+    background-color: $bg_secondary;
+    border-radius: $radius_md;
+    border: 1px solid $border_light;
+}
+
+// ============================================
+// INPUT MASKING STYLES
+// ============================================
+
+// TCKN input için özel stil
+.form_input[data-mask="tckn"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+// Telefon input için özel stil
+.form_input[data-mask="phone"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+// Para input için özel stil
+.form_input[data-mask="currency"] {
+    text-align: right;
+    font-weight: $font_weight_semibold;
+}
+
+// ============================================
+// FORM VALIDATION STATES
+// ============================================
+
+.form_group {
+    // Error state
+    &--error {
+        .form_input,
+        .form_select,
+        .form_textarea {
+            border-color: $error_color;
+            background-color: color.mix($error_color, #fff, 55%);
+
+            &:focus {
+                @include focus_ring($error_color);
+            }
+        }
+    }
+
+    // Success state
+    &--success {
+        .form_input,
+        .form_select,
+        .form_textarea {
+            border-color: $success_color;
+            background-color: color.mix($success_color, #fff, 55%);
+
+            &:focus {
+                @include focus_ring($success_color);
+            }
+        }
+    }
+}
+
+// ============================================
+// RESPONSIVE FORMS
+// ============================================
+
+@include respond_to_max(sm) {
+    .form_input,
+    .form_select,
+    .form_textarea {
+        font-size: 16px; // iOS zoom önleme
+    }
+}

@@ -1,0 +1,148 @@
+@page
+@model InteraktifKredi.Pages.Onboarding.TcknGsmModel
+@{
+    ViewData["Title"] = "TCKN ve GSM Doğrulama";
+}
+
+<div class="onboarding_container">
+    <div class="onboarding_card">
+        <div class="onboarding_card__header">
+            <h1 class="onboarding_title">Hoş Geldiniz</h1>
+            <p class="onboarding_subtitle">Kimlik bilgilerinizi girin</p>
+        </div>
+
+        <form id="tckn_gsm_form" method="post" class="onboarding_form" novalidate>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="form_error_message">
+                    <span class="form_error_message__icon">⚠</span>
+                    <span class="form_error_message__text">@Model.ErrorMessage</span>
+                </div>
+            }
+
+            <div class="form_group">
+                <label asp-for="Tckn" class="form_label form_label--required">TC Kimlik No</label>
+                <input 
+                    asp-for="Tckn" 
+                    id="tckn_input"
+                    class="form_input" 
+                    type="text" 
+                    inputmode="numeric"
+                    maxlength="11" 
+                    placeholder="11 haneli TCKN"
+                    autocomplete="off"
+                    data-mask="tckn"
+                    required />
+                <span asp-validation-for="Tckn" class="form_error"></span>
+            </div>
+
+            <div class="form_group">
+                <label asp-for="Gsm" class="form_label form_label--required">GSM Numarası</label>
+                <input 
+                    asp-for="Gsm" 
+                    id="gsm_input"
+                    class="form_input" 
+                    type="tel" 
+                    inputmode="numeric"
+                    maxlength="11" 
+                    placeholder="5XX XXX XX XX"
+                    autocomplete="tel"
+                    data-mask="phone"
+                    required />
+                <span asp-validation-for="Gsm" class="form_error"></span>
+                <span class="form_hint">10-11 haneli cep telefonu numaranız</span>
+            </div>
+
+            <div class="form_group">
+                <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                    <span class="btn_primary__text">Devam Et</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="onboarding_footer">
+            <p class="onboarding_footer__text">
+                Bilgileriniz güvenli bir şekilde işlenmektedir.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#tckn_gsm_form');
+            var $tcknInput = $('#tckn_input');
+            var $gsmInput = $('#gsm_input');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+
+            // TCKN input masking - sadece rakam
+            $tcknInput.on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+                if (value.length > 11) value = value.substring(0, 11);
+                $(this).val(value);
+            });
+
+            // GSM input masking - sadece rakam
+            $gsmInput.on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+                if (value.length > 11) value = value.substring(0, 11);
+                $(this).val(value);
+            });
+
+            // Form submit
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Client-side validation
+                if (!$form[0].checkValidity()) {
+                    $form[0].reportValidity();
+                    return false;
+                }
+
+                var tckn = $tcknInput.val().trim();
+                var gsm = $gsmInput.val().trim();
+
+                // TCKN validation
+                if (tckn.length !== 11 || !/^\d+$/.test(tckn)) {
+                    show_toast('TC Kimlik No 11 haneli olmalıdır.', 'error');
+                    $tcknInput.focus();
+                    return false;
+                }
+
+                // GSM validation
+                if (gsm.length < 10 || gsm.length > 11 || !/^5\d{9,10}$/.test(gsm)) {
+                    show_toast('GSM numarası 5 ile başlamalı ve 10-11 haneli olmalıdır.', 'error');
+                    $gsmInput.focus();
+                    return false;
+                }
+
+                // Butonu disable et
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Doğrulanıyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // Enter tuşu ile submit
+            $tcknInput.on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $gsmInput.focus();
+                }
+            });
+
+            $gsmInput.on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $form.submit();
+                }
+            });
+        });
+    </script>
+}

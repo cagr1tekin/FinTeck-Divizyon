@@ -1,0 +1,228 @@
+@page
+@model InteraktifKredi.Pages.Profile.MeslekBilgileriModel
+@{
+    ViewData["Title"] = "Meslek Bilgileri";
+}
+
+<div class="profile_container">
+    <div class="profile_header">
+        <h1 class="profile_title">Meslek Bilgileri</h1>
+        <p class="profile_subtitle">Meslek ve çalışma bilgilerinizi güncelleyin</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="form_success_message">
+            <span class="form_success_message__icon">✓</span>
+            <span class="form_success_message__text">@Model.SuccessMessage</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="form_error_message">
+            <span class="form_error_message__icon">⚠</span>
+            <span class="form_error_message__text">@Model.ErrorMessage</span>
+        </div>
+    }
+
+    <form id="meslek_form" method="post" class="profile_form" novalidate>
+        <!-- Çalışma Durumu -->
+        <div class="form_group">
+            <label class="form_label form_label--required">Çalışma Durumu</label>
+            <div class="form_radio_group" id="work_status_group">
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="1" name="WorkStatus" />
+                    <span class="form_radio__label">Kamu Çalışanıyım</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="2" name="WorkStatus" />
+                    <span class="form_radio__label">Özel Sektör Çalışanıyım</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="3" name="WorkStatus" />
+                    <span class="form_radio__label">İşyerim var / Ortağım</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="4" name="WorkStatus" />
+                    <span class="form_radio__label">Emekliyim</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="5" name="WorkStatus" />
+                    <span class="form_radio__label">Emekliyim ve Çalışıyorum</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="6" name="WorkStatus" />
+                    <span class="form_radio__label">Çiftçiyim</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="7" name="WorkStatus" />
+                    <span class="form_radio__label">Çalışmıyorum</span>
+                </label>
+                <label class="form_radio">
+                    <input type="radio" asp-for="WorkStatus" value="8" name="WorkStatus" />
+                    <span class="form_radio__label">Freelancer Olarak Çalışıyorum</span>
+                </label>
+            </div>
+            <span asp-validation-for="WorkStatus" class="form_error"></span>
+        </div>
+
+        <!-- Conditional Fields (Çalışmıyorum seçilirse gizlenecek) -->
+        <div class="conditional_fields" id="conditional_fields">
+            <!-- Meslek -->
+            <div class="form_group">
+                <label asp-for="JobId" class="form_label form_label--required">Meslek</label>
+                <select asp-for="JobId" asp-items="Model.Jobs" id="job_select" class="form_select">
+                </select>
+                <span asp-validation-for="JobId" class="form_error"></span>
+            </div>
+
+            <!-- Sektör -->
+            <div class="form_group">
+                <label asp-for="SectorId" class="form_label form_label--required">Sektör</label>
+                <select asp-for="SectorId" asp-items="Model.Sectors" id="sector_select" class="form_select">
+                </select>
+                <span asp-validation-for="SectorId" class="form_error"></span>
+            </div>
+
+            <!-- Firma Adı -->
+            <div class="form_group">
+                <label asp-for="CompanyName" class="form_label form_label--required">Firma Adı</label>
+                <input 
+                    asp-for="CompanyName" 
+                    id="company_name_input"
+                    class="form_input" 
+                    type="text" 
+                    maxlength="200"
+                    placeholder="Firma veya işyeri adı" />
+                <span asp-validation-for="CompanyName" class="form_error"></span>
+            </div>
+
+            <!-- Pozisyon -->
+            <div class="form_group">
+                <label asp-for="Position" class="form_label form_label--required">Pozisyon</label>
+                <input 
+                    asp-for="Position" 
+                    id="position_input"
+                    class="form_input" 
+                    type="text" 
+                    maxlength="100"
+                    placeholder="Çalıştığınız pozisyon" />
+                <span asp-validation-for="Position" class="form_error"></span>
+            </div>
+
+            <!-- Çalışma Süresi -->
+            <div class="form_group">
+                <label class="form_label form_label--required">Çalışma Süresi</label>
+                <div class="form_row">
+                    <div class="form_row__item">
+                        <label for="working_years" class="form_label form_label--inline">Yıl</label>
+                        <input 
+                            asp-for="WorkingYears" 
+                            id="working_years"
+                            class="form_input" 
+                            type="number" 
+                            min="0" 
+                            max="50" 
+                            placeholder="0" />
+                        <span asp-validation-for="WorkingYears" class="form_error"></span>
+                    </div>
+                    <div class="form_row__item">
+                        <label for="working_months" class="form_label form_label--inline">Ay</label>
+                        <input 
+                            asp-for="WorkingMonths" 
+                            id="working_months"
+                            class="form_input" 
+                            type="number" 
+                            min="0" 
+                            max="11" 
+                            placeholder="0" />
+                        <span asp-validation-for="WorkingMonths" class="form_error"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form_group">
+            <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
+                <span class="btn_primary__text">Kaydet</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#meslek_form');
+            var $workStatusRadios = $('input[name="WorkStatus"]');
+            var $conditionalFields = $('#conditional_fields');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+
+            // Çalışma durumu değişikliğinde conditional fields'ı göster/gizle
+            function toggleConditionalFields() {
+                var selectedValue = $workStatusRadios.filter(':checked').val();
+                
+                if (selectedValue === '7') { // "Çalışmıyorum"
+                    $conditionalFields.slideUp(300);
+                    // Conditional fields'ı optional yap
+                    $conditionalFields.find('input, select').prop('required', false);
+                } else {
+                    $conditionalFields.slideDown(300);
+                    // Conditional fields'ı required yap
+                    $conditionalFields.find('input[type="text"], select').prop('required', true);
+                }
+            }
+
+            // İlk yüklemede kontrol et
+            toggleConditionalFields();
+
+            // Radio değişikliğinde
+            $workStatusRadios.on('change', function() {
+                toggleConditionalFields();
+            });
+
+            // Form submit
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                // Client-side validation
+                if (!$form[0].checkValidity()) {
+                    $form[0].reportValidity();
+                    return false;
+                }
+
+                // Double submit prevention
+                if ($form.data('submitting')) {
+                    return false;
+                }
+
+                // Butonu disable et
+                $form.data('submitting', true);
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Kaydediliyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // Çalışma yılı/ay input validation
+            $('#working_years, #working_months').on('input', function() {
+                var value = parseInt($(this).val()) || 0;
+                var max = $(this).attr('max');
+                
+                if (max && value > parseInt(max)) {
+                    $(this).val(max);
+                }
+                
+                if (value < 0) {
+                    $(this).val(0);
+                }
+            });
+        });
+    </script>
+}

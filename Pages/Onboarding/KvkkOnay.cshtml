@@ -1,0 +1,169 @@
+@page
+@model InteraktifKredi.Pages.Onboarding.KvkkOnayModel
+@{
+    ViewData["Title"] = "KVKK Aydınlatma Metni";
+}
+
+<div class="onboarding_container">
+    <div class="onboarding_card">
+        <div class="onboarding_card__header">
+            <h1 class="onboarding_title">KVKK Aydınlatma Metni</h1>
+            <p class="onboarding_subtitle">Lütfen aşağıdaki metni okuyun ve onaylayın</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="form_error_message">
+                <span class="form_error_message__icon">⚠</span>
+                <span class="form_error_message__text">@Model.ErrorMessage</span>
+            </div>
+        }
+
+        <form id="kvkk_form" method="post" class="onboarding_form" novalidate>
+            <div class="form_group">
+                <div class="kvkk_content" id="kvkk_content">
+                    @if (!string.IsNullOrEmpty(Model.KvkkText))
+                    {
+                        <div class="kvkk_text">
+                            @foreach (var line in Model.KvkkText.Split('\n'))
+                            {
+                                <p>@line</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="kvkk_loading">
+                            <div class="kvkk_loading__spinner"></div>
+                            <p>KVKK metni yükleniyor...</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form_group">
+                <label class="form_checkbox" id="kvkk_checkbox_label">
+                    <input 
+                        type="checkbox" 
+                        id="kvkk_checkbox"
+                        asp-for="KvkkAccepted" 
+                        class="form_checkbox__input" 
+                        required />
+                    <span class="form_checkbox__label">
+                        <strong>Okudum, anladım ve onaylıyorum</strong>
+                        <br />
+                        <span class="form_checkbox__hint">KVKK aydınlatma metnini okudum ve kişisel verilerimin işlenmesine onay veriyorum.</span>
+                    </span>
+                </label>
+                <span asp-validation-for="KvkkAccepted" class="form_error"></span>
+            </div>
+
+            <div class="form_group">
+                <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width" disabled>
+                    <span class="btn_primary__text">Devam Et</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="onboarding_footer">
+            <p class="onboarding_footer__text">
+                Onay vermeden devam edemezsiniz.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var $form = $('#kvkk_form');
+            var $checkbox = $('#kvkk_checkbox');
+            var $submitBtn = $('#submit_btn');
+            var $btnText = $submitBtn.find('.btn_primary__text');
+            var $kvkkContent = $('#kvkk_content');
+            var kvkkId = 1; // KVKK ID
+
+            // KVKK metnini yükle (eğer sayfa yüklendiğinde yoksa)
+            if ($kvkkContent.find('.kvkk_text').length === 0 && $kvkkContent.find('.kvkk_loading').length === 0) {
+                loadKvkkText();
+            }
+
+            // Checkbox değişikliğinde butonu enable/disable et
+            $checkbox.on('change', function() {
+                updateSubmitButton();
+            });
+
+            // İlk yüklemede buton durumunu kontrol et
+            updateSubmitButton();
+
+            // Form submit
+            $form.on('submit', function(e) {
+                e.preventDefault();
+
+                if (!$checkbox.is(':checked')) {
+                    show_toast('KVKK aydınlatma metnini onaylamalısınız.', 'error');
+                    return false;
+                }
+
+                // Butonu disable et
+                $submitBtn.prop('disabled', true)
+                    .addClass('btn_primary--loading');
+                $btnText.text('Kaydediliyor...');
+
+                // Form submit (server-side)
+                $form.off('submit').submit();
+            });
+
+            // KVKK metnini yükleme fonksiyonu (eğer sayfa yüklendiğinde yoksa)
+            function loadKvkkText() {
+                $kvkkContent.html('<div class="kvkk_loading"><div class="kvkk_loading__spinner"></div><p>KVKK metni yükleniyor...</p></div>');
+
+                $.ajax({
+                    url: '/api/kvkk/text/' + kvkkId,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    success: function(response) {
+                        if (response.success && response.value) {
+                            // HTML escape yap (XSS koruması)
+                            var kvkkText = $('<div>').text(response.value).html().replace(/\n/g, '<br />');
+                            $kvkkContent.html('<div class="kvkk_text">' + kvkkText + '</div>');
+                        } else {
+                            $kvkkContent.html('<div class="kvkk_error">KVKK metni yüklenemedi. Lütfen sayfayı yenileyin.</div>');
+                            show_toast(response.message || 'KVKK metni yüklenemedi.', 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $kvkkContent.html('<div class="kvkk_error">KVKK metni yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.</div>');
+                        show_toast('KVKK metni yüklenirken bir hata oluştu.', 'error');
+                        console.error('KVKK metni yükleme hatası:', error);
+                    }
+                });
+            }
+
+            // Submit buton durumunu güncelle
+            function updateSubmitButton() {
+                if ($checkbox.is(':checked')) {
+                    $submitBtn.prop('disabled', false);
+                } else {
+                    $submitBtn.prop('disabled', true);
+                }
+            }
+
+            // Scroll to bottom hint (KVKK metni uzunsa)
+            var $kvkkText = $kvkkContent.find('.kvkk_text');
+            if ($kvkkText.length > 0) {
+                var contentHeight = $kvkkText[0].scrollHeight;
+                var containerHeight = $kvkkContent.height();
+                
+                if (contentHeight > containerHeight) {
+                    // Scroll hint göster
+                    setTimeout(function() {
+                        $kvkkContent.addClass('kvkk_content--scrollable');
+                    }, 500);
+                }
+            }
+        });
+    </script>
+}

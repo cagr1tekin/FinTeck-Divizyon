@@ -1,0 +1,308 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// LOAN CALCULATOR COMPONENT
+// ============================================
+
+.loan_calculator {
+    max-width: 800px;
+    margin: 0 auto;
+
+    &__card {
+        @include card_base;
+        padding: $spacing_xl;
+        background-color: $bg_primary;
+        border: 1px solid $border_light;
+        border-radius: $radius_lg;
+        box-shadow: $shadow_lg;
+    }
+
+    &__section {
+        margin-bottom: $spacing_xl;
+    }
+
+    &__label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing_md;
+
+        &__text {
+            font-size: $font_size_lg;
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+        }
+
+        &__hint {
+            font-size: $font_size_sm;
+            color: $text_muted;
+        }
+    }
+
+    // ============================================
+    // AMOUNT SLIDER
+    // ============================================
+
+    &__amount_wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_md;
+    }
+
+    &__slider {
+        width: 100%;
+        height: 8px;
+        border-radius: $radius_full;
+        background: linear-gradient(to right, $bg_secondary 0%, $brand_primary 100%);
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        transition: all $transition_normal;
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: $radius_full;
+            background-color: $brand_primary;
+            border: 3px solid $bg_primary;
+            box-shadow: $shadow_md;
+            cursor: pointer;
+            transition: all $transition_normal;
+
+            &:hover {
+                transform: scale(1.2);
+                box-shadow: $shadow_lg;
+            }
+        }
+
+        &::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: $radius_full;
+            background-color: $brand_primary;
+            border: 3px solid $bg_primary;
+            box-shadow: $shadow_md;
+            cursor: pointer;
+            transition: all $transition_normal;
+
+            &:hover {
+                transform: scale(1.2);
+                box-shadow: $shadow_lg;
+            }
+        }
+
+        &:focus {
+            &::-webkit-slider-thumb {
+                @include focus_ring($brand_primary);
+            }
+
+            &::-moz-range-thumb {
+                @include focus_ring($brand_primary);
+            }
+        }
+    }
+
+    &__amount_input_wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    &__amount_input {
+        @include input_base;
+        width: 100%;
+        padding: $spacing_md $spacing_xl $spacing_md $spacing_lg;
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+        border: 2px solid $border_color;
+        border-radius: $radius_md;
+        transition: all $transition_normal;
+
+        &:focus {
+            border-color: $brand_primary;
+            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+            outline: none;
+        }
+    }
+
+    &__amount_currency {
+        position: absolute;
+        right: $spacing_lg;
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $brand_primary;
+        pointer-events: none;
+    }
+
+    // ============================================
+    // TERM BUTTONS
+    // ============================================
+
+    &__term_buttons {
+        display: flex;
+        gap: $spacing_sm;
+        flex-wrap: wrap;
+
+        @include respond_to_max(sm) {
+            gap: $spacing_xs;
+        }
+    }
+
+    &__term_button {
+        @include button_base;
+        flex: 1;
+        min-width: 100px;
+        padding: $spacing_md $spacing_lg;
+        background-color: $bg_secondary;
+        border: 2px solid $border_color;
+        color: $text_primary;
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        border-radius: $radius_md;
+        transition: all $transition_normal;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $brand_light;
+            border-color: $brand_primary;
+            color: $brand_primary;
+            transform: translateY(-2px);
+        }
+
+        &--active {
+            background-color: $brand_primary;
+            border-color: $brand_primary;
+            color: $text_white;
+            font-weight: $font_weight_semibold;
+            box-shadow: $shadow_md;
+
+            &:hover {
+                background-color: color.mix($brand_primary, #000, 95%);
+                border-color: color.mix($brand_primary, #000, 95%);
+                transform: translateY(-2px);
+            }
+        }
+
+        @include respond_to_max(sm) {
+            min-width: 80px;
+            padding: $spacing_sm $spacing_md;
+            font-size: $font_size_sm;
+        }
+    }
+
+    // ============================================
+    // INTEREST RATE DISPLAY
+    // ============================================
+
+    &__rate_display {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: $spacing_xs;
+        padding: $spacing_lg;
+        background-color: $bg_secondary;
+        border-radius: $radius_md;
+        border: 2px solid $border_light;
+    }
+
+    &__rate_value {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        font-family: 'Courier New', monospace;
+        line-height: 1;
+    }
+
+    &__rate_unit {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_secondary;
+    }
+
+    // ============================================
+    // RESULTS
+    // ============================================
+
+    &__results {
+        margin-top: $spacing_xl;
+        padding-top: $spacing_xl;
+        border-top: 2px solid $border_light;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing_lg;
+
+        @include respond_to_max(sm) {
+            grid-template-columns: 1fr;
+            gap: $spacing_md;
+        }
+    }
+
+    &__result_item {
+        text-align: center;
+        padding: $spacing_lg;
+        background-color: $bg_secondary;
+        border-radius: $radius_md;
+        border: 1px solid $border_light;
+        transition: all $transition_normal;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: $shadow_md;
+            border-color: $brand_primary;
+        }
+    }
+
+    &__result_label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        margin-bottom: $spacing_sm;
+        font-weight: $font_weight_medium;
+    }
+
+    &__result_value {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+        transition: all $transition_normal;
+
+        &--secondary {
+            color: $text_primary;
+            font-size: $font_size_xl;
+        }
+    }
+}
+
+// ============================================
+// RESPONSIVE LOAN CALCULATOR
+// ============================================
+
+@include respond_to_max(sm) {
+    .loan_calculator {
+        &__card {
+            padding: $spacing_lg;
+        }
+
+        &__amount_input {
+            font-size: $font_size_xl;
+            padding: $spacing_sm $spacing_lg $spacing_sm $spacing_md;
+        }
+
+        &__rate_value {
+            font-size: $font_size_2xl;
+        }
+
+        &__result_value {
+            font-size: $font_size_xl;
+        }
+    }
+}
+

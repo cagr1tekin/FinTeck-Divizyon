@@ -1,0 +1,360 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+// ============================================
+// DASHBOARD PAGE STYLES
+// ============================================
+
+.dashboard_container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing_xl $spacing_lg;
+}
+
+// ============================================
+// DASHBOARD HEADER
+// ============================================
+
+.dashboard_header {
+    margin-bottom: $spacing_xl * 2;
+
+    &__content {
+        text-align: center;
+
+        @include respond_to(sm) {
+            text-align: left;
+        }
+    }
+}
+
+.dashboard_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin-bottom: $spacing_sm;
+    line-height: $line_height_tight;
+
+    &__name {
+        color: $brand_primary;
+    }
+
+    @include respond_to_max(sm) {
+        font-size: $font_size_xl;
+    }
+}
+
+.dashboard_subtitle {
+    font-size: $font_size_lg;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+// ============================================
+// DASHBOARD SECTIONS
+// ============================================
+
+.dashboard_section {
+    margin-bottom: $spacing_xl * 2;
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_lg;
+        padding-bottom: $spacing_sm;
+        border-bottom: 2px solid $border_light;
+    }
+}
+
+// ============================================
+// QUICK ACTIONS
+// ============================================
+
+.quick_actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing_lg;
+    margin-bottom: $spacing_xl;
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+        gap: $spacing_md;
+    }
+}
+
+.quick_action_card {
+    @include card_base;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $spacing_xl;
+    background-color: $bg_primary;
+    border: 2px solid $border_light;
+    border-radius: $radius_lg;
+    text-decoration: none;
+    color: $text_primary;
+    transition: all $transition_normal;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow_lg;
+        border-color: $brand_primary;
+        background-color: $brand_light;
+
+        .quick_action_card__icon {
+            transform: scale(1.1);
+            color: $brand_primary;
+        }
+    }
+
+    &:active {
+        transform: translateY(-2px);
+    }
+
+    &__icon {
+        width: 64px;
+        height: 64px;
+        margin-bottom: $spacing_md;
+        color: $brand_primary;
+        transition: all $transition_normal;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__title {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_xs;
+        line-height: $line_height_tight;
+    }
+
+    &__description {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        margin: 0;
+        line-height: $line_height_normal;
+    }
+}
+
+// ============================================
+// PROFILE SUMMARY
+// ============================================
+
+.profile_summary {
+    @include card_base;
+    padding: $spacing_xl;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    border-radius: $radius_lg;
+}
+
+.profile_summary__progress {
+    margin-bottom: $spacing_lg;
+}
+
+.progress_bar {
+    width: 100%;
+    height: 12px;
+    background-color: $bg_secondary;
+    border-radius: $radius_full;
+    overflow: hidden;
+    margin-bottom: $spacing_sm;
+
+    &__fill {
+        height: 100%;
+        background: linear-gradient(90deg, $brand_primary 0%, $brand_secondary 100%);
+        border-radius: $radius_full;
+        transition: width $transition_normal;
+    }
+}
+
+.profile_summary__percent {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing_xs;
+
+    &__value {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+    }
+
+    &__label {
+        font-size: $font_size_base;
+        color: $text_secondary;
+    }
+}
+
+.profile_summary__missing {
+    padding-top: $spacing_lg;
+    border-top: 1px solid $border_light;
+
+    &__title {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_md;
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+        padding: $spacing_sm 0;
+        color: $text_secondary;
+        font-size: $font_size_base;
+    }
+
+    &__icon {
+        color: $warning_color;
+        font-size: $font_size_lg;
+    }
+}
+
+.profile_summary__complete {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $spacing_lg;
+    text-align: center;
+
+    &__icon {
+        width: 64px;
+        height: 64px;
+        border-radius: $radius_full;
+        background-color: $success_color;
+        color: white;
+        font-size: $font_size_2xl;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: $spacing_md;
+    }
+
+    &__text {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_semibold;
+        color: $success_color;
+        margin: 0;
+    }
+}
+
+// ============================================
+// RECENT ACTIVITIES
+// ============================================
+
+.recent_activities {
+    @include card_base;
+    padding: $spacing_lg;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    border-radius: $radius_lg;
+}
+
+.recent_activity_item {
+    display: flex;
+    align-items: center;
+    gap: $spacing_md;
+    padding: $spacing_md 0;
+    border-bottom: 1px solid $border_light;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius_full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        &--success {
+            background-color: color.mix($success_color, #fff, 60%);
+            color: $success_color;
+        }
+
+        &--info {
+            background-color: color.mix($info_color, #fff, 60%);
+            color: $info_color;
+        }
+
+        &--warning {
+            background-color: color.mix($warning_color, #fff, 60%);
+            color: $warning_color;
+        }
+
+        &--error {
+            background-color: color.mix($error_color, #fff, 60%);
+            color: $error_color;
+        }
+    }
+
+    &__content {
+        flex: 1;
+    }
+
+    &__title {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_xs;
+        line-height: $line_height_tight;
+    }
+
+    &__date {
+        font-size: $font_size_sm;
+        color: $text_muted;
+        margin: 0;
+    }
+}
+
+// ============================================
+// RESPONSIVE DASHBOARD
+// ============================================
+
+@include respond_to_max(sm) {
+    .dashboard_container {
+        padding: $spacing_lg $spacing_md;
+    }
+
+    .dashboard_header {
+        margin-bottom: $spacing_xl;
+    }
+
+    .dashboard_section {
+        margin-bottom: $spacing_xl;
+    }
+
+    .quick_action_card {
+        padding: $spacing_lg;
+    }
+
+    .profile_summary {
+        padding: $spacing_lg;
+    }
+
+    .recent_activities {
+        padding: $spacing_md;
+    }
+}

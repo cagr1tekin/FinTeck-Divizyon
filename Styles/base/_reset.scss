@@ -1,0 +1,213 @@
+@use '../abstracts' as *;
+
+// ============================================
+// MODERN CSS RESET
+// ============================================
+
+// Box-sizing border-box (tüm elementler için)
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+// HTML ve Body
+html {
+    font-size: $font_size_base;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    font-family: $font_primary;
+    font-size: $font_size_base;
+    font-weight: $font_weight_normal;
+    line-height: $line_height_normal;
+    color: $text_primary;
+    background-color: $bg_primary;
+    min-height: 100vh;
+}
+
+// ============================================
+// BUTTON RESET
+// ============================================
+
+button {
+    @include button_reset;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+// ============================================
+// INPUT RESET
+// ============================================
+
+input,
+textarea,
+select {
+    @include input_reset;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+// Input number için spinner'ları kaldır
+input[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+// Input search için X butonunu kaldır (IE)
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+// ============================================
+// LIST RESET
+// ============================================
+
+ul,
+ol {
+    @include list_reset;
+}
+
+// ============================================
+// LINK RESET
+// ============================================
+
+a {
+    text-decoration: none;
+    color: inherit;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+
+// ============================================
+// IMAGE RESET
+// ============================================
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-style: none;
+}
+
+// SVG responsive
+svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+// ============================================
+// TABLE RESET
+// ============================================
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+// ============================================
+// FORM ELEMENT RESET
+// ============================================
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: $spacing_sm;
+    font-size: $font_size_lg;
+    line-height: inherit;
+    color: inherit;
+    white-space: normal;
+}
+
+// ============================================
+// MEDIA ELEMENTS
+// ============================================
+
+audio,
+video {
+    display: inline-block;
+}
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+// ============================================
+// HIDDEN ATTRIBUTE
+// ============================================
+
+[hidden] {
+    display: none !important;
+}
+
+// ============================================
+// FOCUS OUTLINE (Accessibility)
+// ============================================
+
+// Focus outline'ı kaldırmak için outline: none kullanmayın
+// Bunun yerine focus-visible kullanın
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+// ============================================
+// PRINT STYLES
+// ============================================
+
+@media print {
+    *,
+    *::before,
+    *::after {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    img {
+        page-break-inside: avoid;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
