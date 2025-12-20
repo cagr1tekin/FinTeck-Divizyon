@@ -1,0 +1,181 @@
+@page
+@model InteraktifKredi.Pages.KrediRehberi.IndexModel
+@{
+    ViewData["Title"] = "Kredi Rehberi";
+}
+
+<div class="blog_list_container">
+    <div class="blog_list__main">
+        <div class="blog_carousel" id="blog_carousel">
+            <div class="blog_carousel__wrapper">
+                @foreach (var post in Model.FeaturedPosts)
+                {
+                    <article class="blog_featured blog_carousel__slide">
+                        @if (post == Model.FeaturedPosts.First())
+                        {
+                            <div class="blog_featured__badge">Yeni Yazı</div>
+                        }
+                        <div class="blog_featured__image">
+                            <img src="@post.ImageUrl" alt="@post.Title" />
+                        </div>
+                        <div class="blog_featured__content">
+                            <h1 class="blog_featured__title">
+                                <a href="/KrediRehberi/@post.Slug">@post.Title</a>
+                            </h1>
+                            <p class="blog_featured__excerpt">@post.Excerpt</p>
+                            <div class="blog_featured__meta">
+                                <span class="blog_featured__author">@post.Author</span>
+                                <span class="blog_featured__date">@GetTimeAgo(post.PublishedDate)</span>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+            <div class="blog_carousel__controls">
+                <button type="button" class="blog_carousel__btn blog_carousel__btn--prev" id="carousel_prev" aria-label="Önceki">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button type="button" class="blog_carousel__btn blog_carousel__btn--next" id="carousel_next" aria-label="Sonraki">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="blog_carousel__indicators" id="carousel_indicators">
+                @for (int i = 0; i < Model.FeaturedPosts.Count; i++)
+                {
+                    <button type="button" class="blog_carousel__indicator @(i == 0 ? "blog_carousel__indicator--active" : "")" data-slide="@i" aria-label="Slide @(i + 1)"></button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <aside class="blog_list__sidebar">
+        <div class="blog_most_read">
+            <h2 class="blog_most_read__title">EN ÇOK OKUNANLAR</h2>
+            <ul class="blog_most_read__list">
+                @foreach (var post in Model.MostReadPosts)
+                {
+                    <li class="blog_most_read__item">
+                        <a href="/KrediRehberi/@post.Slug" class="blog_most_read__link">
+                            <h3 class="blog_most_read__item_title">@post.Title</h3>
+                            <div class="blog_most_read__item_meta">
+                                <span class="blog_most_read__item_author">@post.Author</span>
+                                <span class="blog_most_read__item_date">@GetTimeAgo(post.PublishedDate)</span>
+                            </div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </aside>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var $carousel = $('#blog_carousel');
+            var $wrapper = $carousel.find('.blog_carousel__wrapper');
+            var $slides = $carousel.find('.blog_carousel__slide');
+            var $prevBtn = $('#carousel_prev');
+            var $nextBtn = $('#carousel_next');
+            var $indicators = $carousel.find('.blog_carousel__indicator');
+            
+            var currentSlide = 0;
+            var totalSlides = $slides.length;
+            var autoSlideInterval = null;
+
+            // Slide göster
+            function showSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                
+                currentSlide = index;
+                
+                // Slide'ları kaydır
+                $wrapper.css('transform', 'translateX(-' + (currentSlide * 100) + '%)');
+                
+                // Indicator'ları güncelle
+                $indicators.removeClass('blog_carousel__indicator--active');
+                $indicators.eq(currentSlide).addClass('blog_carousel__indicator--active');
+            }
+
+            // Önceki slide
+            $prevBtn.on('click', function() {
+                showSlide(currentSlide - 1);
+                resetAutoSlide();
+            });
+
+            // Sonraki slide
+            $nextBtn.on('click', function() {
+                showSlide(currentSlide + 1);
+                resetAutoSlide();
+            });
+
+            // Indicator'a tıkla
+            $indicators.on('click', function() {
+                var slideIndex = parseInt($(this).data('slide'));
+                showSlide(slideIndex);
+                resetAutoSlide();
+            });
+
+            // Otomatik kaydırma
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(function() {
+                    showSlide(currentSlide + 1);
+                }, 5000); // 5 saniyede bir
+            }
+
+            function resetAutoSlide() {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+                startAutoSlide();
+            }
+
+            // İlk slide'ı göster
+            showSlide(0);
+            
+            // Otomatik kaydırmayı başlat
+            if (totalSlides > 1) {
+                startAutoSlide();
+            }
+
+            // Mouse hover'da durdur
+            $carousel.on('mouseenter', function() {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+            });
+
+            $carousel.on('mouseleave', function() {
+                if (totalSlides > 1) {
+                    startAutoSlide();
+                }
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetTimeAgo(DateTime date)
+    {
+        var timeSpan = DateTime.Now - date;
+        
+        if (timeSpan.Days == 0)
+            return "Bugün";
+        else if (timeSpan.Days == 1)
+            return "1 Gün Önce";
+        else if (timeSpan.Days < 7)
+            return $"{timeSpan.Days} Gün Önce";
+        else if (timeSpan.Days < 30)
+            return $"{timeSpan.Days / 7} Hafta Önce";
+        else if (timeSpan.Days < 365)
+            return $"{timeSpan.Days / 30} Ay Önce";
+        else
+            return $"{timeSpan.Days / 365} Yıl Önce";
+    }
+}
+

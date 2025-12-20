@@ -2,307 +2,729 @@
 @use '../abstracts' as *;
 
 // ============================================
-// LOAN CALCULATOR COMPONENT
+// LOAN CALCULATOR - MODERN FINTECH DESIGN
 // ============================================
 
-.loan_calculator {
-    max-width: 800px;
+// Main Container
+.calc_page_container {
+    min-height: calc(100vh - 200px);
+    padding: $spacing_xl * 2 $spacing_lg;
+    background-color: #F5F7FB;
+
+    @include respond_to_max(sm) {
+        padding: $spacing_lg $spacing_md;
+    }
+}
+
+// 2 Sütunlu Asimetrik Grid (2fr 1fr)
+.calc_wrapper {
+    max-width: 1400px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: $spacing_xl * 2;
 
-    &__card {
-        @include card_base;
-        padding: $spacing_xl;
-        background-color: $bg_primary;
-        border: 1px solid $border_light;
-        border-radius: $radius_lg;
-        box-shadow: $shadow_lg;
+    @include respond_to_max(lg) {
+        grid-template-columns: 1fr;
+        gap: $spacing_xl;
+    }
+}
+
+// ============================================
+// SOL SÜTUN: Hesaplama Kontrolleri
+// ============================================
+
+.calc_input_zone {
+    width: 100%;
+}
+
+.calc_input_card {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: $spacing_xl * 2;
+    width: 100%;
+
+    @include respond_to_max(sm) {
+        padding: $spacing_xl $spacing_lg;
+    }
+}
+
+.calc_input_header {
+    margin-bottom: $spacing_xl * 2;
+    padding-bottom: $spacing_lg;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.calc_input_title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin: 0 0 $spacing_sm 0;
+    line-height: $line_height_tight;
+}
+
+.calc_input_subtitle {
+    font-size: $font_size_base;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+// ============================================
+// MEGA TUTAR GİRİŞİ
+// ============================================
+
+.calc_amount_section {
+    margin-bottom: $spacing_xl * 2;
+}
+
+.calc_amount_label {
+    display: block;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+    color: $text_secondary;
+    margin-bottom: $spacing_md;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calc_amount_display_wrapper {
+    position: relative;
+    margin-bottom: $spacing_lg;
+}
+
+.calc_amount_display {
+    width: 100%;
+    padding: $spacing_xl $spacing_xl * 2;
+    font-size: 3rem; // Mega font
+    font-weight: $font_weight_bold;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-variant-numeric: tabular-nums; // Rakam titremesini engelle
+    letter-spacing: 2px;
+    border: 2px solid #E5E7EB;
+    border-radius: 16px;
+    background-color: #FFFFFF;
+    color: $text_primary;
+    transition: all $transition_normal;
+    outline: none;
+    min-width: 0; // Flexbox overflow önleme
+    overflow: hidden; // Taşan içeriği gizle
+    text-overflow: ellipsis; // Taşan metni kısalt
+
+    &:focus {
+        border-color: #0EA5E9;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
     }
 
-    &__section {
-        margin-bottom: $spacing_xl;
+    @include respond_to_max(sm) {
+        font-size: 2rem;
+        padding: $spacing_lg $spacing_xl;
     }
+}
 
-    &__label {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: $spacing_md;
+.calc_amount_currency {
+    position: absolute;
+    right: $spacing_xl;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    font-weight: $font_weight_bold;
+    color: #0EA5E9;
+    pointer-events: none;
 
-        &__text {
-            font-size: $font_size_lg;
-            font-weight: $font_weight_semibold;
-            color: $text_primary;
-        }
-
-        &__hint {
-            font-size: $font_size_sm;
-            color: $text_muted;
-        }
+    @include respond_to_max(sm) {
+        font-size: 1.5rem;
+        right: $spacing_lg;
     }
+}
 
-    // ============================================
-    // AMOUNT SLIDER
-    // ============================================
+// Custom Range Slider
+.calc_amount_range_wrapper {
+    position: relative;
+}
 
-    &__amount_wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: $spacing_md;
-    }
+.calc_amount_range {
+    width: 100%;
+    height: 12px; // Kalın track
+    border-radius: $radius_full;
+    background: linear-gradient(to right, #E5E7EB 0%, #0EA5E9 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: all $transition_normal;
 
-    &__slider {
+    // Track (yol)
+    &::-webkit-slider-runnable-track {
         width: 100%;
-        height: 8px;
+        height: 12px;
         border-radius: $radius_full;
-        background: linear-gradient(to right, $bg_secondary 0%, $brand_primary 100%);
-        outline: none;
+        background: linear-gradient(to right, #E5E7EB 0%, #0EA5E9 100%);
+    }
+
+    &::-moz-range-track {
+        width: 100%;
+        height: 12px;
+        border-radius: $radius_full;
+        background: linear-gradient(to right, #E5E7EB 0%, #0EA5E9 100%);
+    }
+
+    // Thumb (tutanak) - Büyük ve mavi gölgeli
+    &::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
+        width: 32px;
+        height: 32px;
+        border-radius: $radius_full;
+        background-color: #0EA5E9;
+        border: 4px solid #FFFFFF;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        cursor: pointer;
+        transition: all $transition_normal;
+        margin-top: -10px;
+
+        &:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
+        }
+
+        &:active {
+            transform: scale(1.1);
+        }
+    }
+
+    &::-moz-range-thumb {
+        width: 32px;
+        height: 32px;
+        border-radius: $radius_full;
+        background-color: #0EA5E9;
+        border: 4px solid #FFFFFF;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
         cursor: pointer;
         transition: all $transition_normal;
 
-        &::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: $radius_full;
-            background-color: $brand_primary;
-            border: 3px solid $bg_primary;
-            box-shadow: $shadow_md;
-            cursor: pointer;
-            transition: all $transition_normal;
+        &:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
+        }
 
-            &:hover {
-                transform: scale(1.2);
-                box-shadow: $shadow_lg;
-            }
+        &:active {
+            transform: scale(1.1);
+        }
+    }
+
+    &:focus {
+        &::-webkit-slider-thumb {
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2), 0 4px 12px rgba(14, 165, 233, 0.4);
         }
 
         &::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: $radius_full;
-            background-color: $brand_primary;
-            border: 3px solid $bg_primary;
-            box-shadow: $shadow_md;
-            cursor: pointer;
-            transition: all $transition_normal;
-
-            &:hover {
-                transform: scale(1.2);
-                box-shadow: $shadow_lg;
-            }
-        }
-
-        &:focus {
-            &::-webkit-slider-thumb {
-                @include focus_ring($brand_primary);
-            }
-
-            &::-moz-range-thumb {
-                @include focus_ring($brand_primary);
-            }
-        }
-    }
-
-    &__amount_input_wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    &__amount_input {
-        @include input_base;
-        width: 100%;
-        padding: $spacing_md $spacing_xl $spacing_md $spacing_lg;
-        font-size: $font_size_2xl;
-        font-weight: $font_weight_bold;
-        text-align: center;
-        font-family: 'Courier New', monospace;
-        letter-spacing: 1px;
-        border: 2px solid $border_color;
-        border-radius: $radius_md;
-        transition: all $transition_normal;
-
-        &:focus {
-            border-color: $brand_primary;
-            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
-            outline: none;
-        }
-    }
-
-    &__amount_currency {
-        position: absolute;
-        right: $spacing_lg;
-        font-size: $font_size_xl;
-        font-weight: $font_weight_semibold;
-        color: $brand_primary;
-        pointer-events: none;
-    }
-
-    // ============================================
-    // TERM BUTTONS
-    // ============================================
-
-    &__term_buttons {
-        display: flex;
-        gap: $spacing_sm;
-        flex-wrap: wrap;
-
-        @include respond_to_max(sm) {
-            gap: $spacing_xs;
-        }
-    }
-
-    &__term_button {
-        @include button_base;
-        flex: 1;
-        min-width: 100px;
-        padding: $spacing_md $spacing_lg;
-        background-color: $bg_secondary;
-        border: 2px solid $border_color;
-        color: $text_primary;
-        font-size: $font_size_base;
-        font-weight: $font_weight_medium;
-        border-radius: $radius_md;
-        transition: all $transition_normal;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $brand_light;
-            border-color: $brand_primary;
-            color: $brand_primary;
-            transform: translateY(-2px);
-        }
-
-        &--active {
-            background-color: $brand_primary;
-            border-color: $brand_primary;
-            color: $text_white;
-            font-weight: $font_weight_semibold;
-            box-shadow: $shadow_md;
-
-            &:hover {
-                background-color: color.mix($brand_primary, #000, 95%);
-                border-color: color.mix($brand_primary, #000, 95%);
-                transform: translateY(-2px);
-            }
-        }
-
-        @include respond_to_max(sm) {
-            min-width: 80px;
-            padding: $spacing_sm $spacing_md;
-            font-size: $font_size_sm;
-        }
-    }
-
-    // ============================================
-    // INTEREST RATE DISPLAY
-    // ============================================
-
-    &__rate_display {
-        display: flex;
-        align-items: baseline;
-        justify-content: center;
-        gap: $spacing_xs;
-        padding: $spacing_lg;
-        background-color: $bg_secondary;
-        border-radius: $radius_md;
-        border: 2px solid $border_light;
-    }
-
-    &__rate_value {
-        font-size: $font_size_2xl;
-        font-weight: $font_weight_bold;
-        color: $brand_primary;
-        font-family: 'Courier New', monospace;
-        line-height: 1;
-    }
-
-    &__rate_unit {
-        font-size: $font_size_xl;
-        font-weight: $font_weight_semibold;
-        color: $text_secondary;
-    }
-
-    // ============================================
-    // RESULTS
-    // ============================================
-
-    &__results {
-        margin-top: $spacing_xl;
-        padding-top: $spacing_xl;
-        border-top: 2px solid $border_light;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: $spacing_lg;
-
-        @include respond_to_max(sm) {
-            grid-template-columns: 1fr;
-            gap: $spacing_md;
-        }
-    }
-
-    &__result_item {
-        text-align: center;
-        padding: $spacing_lg;
-        background-color: $bg_secondary;
-        border-radius: $radius_md;
-        border: 1px solid $border_light;
-        transition: all $transition_normal;
-
-        &:hover {
-            transform: translateY(-4px);
-            box-shadow: $shadow_md;
-            border-color: $brand_primary;
-        }
-    }
-
-    &__result_label {
-        font-size: $font_size_sm;
-        color: $text_secondary;
-        margin-bottom: $spacing_sm;
-        font-weight: $font_weight_medium;
-    }
-
-    &__result_value {
-        font-size: $font_size_2xl;
-        font-weight: $font_weight_bold;
-        color: $brand_primary;
-        font-family: 'Courier New', monospace;
-        letter-spacing: 0.5px;
-        transition: all $transition_normal;
-
-        &--secondary {
-            color: $text_primary;
-            font-size: $font_size_xl;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2), 0 4px 12px rgba(14, 165, 233, 0.4);
         }
     }
 }
 
+.calc_amount_range_labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing_sm;
+    font-size: $font_size_xs;
+    color: $text_muted;
+}
+
 // ============================================
-// RESPONSIVE LOAN CALCULATOR
+// VADE SEÇİMİ (Pill Selector)
+// ============================================
+
+.calc_term_section {
+    margin-bottom: $spacing_xl;
+}
+
+.calc_term_label {
+    display: block;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+    color: $text_secondary;
+    margin-bottom: $spacing_md;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calc_term_selector {
+    display: flex;
+    gap: $spacing_sm;
+    flex-wrap: wrap;
+    background-color: #F9FAFB;
+    padding: $spacing_xs;
+    border-radius: 12px;
+
+    @include respond_to_max(sm) {
+        gap: $spacing_xs;
+    }
+}
+
+.calc_term_pill {
+    flex: 1;
+    min-width: 80px;
+    padding: $spacing_md $spacing_lg;
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+    color: $text_secondary;
+    font-size: $font_size_base;
+    font-weight: $font_weight_medium;
+    cursor: pointer;
+    transition: all $transition_normal;
+    font-family: $font_primary;
+
+    &:hover {
+        background-color: rgba(14, 165, 233, 0.1);
+        color: #0EA5E9;
+    }
+
+    &--active {
+        background-color: #0EA5E9;
+        color: #FFFFFF;
+        font-weight: $font_weight_semibold;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+
+        &:hover {
+            background-color: #0284C7;
+        }
+    }
+
+    @include respond_to_max(sm) {
+        min-width: 60px;
+        padding: $spacing_sm $spacing_md;
+        font-size: $font_size_sm;
+    }
+}
+
+// ============================================
+// SAĞ SÜTUN: Canlı Özet (Sticky)
+// ============================================
+
+.calc_result_zone {
+    width: 100%;
+
+    @include respond_to_max(lg) {
+        position: static;
+    }
+}
+
+.calc_result_card {
+    position: sticky;
+    top: $spacing_xl;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: $spacing_xl * 2;
+    width: 100%;
+
+    @include respond_to_max(lg) {
+        position: static;
+    }
+
+    @include respond_to_max(sm) {
+        padding: $spacing_xl $spacing_lg;
+    }
+}
+
+.calc_result_header {
+    margin-bottom: $spacing_xl;
+    padding-bottom: $spacing_lg;
+    border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.calc_result_title {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin: 0;
+    line-height: $line_height_tight;
+}
+
+.calc_result_content {
+    margin-bottom: $spacing_xl * 2;
+}
+
+// Aylık Taksit (Ana Değer)
+.calc_result_main {
+    text-align: center;
+    margin-bottom: $spacing_xl * 2;
+    padding: $spacing_xl;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+}
+
+.calc_result_main_label {
+    display: block;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+    color: $text_secondary;
+    margin-bottom: $spacing_md;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calc_result_main_value {
+    font-size: 2.5rem;
+    font-weight: $font_weight_bold;
+    color: #0EA5E9;
+    font-family: 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: 1px;
+    display: inline-block;
+    min-width: 200px; // Sabit genişlik - rakam kaymasını önle
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @include respond_to_max(sm) {
+        font-size: 2rem;
+        min-width: 150px;
+    }
+}
+
+// Detaylar
+.calc_result_details {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+}
+
+.calc_result_detail_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing_md;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+}
+
+.calc_result_detail_label {
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    font-weight: $font_weight_medium;
+}
+
+.calc_result_detail_value {
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    font-family: 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+    display: inline-block;
+    min-width: 120px; // Sabit genişlik - rakam kaymasını önle
+    text-align: right;
+}
+
+// CTA Butonu (Mavi - Palete Sadık)
+.calc_result_actions {
+    margin-top: $spacing_xl;
+}
+
+.calc_cta_button {
+    width: 100%;
+    padding: $spacing_lg $spacing_xl;
+    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font-size: $font_size_lg;
+    font-weight: $font_weight_bold;
+    cursor: pointer;
+    transition: all $transition_normal;
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    @include respond_to_max(sm) {
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_base;
+    }
+}
+
+// ============================================
+// BANK CARDS MODAL
+// ============================================
+
+.bank_cards_list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+}
+
+.bank_card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: $spacing_xl;
+    transition: all $transition_normal;
+    position: relative;
+
+    &:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+}
+
+.bank_card__badges {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing_md;
+}
+
+.bank_card__badge {
+    display: inline-block;
+    padding: $spacing_xs $spacing_sm;
+    border-radius: 6px;
+    font-size: $font_size_xs;
+    font-weight: $font_weight_semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &--interest_free {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    &--opportunity {
+        background-color: rgba(14, 165, 233, 0.1);
+        color: #0EA5E9;
+    }
+
+    &--sponsor {
+        background-color: rgba(14, 165, 233, 0.1);
+        color: #0EA5E9;
+        margin-left: auto;
+    }
+}
+
+.bank_card__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing_lg;
+    margin-bottom: $spacing_lg;
+}
+
+.bank_card__logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--akbank {
+        background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    }
+
+    &--garanti {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+}
+
+.bank_card__logo__icon {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_bold;
+    color: #FFFFFF;
+    letter-spacing: 1px;
+}
+
+.bank_card__info {
+    flex: 1;
+}
+
+.bank_card__name {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin: 0 0 $spacing_xs 0;
+    line-height: $line_height_tight;
+}
+
+.bank_card__subtitle {
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+}
+
+.bank_card__details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing_md;
+    margin-bottom: $spacing_lg;
+    padding: $spacing_lg;
+    background-color: #F9FAFB;
+    border-radius: 12px;
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bank_card__detail_item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xs;
+}
+
+.bank_card__detail_label {
+    font-size: $font_size_xs;
+    color: $text_secondary;
+    font-weight: $font_weight_medium;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bank_card__detail_value {
+    font-size: $font_size_lg;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    font-family: 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+    display: inline-block;
+    min-width: 100px; // Sabit genişlik - rakam kaymasını önle
+    text-align: right;
+
+    &--interest_free {
+        color: #059669;
+    }
+}
+
+.bank_card__features {
+    margin-bottom: $spacing_lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+}
+
+.bank_card__feature {
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    line-height: $line_height_normal;
+    padding-left: $spacing_md;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.5em;
+        width: 6px;
+        height: 6px;
+        border-radius: $radius_full;
+        background-color: #10B981;
+    }
+}
+
+.bank_card__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing_md;
+    padding-top: $spacing_lg;
+    border-top: 1px solid #F3F4F6;
+}
+
+.bank_card__apply_button {
+    flex: 1;
+    padding: $spacing_md $spacing_lg;
+    background-color: #0EA5E9;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    cursor: pointer;
+    transition: all $transition_normal;
+    font-family: $font_primary;
+
+    &:hover {
+        background-color: #0284C7;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &--customer {
+        background-color: #0EA5E9;
+
+        &:hover {
+            background-color: #0284C7;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+    }
+}
+
+.bank_card__terms_link {
+    font-size: $font_size_sm;
+    color: #0EA5E9;
+    text-decoration: none;
+    font-weight: $font_weight_medium;
+    transition: color $transition_normal;
+
+    &:hover {
+        color: #0284C7;
+        text-decoration: underline;
+    }
+}
+
+// ============================================
+// RESPONSIVE
 // ============================================
 
 @include respond_to_max(sm) {
-    .loan_calculator {
-        &__card {
-            padding: $spacing_lg;
-        }
+    .calc_page_container {
+        padding: $spacing_lg $spacing_md;
+    }
 
-        &__amount_input {
-            font-size: $font_size_xl;
-            padding: $spacing_sm $spacing_lg $spacing_sm $spacing_md;
-        }
+    .calc_wrapper {
+        gap: $spacing_lg;
+    }
 
-        &__rate_value {
-            font-size: $font_size_2xl;
-        }
+    .calc_input_card {
+        padding: $spacing_lg;
+    }
 
-        &__result_value {
-            font-size: $font_size_xl;
-        }
+    .calc_result_card {
+        padding: $spacing_lg;
+    }
+
+    .bank_card {
+        padding: $spacing_lg;
+    }
+
+    .bank_card__header {
+        gap: $spacing_md;
+    }
+
+    .bank_card__logo {
+        width: 50px;
+        height: 50px;
     }
 }
-

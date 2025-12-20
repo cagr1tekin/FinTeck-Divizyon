@@ -140,8 +140,8 @@ public class OtpDogrulaModel : PageModel
                 _logger.LogInformation("OTP doğrulama başarılı: CustomerId={CustomerId}", 
                     customerId);
 
-                // KVKK sayfasına yönlendir
-                return RedirectToPage("/Onboarding/KvkkOnay");
+                // Başarılı - Direkt Dashboard'a yönlendir
+                return RedirectToPage("/Dashboard/Index");
             }
 
             // Hata durumu - Retry count'u artır

@@ -4,92 +4,256 @@
     ViewData["Title"] = "Kredi Hesaplama";
 }
 
-<div class="dashboard_container">
-    <div class="dashboard_header">
-        <div class="dashboard_header__content">
-            <h1 class="dashboard_title">Kredi Hesaplama</h1>
-            <p class="dashboard_subtitle">Kredi tutarınızı ve vade seçeneklerini hesaplayın</p>
-        </div>
-    </div>
+<div class="calc_page_container">
+    <div class="calc_wrapper">
+        <!-- SOL SÜTUN: Hesaplama Kontrolleri -->
+        <div class="calc_input_zone">
+            <div class="calc_input_card">
+                <!-- Header -->
+                <div class="calc_input_header">
+                    <h1 class="calc_input_title">Kredi Hesaplama</h1>
+                    <p class="calc_input_subtitle">Kredi tutarınızı ve vade seçeneklerini hesaplayın</p>
+                </div>
 
-    <div class="loan_calculator">
-        <div class="loan_calculator__card">
-            <!-- Kredi Tutarı -->
-            <div class="loan_calculator__section">
-                <label class="loan_calculator__label">
-                    <span class="loan_calculator__label__text">Kredi Tutarı</span>
-                    <span class="loan_calculator__label__hint">5.000 ₺ - 500.000 ₺</span>
-                </label>
-                <div class="loan_calculator__amount_wrapper">
-                    <input 
-                        type="range" 
-                        id="loan_amount_slider"
-                        class="loan_calculator__slider"
-                        min="5000" 
-                        max="500000" 
-                        step="1000" 
-                        value="100000" />
-                    <div class="loan_calculator__amount_input_wrapper">
+                <!-- Mega Tutar Girişi -->
+                <div class="calc_amount_section">
+                    <label class="calc_amount_label">Kredi Tutarı</label>
+                    <div class="calc_amount_display_wrapper">
                         <input 
                             type="text" 
                             id="loan_amount_input"
-                            class="loan_calculator__amount_input"
+                            class="calc_amount_display"
                             value="100.000" 
                             data-mask="currency" />
-                        <span class="loan_calculator__amount_currency">₺</span>
+                        <span class="calc_amount_currency">₺</span>
+                    </div>
+                    <div class="calc_amount_range_wrapper">
+                        <input 
+                            type="range" 
+                            id="loan_amount_slider"
+                            class="calc_amount_range"
+                            min="5000" 
+                            max="500000" 
+                            step="1000" 
+                            value="100000" />
+                        <div class="calc_amount_range_labels">
+                            <span>5.000 ₺</span>
+                            <span>500.000 ₺</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vade Seçimi (Pill Selector) -->
+                <div class="calc_term_section">
+                    <label class="calc_term_label">Vade Seçimi</label>
+                    <div class="calc_term_selector" id="term_selector">
+                        <button type="button" class="calc_term_pill calc_term_pill--active" data-term="12">
+                            12 Ay
+                        </button>
+                        <button type="button" class="calc_term_pill" data-term="24">
+                            24 Ay
+                        </button>
+                        <button type="button" class="calc_term_pill" data-term="36">
+                            36 Ay
+                        </button>
+                        <button type="button" class="calc_term_pill" data-term="48">
+                            48 Ay
+                        </button>
+                        <button type="button" class="calc_term_pill" data-term="60">
+                            60 Ay
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Vade Seçimi -->
-            <div class="loan_calculator__section">
-                <label class="loan_calculator__label">
-                    <span class="loan_calculator__label__text">Vade</span>
-                    <span class="loan_calculator__label__hint">Ay cinsinden</span>
-                </label>
-                <div class="loan_calculator__term_buttons" id="term_buttons">
-                    <button type="button" class="loan_calculator__term_button loan_calculator__term_button--active" data-term="12">
-                        12 Ay
-                    </button>
-                    <button type="button" class="loan_calculator__term_button" data-term="24">
-                        24 Ay
-                    </button>
-                    <button type="button" class="loan_calculator__term_button" data-term="36">
-                        36 Ay
-                    </button>
-                    <button type="button" class="loan_calculator__term_button" data-term="48">
-                        48 Ay
-                    </button>
-                    <button type="button" class="loan_calculator__term_button" data-term="60">
-                        60 Ay
+        <!-- SAĞ SÜTUN: Canlı Özet (Sticky) -->
+        <div class="calc_result_zone">
+            <div class="calc_result_card">
+                <div class="calc_result_header">
+                    <h2 class="calc_result_title">Özet</h2>
+                </div>
+                
+                <div class="calc_result_content">
+                    <!-- Aylık Taksit -->
+                    <div class="calc_result_main">
+                        <div class="calc_result_main_label">Aylık Taksit Tutarı</div>
+                        <div class="calc_result_main_value" id="monthly_payment">0,00 ₺</div>
+                    </div>
+
+                    <!-- Detaylar -->
+                    <div class="calc_result_details">
+                        <div class="calc_result_detail_item">
+                            <span class="calc_result_detail_label">Toplam Geri Ödeme</span>
+                            <span class="calc_result_detail_value" id="total_payment">0,00 ₺</span>
+                        </div>
+                        <div class="calc_result_detail_item">
+                            <span class="calc_result_detail_label">Faiz Oranı</span>
+                            <span class="calc_result_detail_value" id="interest_rate">2,5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Butonu -->
+                <div class="calc_result_actions">
+                    <button type="button" class="calc_cta_button" id="apply_button">
+                        Hemen Başvur
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Faiz Oranı -->
-            <div class="loan_calculator__section">
-                <label class="loan_calculator__label">
-                    <span class="loan_calculator__label__text">Faiz Oranı (Aylık)</span>
-                </label>
-                <div class="loan_calculator__rate_display">
-                    <span class="loan_calculator__rate_value" id="interest_rate">2,5</span>
-                    <span class="loan_calculator__rate_unit">%</span>
-                </div>
+<!-- Banka Başvuru Modal -->
+<div class="modal" id="bank_modal">
+    <div class="modal__overlay"></div>
+    <div class="modal__container modal__container--xl">
+        <div class="modal__header">
+            <div>
+                <h2 class="modal__title">Başvurabileceğiniz Bankalar</h2>
+                <p class="modal__subtitle">Size en uygun kredi seçeneklerini bulun</p>
             </div>
+            <button type="button" class="modal_close" aria-label="Kapat"></button>
+        </div>
+        <div class="modal__body">
+            <div class="bank_cards_list">
+                <!-- QNB -->
+                <div class="bank_card">
+                    <div class="bank_card__badges">
+                        <span class="bank_card__badge bank_card__badge--interest_free">Faizsiz Fırsat</span>
+                        <span class="bank_card__badge bank_card__badge--sponsor">Sponsor</span>
+                    </div>
+                    <div class="bank_card__header">
+                        <div class="bank_card__logo">
+                            <div class="bank_card__logo__icon">QNB</div>
+                        </div>
+                        <div class="bank_card__info">
+                            <h3 class="bank_card__name">QNB</h3>
+                            <p class="bank_card__subtitle">Yeni Müşterilere Özel</p>
+                        </div>
+                    </div>
+                    <div class="bank_card__details">
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Faiz Oranı</span>
+                            <span class="bank_card__detail_value bank_card__detail_value--interest_free">%0 (Faizsiz)</span>
+                        </div>
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Toplam</span>
+                            <span class="bank_card__detail_value">85.000 TL</span>
+                        </div>
+                    </div>
+                    <div class="bank_card__features">
+                        <div class="bank_card__feature">✔ 3 ay vadeli, 60.000 TL ihtiyaç kredisi!</div>
+                        <div class="bank_card__feature">✔ 3 ay vadeli, 25.000 TL taksitli nakit avans!</div>
+                    </div>
+                    <div class="bank_card__actions">
+                        <button type="button" class="bank_card__apply_button" data-bank="QNB">Hemen Başvur</button>
+                        <a href="#" class="bank_card__terms_link">Koşullar</a>
+                    </div>
+                </div>
 
-            <!-- Sonuçlar -->
-            <div class="loan_calculator__results">
-                <div class="loan_calculator__result_item">
-                    <div class="loan_calculator__result_label">Aylık Taksit</div>
-                    <div class="loan_calculator__result_value" id="monthly_payment">0,00 ₺</div>
+                <!-- Enpara.com -->
+                <div class="bank_card">
+                    <div class="bank_card__badges">
+                        <span class="bank_card__badge bank_card__badge--interest_free">Faizsiz Fırsat</span>
+                        <span class="bank_card__badge bank_card__badge--sponsor">Sponsor</span>
+                    </div>
+                    <div class="bank_card__header">
+                        <div class="bank_card__logo">
+                            <div class="bank_card__logo__icon">EN</div>
+                        </div>
+                        <div class="bank_card__info">
+                            <h3 class="bank_card__name">Enpara.com</h3>
+                            <p class="bank_card__subtitle">Yeni Müşterilere Özel</p>
+                        </div>
+                    </div>
+                    <div class="bank_card__details">
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Faiz Oranı</span>
+                            <span class="bank_card__detail_value bank_card__detail_value--interest_free">%0 (Faizsiz)</span>
+                        </div>
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Tutar</span>
+                            <span class="bank_card__detail_value">75.000 TL</span>
+                        </div>
+                    </div>
+                    <div class="bank_card__features">
+                        <div class="bank_card__feature">✔ 6 aya varan vade ile, 75.000 TL'ye kadar faizsiz ve masrafsız ihtiyaç kredisi!</div>
+                    </div>
+                    <div class="bank_card__actions">
+                        <button type="button" class="bank_card__apply_button" data-bank="Enpara.com">Hemen Başvur</button>
+                        <a href="#" class="bank_card__terms_link">Koşullar</a>
+                    </div>
                 </div>
-                <div class="loan_calculator__result_item">
-                    <div class="loan_calculator__result_label">Toplam Geri Ödeme</div>
-                    <div class="loan_calculator__result_value" id="total_payment">0,00 ₺</div>
+
+                <!-- AKBANK -->
+                <div class="bank_card">
+                    <div class="bank_card__badges">
+                        <span class="bank_card__badge bank_card__badge--opportunity">Fırsat</span>
+                        <span class="bank_card__badge bank_card__badge--sponsor">Sponsor</span>
+                    </div>
+                    <div class="bank_card__header">
+                        <div class="bank_card__logo bank_card__logo--akbank">
+                            <div class="bank_card__logo__icon">AK</div>
+                        </div>
+                        <div class="bank_card__info">
+                            <h3 class="bank_card__name">AKBANK</h3>
+                            <p class="bank_card__subtitle">Yeni Müşterilere Özel</p>
+                        </div>
+                    </div>
+                    <div class="bank_card__details">
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Faiz Oranı</span>
+                            <span class="bank_card__detail_value">%0,99</span>
+                        </div>
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Tutar</span>
+                            <span class="bank_card__detail_value">100.000 TL</span>
+                        </div>
+                    </div>
+                    <div class="bank_card__features">
+                        <div class="bank_card__feature">✔ Mobilden Akbanklı olanlara özel %0,99 faizli, 6 ay vadeli 100.000 TL kredi fırsatı!</div>
+                    </div>
+                    <div class="bank_card__actions">
+                        <button type="button" class="bank_card__apply_button bank_card__apply_button--customer" data-bank="AKBANK">Müşteri Ol</button>
+                        <a href="#" class="bank_card__terms_link">Koşullar</a>
+                    </div>
                 </div>
-                <div class="loan_calculator__result_item">
-                    <div class="loan_calculator__result_label">Toplam Faiz</div>
-                    <div class="loan_calculator__result_value loan_calculator__result_value--secondary" id="total_interest">0,00 ₺</div>
+
+                <!-- Garanti BBVA -->
+                <div class="bank_card">
+                    <div class="bank_card__badges">
+                        <span class="bank_card__badge bank_card__badge--interest_free">Faizsiz Fırsat</span>
+                        <span class="bank_card__badge bank_card__badge--sponsor">Sponsor</span>
+                    </div>
+                    <div class="bank_card__header">
+                        <div class="bank_card__logo bank_card__logo--garanti">
+                            <div class="bank_card__logo__icon">GB</div>
+                        </div>
+                        <div class="bank_card__info">
+                            <h3 class="bank_card__name">Garanti BBVA</h3>
+                            <p class="bank_card__subtitle">Yeni Müşterilere Özel</p>
+                        </div>
+                    </div>
+                    <div class="bank_card__details">
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Faiz Oranı</span>
+                            <span class="bank_card__detail_value bank_card__detail_value--interest_free">%0 (Faizsiz)</span>
+                        </div>
+                        <div class="bank_card__detail_item">
+                            <span class="bank_card__detail_label">Toplam</span>
+                            <span class="bank_card__detail_value">75.000 TL</span>
+                        </div>
+                    </div>
+                    <div class="bank_card__features">
+                        <div class="bank_card__feature">✔ Faizsiz 25.000 TL'ye varan taksitli avans hesap!</div>
+                        <div class="bank_card__feature">✔ Sigortasız, masrafsız, faizsiz 50.000 TL'ye varan kredi!</div>
+                    </div>
+                    <div class="bank_card__actions">
+                        <button type="button" class="bank_card__apply_button bank_card__apply_button--customer" data-bank="Garanti BBVA">Müşteri Ol</button>
+                        <a href="#" class="bank_card__terms_link">Koşullar</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,19 +263,20 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            // Selector caching
             var $slider = $('#loan_amount_slider');
             var $input = $('#loan_amount_input');
-            var $termButtons = $('.loan_calculator__term_button');
-            var $rateValue = $('#interest_rate');
+            var $termPills = $('.calc_term_pill');
             var $monthlyPayment = $('#monthly_payment');
             var $totalPayment = $('#total_payment');
-            var $totalInterest = $('#total_interest');
+            var $interestRate = $('#interest_rate');
 
+            // State
             var loanAmount = 100000;
             var termMonths = 12;
             var monthlyRate = 0.025; // 2.5% aylık faiz
 
-            // Slider değişikliği
+            // Slider değişikliği (anlık güncelleme)
             $slider.on('input', function() {
                 loanAmount = parseInt($(this).val());
                 $input.val(format_currency(loanAmount));
@@ -133,10 +298,10 @@
                 calculateLoan();
             });
 
-            // Vade butonları
-            $termButtons.on('click', function() {
-                $termButtons.removeClass('loan_calculator__term_button--active');
-                $(this).addClass('loan_calculator__term_button--active');
+            // Vade pill seçimi
+            $termPills.on('click', function() {
+                $termPills.removeClass('calc_term_pill--active');
+                $(this).addClass('calc_term_pill--active');
                 termMonths = parseInt($(this).data('term'));
                 calculateLoan();
             });
@@ -146,24 +311,18 @@
                 if (loanAmount <= 0 || termMonths <= 0) {
                     $monthlyPayment.text('0,00 ₺');
                     $totalPayment.text('0,00 ₺');
-                    $totalInterest.text('0,00 ₺');
                     return;
                 }
 
-                // Basit faiz hesaplama formülü: Aylık Taksit = (Ana Para * (1 + Faiz Oranı)^Vade) / Vade
-                // Veya daha basit: Aylık Taksit = Ana Para * (Faiz Oranı * (1 + Faiz Oranı)^Vade) / ((1 + Faiz Oranı)^Vade - 1)
-                
-                // Basit formül (yaklaşık)
+                // Kredi hesaplama formülü
                 var monthlyPaymentAmount = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / 
                                           (Math.pow(1 + monthlyRate, termMonths) - 1);
                 
                 var totalPaymentAmount = monthlyPaymentAmount * termMonths;
-                var totalInterestAmount = totalPaymentAmount - loanAmount;
 
-                // Animasyonlu güncelleme
+                // Anlık güncelleme (animasyonlu)
                 animateValue($monthlyPayment, monthlyPaymentAmount, format_currency);
                 animateValue($totalPayment, totalPaymentAmount, format_currency);
-                animateValue($totalInterest, totalInterestAmount, format_currency);
             }
 
             // Değer animasyonu
@@ -194,7 +353,7 @@
                 requestAnimationFrame(animate);
             }
 
-            // Para formatı (10.000 ₺)
+            // Para formatı (10.000,00 ₺)
             window.format_currency = function(amount) {
                 if (typeof amount === 'string') {
                     amount = parseFloat(amount.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
@@ -205,9 +364,46 @@
                 }).format(amount) + ' ₺';
             };
 
+            // CTA Butonu - Modal aç
+            $('#apply_button').on('click', function() {
+                openBankModal();
+            });
+
             // İlk hesaplama
             calculateLoan();
+
+            // Modal açma/kapama fonksiyonları
+            function openBankModal() {
+                $('#bank_modal').addClass('modal--visible');
+                $('body').addClass('modal_open');
+            }
+
+            function closeBankModal() {
+                $('#bank_modal').removeClass('modal--visible');
+                $('body').removeClass('modal_open');
+            }
+
+            // Modal kapatma
+            $('.modal_close, .modal__overlay').on('click', function(e) {
+                if (e.target === this) {
+                    closeBankModal();
+                }
+            });
+
+            // ESC tuşu ile kapatma
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $('#bank_modal').hasClass('modal--visible')) {
+                    closeBankModal();
+                }
+            });
+
+            // Banka başvuru butonu
+            $('.bank_card__apply_button').on('click', function(e) {
+                e.preventDefault();
+                var bankName = $(this).data('bank');
+                // Burada gerçek başvuru işlemi yapılabilir
+                alert(bankName + ' bankasına yönlendiriliyorsunuz...');
+            });
         });
     </script>
 }
-
