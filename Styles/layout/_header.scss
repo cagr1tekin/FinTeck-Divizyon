@@ -32,10 +32,6 @@
     &__logo {
         display: flex;
         align-items: center;
-        gap: $spacing_sm;
-        font-size: $font_size_xl;
-        font-weight: $font_weight_bold;
-        color: $brand_primary;
         text-decoration: none;
         transition: color $transition_normal;
         position: relative;
@@ -43,32 +39,15 @@
         z-index: 1;
 
         &:hover {
-            color: $brand_secondary;
+            opacity: 0.9;
         }
 
-        // Logo image (opsiyonel)
+        // Logo image
         &__image {
-            width: 40px;
             height: 40px;
+            width: auto;
             object-fit: contain;
-        }
-
-        // Logo text
-        &__text {
-            font-family: $font_primary;
-            letter-spacing: -0.01em;
-            
-            // Logo'da özel nokta vurgusu (referans tasarıma göre)
-            &::after {
-                content: '';
-                display: inline-block;
-                width: 6px;
-                height: 6px;
-                background-color: $brand_accent;
-                border-radius: $radius_full;
-                margin-left: 2px;
-                vertical-align: super;
-            }
+            display: block;
         }
     }
 
@@ -288,6 +267,7 @@
     &__toggle {
         @include button_reset;
         display: none !important;
+        display: none !important;
         width: 40px;
         height: 40px;
         @include flex_center;
@@ -371,7 +351,7 @@
 
     // Mobile menu
     &__mobile_menu {
-        display: none;
+        display: none !important;
         position: absolute;
         top: 100%;
         left: 0;

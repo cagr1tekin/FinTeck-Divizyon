@@ -41,23 +41,29 @@
     <a href="#main_content" class="skip_to_main">Ana içeriğe geç</a>
     
     <header class="header" role="banner">
+        @{
+            var isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("CustomerId"));
+            var isHomePage = ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/";
+        }
+        
         <div class="header__container">
-            <a href="/" class="header__logo">
-                <span class="header__logo__text">İnteraktif Kredi</span>
+            <a href="@(isAuthenticated ? "/Dashboard" : "/")" class="header__logo">
+                <img src="~/assets/image 1.png" alt="İnteraktif Kredi Logo" class="header__logo__image" />
             </a>
             
             <nav class="header__nav">
-                <a href="/" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/" ? "header__link--active" : "")">Ana Sayfa</a>
-                <a href="/Dashboard" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Dashboard") == true ? "header__link--active" : "")">Dashboard</a>
+                @if (!isAuthenticated)
+                {
+                    <a href="/" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/" ? "header__link--active" : "")">Ana Sayfa</a>
+                }
+                @if (!isAuthenticated)
+                {
+                    <a href="/Dashboard" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Dashboard") == true ? "header__link--active" : "")">Dashboard</a>
+                }
                 <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
                 <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
                 <a href="/SSS" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/SSS") == true ? "header__link--active" : "")">SSS</a>
             </nav>
-            
-            @{
-                var isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("CustomerId"));
-                var isHomePage = ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/";
-            }
             
             @if (isAuthenticated)
             {
@@ -86,8 +92,11 @@
         </div>
         
         <nav class="header__mobile_menu" id="mobile_menu">
-            <a href="/" class="header__link">Ana Sayfa</a>
-            <a href="/Dashboard" class="header__link">Dashboard</a>
+            @if (!isAuthenticated)
+            {
+                <a href="/" class="header__link">Ana Sayfa</a>
+                <a href="/Dashboard" class="header__link">Dashboard</a>
+            }
             <a href="/Profile/Adres" class="header__link">Profilim</a>
             <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
             <a href="/SSS" class="header__link">SSS</a>
