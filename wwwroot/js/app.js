@@ -129,30 +129,43 @@
         var $loading = $('<div>', {
             id: 'global_loading',
             class: 'global_loading',
-            'aria-label': 'Yükleniyor',
-            'aria-live': 'polite'
+            role: 'status',
+            'aria-live': 'polite',
+            'aria-atomic': 'true',
+            'aria-busy': 'false',
+            tabindex: '-1'
         });
 
         var $spinner = $('<div>', {
-            class: 'global_loading__spinner'
+            class: 'global_loading__spinner',
+            'aria-hidden': 'true'
         });
 
-        var $text = $('<p>', {
-            class: 'global_loading__text',
-            text: 'Yükleniyor...'
-        });
-
+        $loading.attr('aria-label', 'Yükleniyor');
         $loading.append($spinner);
-        $loading.append($text);
         $('body').append($loading);
     }
 
     window.show_global_loading = function() {
-        $('#global_loading').addClass('global_loading--visible');
+        var $loading = $('#global_loading');
+        var $body = $('body');
+        
+        // Body'ye overflow hidden ekle (scroll'u engelle)
+        $body.css('overflow', 'hidden');
+        
+        $loading.attr('aria-busy', 'true');
+        $loading.addClass('global_loading--visible');
     };
 
     window.hide_global_loading = function() {
-        $('#global_loading').removeClass('global_loading--visible');
+        var $loading = $('#global_loading');
+        var $body = $('body');
+        
+        $loading.attr('aria-busy', 'false');
+        $loading.removeClass('global_loading--visible');
+        
+        // Body'den overflow hidden'ı kaldır
+        $body.css('overflow', '');
     };
 
     // Session timeout handling

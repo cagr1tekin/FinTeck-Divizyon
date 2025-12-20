@@ -2,10 +2,37 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Ana Sayfa";
+    ViewData["Description"] = "İnteraktif Kredi ile dijital şube deneyimi. Hızlı ve güvenli kredi başvurusu yapın, finansal geleceğinizi şekillendirin.";
 }
 
-<div class="onboarding_container">
-    <h1>Hoş Geldiniz</h1>
-    <p>İnteraktif Kredi başvurunuzu tamamlamak için başlayın.</p>
-    <a href="/Onboarding/TcknGsm" class="btn_primary btn_primary--full_width" style="margin-top: 24px; display: inline-block; text-align: center;">Başvuruya Başla</a>
-</div>
+<section class="home_hero" role="banner">
+    <div class="home_hero__bg_elements" aria-hidden="true">
+        <div class="home_hero__bg_elements__item">Kredi</div>
+        <div class="home_hero__bg_elements__item">Finans</div>
+        <div class="home_hero__bg_elements__item">Güven</div>
+        <div class="home_hero__bg_elements__item">Hız</div>
+    </div>
+    
+    <div class="home_hero__container">
+        <div class="home_hero__content">
+            <h1 class="home_hero__headline">
+                Geleceğinizi Finansal Özgürlükle Şekillendirin
+            </h1>
+            
+            <p class="home_hero__subheadline">
+                İnteraktif Kredi ile dijital şube deneyimini yaşayın. 
+                Modern teknoloji ve güvenli altyapı ile hızlı kredi başvurusu yapın, 
+                finansal hedeflerinize ulaşın.
+            </p>
+            
+            <div class="home_hero__cta_group">
+                <a href="/Onboarding/TcknGsm" class="home_hero__cta_primary">
+                    Başvuruya Başla
+                </a>
+                <a href="/Dashboard" class="home_hero__cta_secondary">
+                    Dashboard'a Git
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

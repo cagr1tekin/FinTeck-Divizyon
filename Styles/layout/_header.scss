@@ -36,6 +36,7 @@
         color: $brand_primary;
         text-decoration: none;
         transition: color $transition_normal;
+        position: relative;
 
         &:hover {
             color: $brand_secondary;
@@ -51,6 +52,19 @@
         // Logo text
         &__text {
             font-family: $font_primary;
+            letter-spacing: -0.01em;
+            
+            // Logo'da özel nokta vurgusu (referans tasarıma göre)
+            &::after {
+                content: '';
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                background-color: $brand_accent;
+                border-radius: $radius_full;
+                margin-left: 2px;
+                vertical-align: super;
+            }
         }
     }
 
@@ -58,11 +72,11 @@
     &__nav {
         display: flex;
         align-items: center;
-        gap: $spacing_md;
+        gap: $spacing_lg;
         flex: 1 1 auto;
         justify-content: center;
 
-        @include respond_to_max(md) {
+        @include respond_to_max(sm) {
             display: none;
         }
     }
@@ -72,29 +86,30 @@
         font-size: $font_size_base;
         font-weight: $font_weight_medium;
         text-decoration: none;
-        padding: $spacing_xs $spacing_sm;
+        padding: $spacing_xs $spacing_md;
         border-radius: $radius_sm;
         transition: all $transition_normal;
         position: relative;
 
         &:hover {
             color: $brand_primary;
-            background-color: $brand_light;
+            background-color: transparent;
         }
 
         // Active state
         &--active {
             color: $brand_primary;
             font-weight: $font_weight_semibold;
-            background-color: $brand_light;
+            background-color: transparent;
 
             &::after {
                 content: '';
                 position: absolute;
                 bottom: -$spacing_md - 1px;
-                left: $spacing_sm;
-                right: $spacing_sm;
-                height: 2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 40px;
+                height: 3px;
                 background-color: $brand_primary;
                 border-radius: $radius_full;
             }
@@ -107,6 +122,10 @@
         align-items: center;
         gap: $spacing_sm;
         position: relative;
+
+        @include respond_to_max(md) {
+            display: none;
+        }
 
         &__avatar {
             width: 36px;
@@ -191,6 +210,68 @@
         }
     }
 
+    // Auth buttons (Login/Register)
+    &__auth {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+
+        @include respond_to_max(md) {
+            display: none;
+        }
+
+        &__login {
+            @include button_base;
+            background-color: transparent;
+            color: $text_primary;
+            border: 1px solid $border_color;
+            padding: $spacing_xs $spacing_md;
+            font-size: $font_size_base;
+            font-weight: $font_weight_medium;
+            border-radius: $radius_md;
+            transition: all $transition_normal;
+
+            &:hover {
+                background-color: $bg_secondary;
+                border-color: $border_dark;
+                color: $text_primary;
+            }
+
+            &:focus {
+                @include focus_ring($brand_primary);
+            }
+        }
+
+        &__register {
+            @include button_base;
+            background-color: $brand_primary;
+            color: $text_white;
+            border: 1px solid $brand_primary;
+            padding: $spacing_xs $spacing_md;
+            font-size: $font_size_base;
+            font-weight: $font_weight_semibold;
+            border-radius: $radius_md;
+            transition: all $transition_normal;
+
+            &:hover {
+                background-color: color.mix($brand_primary, #000, 95%);
+                border-color: color.mix($brand_primary, #000, 95%);
+                transform: translateY(-1px);
+                box-shadow: $shadow_md;
+            }
+
+            &:active {
+                background-color: color.mix($brand_primary, #000, 90%);
+                border-color: color.mix($brand_primary, #000, 90%);
+                transform: translateY(0);
+            }
+
+            &:focus {
+                @include focus_ring($brand_primary);
+            }
+        }
+    }
+
     // Mobile menu toggle
     &__toggle {
         @include button_reset;
@@ -202,7 +283,7 @@
         border-radius: $radius_sm;
         transition: all $transition_normal;
 
-        @include respond_to_max(md) {
+        @include respond_to_max(sm) {
             display: flex;
         }
 
@@ -269,7 +350,7 @@
         overflow-y: auto;
         z-index: $z_dropdown;
 
-        @include respond_to_max(md) {
+        @include respond_to_max(sm) {
             display: block;
         }
 
@@ -281,6 +362,21 @@
             display: block;
             padding: $spacing_sm $spacing_md;
             margin-bottom: $spacing_xs;
+        }
+
+        &__auth {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing_sm;
+            margin-top: $spacing_md;
+            padding-top: $spacing_md;
+            border-top: 1px solid $border_light;
+
+            .header__auth__login,
+            .header__auth__register {
+                width: 100%;
+                text-align: center;
+            }
         }
     }
 }

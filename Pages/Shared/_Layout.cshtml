@@ -38,7 +38,7 @@
 </head>
 <body>
     <!-- Skip to main content (Accessibility) -->
-    <a href="#main_content" class="skip_to_main" aria-label="Ana içeriğe geç">Ana içeriğe geç</a>
+    <a href="#main_content" class="skip_to_main">Ana içeriğe geç</a>
     
     <header class="header" role="banner">
         <div class="header__container">
@@ -47,22 +47,38 @@
             </a>
             
             <nav class="header__nav">
+                <a href="/" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/" ? "header__link--active" : "")">Ana Sayfa</a>
                 <a href="/Dashboard" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Dashboard") == true ? "header__link--active" : "")">Dashboard</a>
                 <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
                 <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
                 <a href="/SSS" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/SSS") == true ? "header__link--active" : "")">SSS</a>
             </nav>
             
-            <div class="header__user">
-                <div class="header__user__avatar" id="user_menu_toggle" aria-label="Kullanıcı menüsü">
-                    <span id="user_avatar_initial">K</span>
+            @{
+                var isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("CustomerId"));
+                var isHomePage = ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/";
+            }
+            
+            @if (isAuthenticated)
+            {
+                <div class="header__user">
+                    <div class="header__user__avatar" id="user_menu_toggle" aria-label="Kullanıcı menüsü">
+                        <span id="user_avatar_initial">K</span>
+                    </div>
+                    <span class="header__user__name" id="user_name">Kullanıcı</span>
+                    <div class="header__user__menu" id="user_menu">
+                        <a href="/Profile/Adres" class="header__user__menu_item">Profil</a>
+                        <a href="/Logout" class="header__user__menu_item header__user__menu_item--danger">Çıkış Yap</a>
+                    </div>
                 </div>
-                <span class="header__user__name" id="user_name">Kullanıcı</span>
-                <div class="header__user__menu" id="user_menu">
-                    <a href="/Profile/Adres" class="header__user__menu_item">Profil</a>
-                    <a href="/Logout" class="header__user__menu_item header__user__menu_item--danger">Çıkış Yap</a>
+            }
+            else
+            {
+                <div class="header__auth">
+                    <a href="/Onboarding/TcknGsm" class="header__auth__login">Giriş Yap</a>
+                    <a href="/Onboarding/TcknGsm" class="header__auth__register">Kayıt Ol</a>
                 </div>
-            </div>
+            }
             
             <button type="button" class="header__toggle" id="mobile_menu_toggle" aria-label="Menü">
                 <span class="header__toggle__icon"></span>
@@ -70,10 +86,18 @@
         </div>
         
         <nav class="header__mobile_menu" id="mobile_menu">
+            <a href="/" class="header__link">Ana Sayfa</a>
             <a href="/Dashboard" class="header__link">Dashboard</a>
             <a href="/Profile/Adres" class="header__link">Profilim</a>
             <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
             <a href="/SSS" class="header__link">SSS</a>
+            @if (!isAuthenticated)
+            {
+                <div class="header__mobile_menu__auth">
+                    <a href="/Onboarding/TcknGsm" class="header__auth__login">Giriş Yap</a>
+                    <a href="/Onboarding/TcknGsm" class="header__auth__register">Kayıt Ol</a>
+                </div>
+            }
         </nav>
     </header>
 

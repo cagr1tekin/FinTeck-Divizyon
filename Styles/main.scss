@@ -4,6 +4,7 @@
 // Base
 @use 'base/reset';
 @use 'base/typography';
+@use 'base/accessibility';
 
 // Components
 @use 'components/buttons';
@@ -18,6 +19,7 @@
 @use 'layout/sidebar';
 
 // Pages
+@use 'pages/home';
 @use 'pages/onboarding';
 @use 'pages/dashboard';
 @use 'pages/profile';

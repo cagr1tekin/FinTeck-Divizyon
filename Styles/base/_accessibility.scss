@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../abstracts' as *;
 
 // ============================================
@@ -8,19 +9,29 @@
 .skip_to_main {
     position: absolute;
     top: -100px;
-    left: 0;
+    left: $spacing_md;
     z-index: $z_modal + 10;
     padding: $spacing_sm $spacing_md;
     background-color: $brand_primary;
     color: $text_white;
     text-decoration: none;
     font-weight: $font_weight_semibold;
+    font-size: $font_size_base;
     border-radius: 0 0 $radius_md $radius_md;
     transition: top $transition_normal;
+    clip-path: inset(0);
+    white-space: nowrap;
 
-    &:focus {
+    &:focus,
+    &:focus-visible {
         top: 0;
-        @include focus_ring($brand_primary);
+        outline: 3px solid $brand_primary;
+        outline-offset: 2px;
+        clip-path: none;
+    }
+
+    &:active {
+        background-color: color.mix($brand_primary, #000, 90%);
     }
 }
 
