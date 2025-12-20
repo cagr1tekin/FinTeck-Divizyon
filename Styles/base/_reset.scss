@@ -145,6 +145,34 @@ legend {
 }
 
 // ============================================
+// VALIDATION ICON RESET
+// ============================================
+
+// Browser native validation icon'larını kaldır
+input:invalid,
+input.is-invalid,
+textarea:invalid,
+textarea.is-invalid,
+select:invalid,
+select.is-invalid {
+    background-image: none !important;
+    padding-right: $spacing_md !important;
+}
+
+// Bootstrap validation icon'larını kaldır
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+    background-image: none !important;
+    padding-right: $spacing_md !important;
+}
+
+.form-select.is-invalid,
+.was-validated .form-select:invalid {
+    background-image: none !important;
+    padding-right: $spacing_md !important;
+}
+
+// ============================================
 // MEDIA ELEMENTS
 // ============================================
 

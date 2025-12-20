@@ -8,7 +8,7 @@
 // Main Container
 .profile_page_container {
     min-height: 100vh;
-    padding: $spacing_xl * 2 $spacing_lg;
+    padding: $spacing_xl * 1 $spacing_lg;
     background-color: #F5F7FB; // Clean light grey/blue background
     position: relative;
 
@@ -173,14 +173,14 @@
 .profile_form {
     display: flex;
     flex-direction: column;
-    gap: $spacing_xl * 1.5;
+    gap: $spacing_lg; // Kartlar arası boşluk
 
     @include respond_to_max(md) {
-        gap: $spacing_xl;
+        gap: $spacing_lg; // Yarı yarıya: $spacing_xl -> $spacing_lg
     }
 
     @include respond_to_max(sm) {
-        gap: $spacing_lg;
+        gap: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
     }
 }
 
@@ -228,8 +228,8 @@
     .form_row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: $spacing_lg;
-        margin-bottom: $spacing_lg;
+        gap: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
+        margin-bottom: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
 
         &:last-child {
             margin-bottom: 0;
@@ -237,7 +237,7 @@
 
         @include respond_to_max(sm) {
             grid-template-columns: 1fr;
-            gap: $spacing_md;
+            gap: $spacing_sm; // Yarı yarıya: $spacing_md -> $spacing_sm
         }
     }
 
@@ -246,7 +246,7 @@
     }
 
     &__actions {
-        margin-top: $spacing_xl;
+        margin-top: $spacing_lg; // Yarı yarıya: $spacing_xl -> $spacing_lg
         display: flex;
         justify-content: flex-end;
 

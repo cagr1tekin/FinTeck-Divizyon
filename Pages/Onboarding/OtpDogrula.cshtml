@@ -26,12 +26,12 @@
         <form id="otp_form" method="post" class="onboarding_form" novalidate>
             <div class="form_group">
                 <div class="otp_inputs" id="otp_inputs">
-                    <input type="text" class="otp_input" id="otp_1" maxlength="1" inputmode="numeric" autocomplete="off" />
-                    <input type="text" class="otp_input" id="otp_2" maxlength="1" inputmode="numeric" autocomplete="off" />
-                    <input type="text" class="otp_input" id="otp_3" maxlength="1" inputmode="numeric" autocomplete="off" />
-                    <input type="text" class="otp_input" id="otp_4" maxlength="1" inputmode="numeric" autocomplete="off" />
-                    <input type="text" class="otp_input" id="otp_5" maxlength="1" inputmode="numeric" autocomplete="off" />
-                    <input type="text" class="otp_input" id="otp_6" maxlength="1" inputmode="numeric" autocomplete="off" />
+                    <input type="text" class="otp_input" id="otp_1" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
+                    <input type="text" class="otp_input" id="otp_2" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
+                    <input type="text" class="otp_input" id="otp_3" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
+                    <input type="text" class="otp_input" id="otp_4" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
+                    <input type="text" class="otp_input" id="otp_5" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
+                    <input type="text" class="otp_input" id="otp_6" maxlength="1" inputmode="numeric" autocomplete="off" data-otp-mask />
                 </div>
                 <input type="hidden" asp-for="OtpCode" id="otp_code_hidden" />
                 <span asp-validation-for="OtpCode" class="form_error"></span>
@@ -85,13 +85,37 @@
             // Timer başlat
             startTimer();
 
+            // OTP maskeleme - gerçek değeri sakla, görünen değeri maskele
+            $otpInputs.each(function() {
+                var $input = $(this);
+                $input.data('real-value', '');
+                
+                // Focus olduğunda gerçek değeri göster
+                $input.on('focus', function() {
+                    var realValue = $(this).data('real-value');
+                    if (realValue) {
+                        $(this).val(realValue);
+                    }
+                });
+                
+                // Blur olduğunda maskele
+                $input.on('blur', function() {
+                    var realValue = $(this).data('real-value');
+                    if (realValue) {
+                        $(this).val('●');
+                    }
+                });
+            });
+
             // OTP input focus geçişi
             $otpInputs.on('input', function() {
                 var $this = $(this);
                 var value = $this.val().replace(/\D/g, '');
                 
                 if (value.length > 0) {
-                    $this.val(value.charAt(0));
+                    var digit = value.charAt(0);
+                    $this.data('real-value', digit);
+                    $this.val('●'); // Maskele
                     
                     // Sonraki input'a geç
                     var index = $otpInputs.index($this);
@@ -104,6 +128,7 @@
                     }
                 } else {
                     $this.val('');
+                    $this.data('real-value', '');
                 }
                 
                 updateOtpCode();
@@ -114,9 +139,15 @@
                 var $this = $(this);
                 var index = $otpInputs.index($this);
                 
-                if (e.key === 'Backspace' && $this.val() === '' && index > 0) {
-                    $otpInputs.eq(index - 1).focus().val('');
-                    updateOtpCode();
+                if (e.key === 'Backspace') {
+                    if ($this.data('real-value') || $this.val()) {
+                        $this.val('');
+                        $this.data('real-value', '');
+                        updateOtpCode();
+                    } else if (index > 0) {
+                        $otpInputs.eq(index - 1).focus().val('').data('real-value', '');
+                        updateOtpCode();
+                    }
                 }
             });
 
@@ -129,7 +160,8 @@
                 if (pasteData.length > 0) {
                     var index = $otpInputs.index($(this));
                     for (var i = 0; i < pasteData.length && (index + i) < $otpInputs.length; i++) {
-                        $otpInputs.eq(index + i).val(pasteData.charAt(i));
+                        var digit = pasteData.charAt(i);
+                        $otpInputs.eq(index + i).data('real-value', digit).val('●');
                     }
                     updateOtpCode();
                     
@@ -143,7 +175,8 @@
             function updateOtpCode() {
                 var otpCode = '';
                 $otpInputs.each(function() {
-                    otpCode += $(this).val() || '';
+                    var realValue = $(this).data('real-value') || '';
+                    otpCode += realValue;
                 });
                 $otpCodeHidden.val(otpCode);
                 
@@ -230,7 +263,7 @@
                                     if (smsResponse.success) {
                                         show_toast('Yeni kod gönderildi.', 'success');
                                         // Input'ları temizle
-                                        $otpInputs.val('').first().focus();
+                                        $otpInputs.val('').data('real-value', '').first().focus();
                                         updateOtpCode();
                                         // Timer'ı yeniden başlat
                                         startTimer();
@@ -282,6 +315,16 @@
                 $form.off('submit').submit();
             });
 
+            // İlk yüklemede mevcut değerleri maskele
+            $otpInputs.each(function() {
+                var $input = $(this);
+                var currentValue = $input.val();
+                if (currentValue) {
+                    $input.data('real-value', currentValue);
+                    $input.val('●');
+                }
+            });
+            
             // İlk input'a focus
             $otpInputs.first().focus();
         });

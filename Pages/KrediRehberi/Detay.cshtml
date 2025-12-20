@@ -1,0 +1,81 @@
+@page "/KrediRehberi/{slug}"
+@model InteraktifKredi.Pages.KrediRehberi.DetayModel
+@{
+    ViewData["Title"] = Model.Post?.Title ?? "Kredi Rehberi";
+}
+
+@if (Model.Post != null)
+{
+    <div class="blog_detail_container">
+        <article class="blog_detail_article">
+            <div class="blog_detail__header">
+                <div class="blog_detail__category">@Model.Post.Category</div>
+                <h1 class="blog_detail__title">@Model.Post.Title</h1>
+                <div class="blog_detail__meta">
+                    <span class="blog_detail__author">@Model.Post.Author</span>
+                    <span class="blog_detail__date">@GetTimeAgo(Model.Post.PublishedDate)</span>
+                </div>
+            </div>
+
+            <div class="blog_detail__image">
+                <img src="@Model.Post.ImageUrl" alt="@Model.Post.Title" />
+            </div>
+
+            <div class="blog_detail__content">
+                @Html.Raw(Model.Post.Content)
+            </div>
+        </article>
+
+        @if (Model.RelatedPosts.Any())
+        {
+            <aside class="blog_detail__related">
+                <h3 class="blog_detail__related_title">İlgili Yazılar</h3>
+                <div class="blog_detail__related_list">
+                    @foreach (var relatedPost in Model.RelatedPosts)
+                    {
+                        <a href="/KrediRehberi/@relatedPost.Slug" class="blog_detail__related_item">
+                            <div class="blog_detail__related_image">
+                                <img src="@relatedPost.ImageUrl" alt="@relatedPost.Title" />
+                            </div>
+                            <div class="blog_detail__related_content">
+                                <h4 class="blog_detail__related_title_small">@relatedPost.Title</h4>
+                                <span class="blog_detail__related_meta">@relatedPost.Author - @GetTimeAgo(relatedPost.PublishedDate)</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </aside>
+        }
+    </div>
+}
+else
+{
+    <div class="blog_detail_container">
+        <div class="blog_detail__not_found">
+            <h2>Yazı bulunamadı</h2>
+            <p>Aradığınız yazı bulunamadı veya kaldırılmış olabilir.</p>
+            <a href="/KrediRehberi" class="btn_primary">Kredi Rehberi'ne Dön</a>
+        </div>
+    </div>
+}
+
+@functions {
+    private string GetTimeAgo(DateTime date)
+    {
+        var timeSpan = DateTime.Now - date;
+        
+        if (timeSpan.Days == 0)
+            return "Bugün";
+        else if (timeSpan.Days == 1)
+            return "1 Gün Önce";
+        else if (timeSpan.Days < 7)
+            return $"{timeSpan.Days} Gün Önce";
+        else if (timeSpan.Days < 30)
+            return $"{timeSpan.Days / 7} Hafta Önce";
+        else if (timeSpan.Days < 365)
+            return $"{timeSpan.Days / 30} Ay Önce";
+        else
+            return $"{timeSpan.Days / 365} Yıl Önce";
+    }
+}
+

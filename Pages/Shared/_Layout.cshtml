@@ -52,17 +52,17 @@
             </a>
             
             <nav class="header__nav">
-                @if (!isAuthenticated)
+                @if (isAuthenticated)
                 {
-                    <a href="/" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/" ? "header__link--active" : "")">Ana Sayfa</a>
+                    <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
+                    <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
                 }
-                @if (!isAuthenticated)
-                {
-                    <a href="/Dashboard" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Dashboard") == true ? "header__link--active" : "")">Dashboard</a>
-                }
-                <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
-                <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
+                <a href="/KrediRehberi" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/KrediRehberi") == true ? "header__link--active" : "")">Kredi Rehberi</a>
                 <a href="/SSS" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/SSS") == true ? "header__link--active" : "")">SSS</a>
+                @if (!isAuthenticated)
+                {
+                    <a href="/BizKimiz" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/BizKimiz") == true ? "header__link--active" : "")">Biz Kimiz</a>
+                }
             </nav>
             
             @if (isAuthenticated)
@@ -92,14 +92,17 @@
         </div>
         
         <nav class="header__mobile_menu" id="mobile_menu">
+            @if (isAuthenticated)
+            {
+                <a href="/Profile/Adres" class="header__link">Profilim</a>
+                <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
+            }
+            <a href="/KrediRehberi" class="header__link">Kredi Rehberi</a>
+            <a href="/SSS" class="header__link">SSS</a>
             @if (!isAuthenticated)
             {
-                <a href="/" class="header__link">Ana Sayfa</a>
-                <a href="/Dashboard" class="header__link">Dashboard</a>
+                <a href="/BizKimiz" class="header__link">Biz Kimiz</a>
             }
-            <a href="/Profile/Adres" class="header__link">Profilim</a>
-            <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
-            <a href="/SSS" class="header__link">SSS</a>
             @if (!isAuthenticated)
             {
                 <div class="header__mobile_menu__auth">
