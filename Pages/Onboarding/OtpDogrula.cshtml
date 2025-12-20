@@ -55,7 +55,8 @@
 
         <div class="onboarding_footer">
             <p class="onboarding_footer__text">
-                SMS gelmedi mi? <a href="#" id="resend_otp_link_footer" class="onboarding_footer__link" style="display: none;">Tekrar gönder</a>
+                <a href="#" id="resend_otp_link_footer" class="onboarding_footer__link">SMS gelmedi mi? Tekrar gönder</a>
+                <span id="footer_timer_countdown" class="onboarding_footer__timer" style="display: none;"></span>
             </p>
         </div>
     </div>
@@ -77,9 +78,12 @@
             var $resendLinkFooter = $('#resend_otp_link_footer');
             var $resendContainer = $('#otp_resend');
             var $otpInputsContainer = $('#otp_inputs');
+            var $footerTimerCountdown = $('#footer_timer_countdown');
             
-            var timerSeconds = 120; // 2 dakika
+            var timerSeconds = 120; // 2 dakika (ana timer)
             var timerInterval = null;
+            var footerTimerSeconds = 0; // Footer link timer (1 dakika)
+            var footerTimerInterval = null;
             var retryCount = @Model.RetryCount;
 
             // Timer başlat
@@ -162,8 +166,9 @@
                 
                 $timer.show();
                 $resendContainer.hide();
-                $resendLinkFooter.hide();
-                $resendLink.prop('disabled', true);
+                // Footer link'i başlangıçta aktif
+                $resendLink.addClass('disabled');
+                // Footer timer'ı sadece resend yapıldığında başlatılır
                 
                 timerInterval = setInterval(function() {
                     timerSeconds--;
@@ -174,8 +179,7 @@
                         timerInterval = null;
                         $timer.hide();
                         $resendContainer.show();
-                        $resendLinkFooter.show();
-                        $resendLink.prop('disabled', false);
+                        $resendLink.removeClass('disabled');
                     }
                 }, 1000);
             }
@@ -187,6 +191,39 @@
                 $timerCountdown.text(minutes + ':' + (seconds < 10 ? '0' : '') + seconds);
             }
 
+            // Footer timer başlat (1 dakika)
+            function startFooterTimer() {
+                footerTimerSeconds = 60; // 1 dakika
+                updateFooterTimerDisplay();
+                
+                $resendLinkFooter.addClass('disabled');
+                $footerTimerCountdown.show();
+                
+                // Eğer önceki timer çalışıyorsa durdur
+                if (footerTimerInterval) {
+                    clearInterval(footerTimerInterval);
+                }
+                
+                footerTimerInterval = setInterval(function() {
+                    footerTimerSeconds--;
+                    updateFooterTimerDisplay();
+                    
+                    if (footerTimerSeconds <= 0) {
+                        clearInterval(footerTimerInterval);
+                        footerTimerInterval = null;
+                        $resendLinkFooter.removeClass('disabled');
+                        $footerTimerCountdown.hide();
+                    }
+                }, 1000);
+            }
+
+            // Footer timer görünümünü güncelle
+            function updateFooterTimerDisplay() {
+                var minutes = Math.floor(footerTimerSeconds / 60);
+                var seconds = footerTimerSeconds % 60;
+                $footerTimerCountdown.text('(' + minutes + ':' + (seconds < 10 ? '0' : '') + seconds + ')');
+            }
+
             // Tekrar gönder
             $resendLink.on('click', function(e) {
                 e.preventDefault();
@@ -195,6 +232,10 @@
 
             $resendLinkFooter.on('click', function(e) {
                 e.preventDefault();
+                // Disabled ise tıklamayı engelle
+                if ($resendLinkFooter.hasClass('disabled')) {
+                    return false;
+                }
                 resendOtp();
             });
 
@@ -207,7 +248,12 @@
                     return;
                 }
 
-                $resendLink.prop('disabled', true).text('Gönderiliyor...');
+                // Tüm resend link'lerini disable et
+                $resendLink.addClass('disabled');
+                if ($resendLink.text() !== 'Gönderiliyor...') {
+                    $resendLink.text('Gönderiliyor...');
+                }
+                $resendLinkFooter.addClass('disabled').text('Gönderiliyor...');
                 
                 // OTP oluştur ve SMS gönder
                 $.ajax({
@@ -216,7 +262,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ TCKN: tckn, GSM: gsm }),
                     success: function(response) {
-                        if (response.success && response.value) {
+                        if (response.success && response.value && response.value.otpCode) {
                             // SMS gönder
                             $.ajax({
                                 url: '/api/otp/send-sms',
@@ -232,27 +278,38 @@
                                         // Input'ları temizle
                                         $otpInputs.val('').first().focus();
                                         updateOtpCode();
-                                        // Timer'ı yeniden başlat
+                                        // Ana timer'ı yeniden başlat
                                         startTimer();
+                                        // Footer link text'ini koru ve timer'ı başlat (1 dakika)
+                                        $resendLinkFooter.text('SMS gelmedi mi? Tekrar gönder');
+                                        startFooterTimer();
                                     } else {
                                         show_toast(smsResponse.message || 'SMS gönderilemedi.', 'error');
+                                        $resendLinkFooter.removeClass('disabled').text('SMS gelmedi mi? Tekrar gönder');
+                                        $footerTimerCountdown.hide();
                                     }
                                 },
                                 error: function() {
                                     show_toast('SMS gönderilirken bir hata oluştu.', 'error');
+                                    $resendLinkFooter.removeClass('disabled').text('SMS gelmedi mi? Tekrar gönder');
+                                    $footerTimerCountdown.hide();
                                 },
                                 complete: function() {
-                                    $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                                    $resendLink.removeClass('disabled').text('Kodu Tekrar Gönder');
                                 }
                             });
                         } else {
                             show_toast(response.message || 'OTP oluşturulamadı.', 'error');
-                            $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                            $resendLink.removeClass('disabled').text('Kodu Tekrar Gönder');
+                            $resendLinkFooter.removeClass('disabled').text('SMS gelmedi mi? Tekrar gönder');
+                            $footerTimerCountdown.hide();
                         }
                     },
                     error: function() {
                         show_toast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
-                        $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                        $resendLink.removeClass('disabled').text('Kodu Tekrar Gönder');
+                        $resendLinkFooter.removeClass('disabled').text('SMS gelmedi mi? Tekrar gönder');
+                        $footerTimerCountdown.hide();
                     }
                 });
             }

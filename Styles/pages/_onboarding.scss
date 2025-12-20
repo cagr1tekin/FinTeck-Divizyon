@@ -132,15 +132,19 @@
         font-size: $font_size_sm;
         color: $text_muted;
         margin: 0;
+        text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: $spacing_xs;
+        flex-wrap: wrap;
+    }
 
-        &::before {
-            content: '🔒';
-            font-size: $font_size_base;
-        }
+    &__timer {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+        font-family: 'Courier New', monospace;
     }
 }
 
@@ -391,9 +395,18 @@
     text-decoration: underline;
     font-weight: $font_weight_medium;
     transition: color $transition_normal;
+    cursor: pointer;
 
-    &:hover {
+    &:hover:not(.disabled) {
         color: $brand_secondary;
+    }
+
+    &.disabled {
+        color: $text_muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+        text-decoration: none;
+        pointer-events: none;
     }
 }
 
