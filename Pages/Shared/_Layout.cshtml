@@ -80,8 +80,8 @@
                 </div>
             }
             
-            <button type="button" class="header__toggle" id="mobile_menu_toggle" aria-label="Menü">
-                <span class="header__toggle__icon"></span>
+            <button type="button" class="header__toggle" id="mobile_menu_toggle" aria-label="Menü" aria-expanded="false" aria-controls="mobile_menu">
+                <span class="header__toggle__icon" aria-hidden="true"></span>
             </button>
         </div>
         
@@ -148,8 +148,10 @@
             var $mobileMenu = $('#mobile_menu');
             
             $mobileToggle.on('click', function() {
+                var isActive = $mobileToggle.hasClass('header__toggle--active');
                 $mobileToggle.toggleClass('header__toggle--active');
                 $mobileMenu.toggleClass('header__mobile_menu--visible');
+                $mobileToggle.attr('aria-expanded', !isActive);
             });
             
             // User menu toggle
