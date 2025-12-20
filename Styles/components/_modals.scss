@@ -112,10 +112,16 @@
         color: $text_secondary;
         line-height: $line_height_normal;
         @include custom_scrollbar;
+        background-color: $bg_secondary;
 
         // Body without padding
         .modal__container--no_padding & {
             padding: 0;
+        }
+
+        // Sample risk report modal body
+        #sample_risk_report_modal & {
+            background-color: $bg_secondary;
         }
     }
 
