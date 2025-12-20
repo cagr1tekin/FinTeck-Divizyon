@@ -840,51 +840,154 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Rapor listesi alınıyor: CustomerId={CustomerId}", customerId);
 
-            // Dummy API endpoint - Gerçek uygulamada değiştirilecek
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/dummy/report-list?customerId={customerId}");
+            // API code parametresini al
+            var apiCode = _configuration.GetValue<string>("ApiSettings:IdcApiReportListCode");
+            
+            var url = $"{IDC_API}/api/dummy/report-list";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var reportList = JsonConvert.DeserializeObject<List<ReportModel>>(responseContent);
-                
-                // Eğer API'den boş gelirse, örnek veri oluştur
-                if (reportList == null || reportList.Count == 0)
+                // API response wrapper'ı kontrol et
+                List<ReportModel>? reportList = null;
+                try
                 {
-                    reportList = GenerateDummyReports(customerId);
-                }
-                else
-                {
-                    // Status text'lerini doldur
-                    foreach (var report in reportList)
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    // Eğer response wrapper içeriyorsa (success, value gibi alanlar varsa)
+                    if (apiResponse?.value != null)
                     {
-                        report.StatusText = GetStatusText(report.Status);
+                        var valueJson = apiResponse.value.ToString();
+                        var rawReports = JsonConvert.DeserializeObject<List<dynamic>>(valueJson);
+                        
+                        if (rawReports != null && rawReports!.Count > 0)
+                        {
+                            reportList = new List<ReportModel>();
+                            
+                            foreach (var rawReport in rawReports!)
+                            {
+                                var report = new ReportModel
+                                {
+                                    ReportId = Convert.ToInt64(rawReport.reportId ?? rawReport.ReportId ?? 0),
+                                    ReportNumber = $"RAP-{rawReport.reportId ?? rawReport.ReportId ?? 0}",
+                                    ReportName = "Kredi Başvuru Raporu",
+                                    Status = 0, // Varsayılan: Bekliyor
+                                    StatusText = "Bekliyor",
+                                    LoanAmount = 0, // API'den gelmiyor
+                                    Term = 0 // API'den gelmiyor
+                                };
+                                
+                                // reportDate string'ini DateTime'a parse et
+                                if (rawReport.reportDate != null)
+                                {
+                                    var dateStr = rawReport.reportDate.ToString();
+                                    // Format: "2025-12-02 11:51" veya benzeri
+                                    if (DateTime.TryParse(dateStr, out DateTime reportDate))
+                                    {
+                                        report.ReportDate = reportDate;
+                                    }
+                                    else
+                                    {
+                                        report.ReportDate = DateTime.Now;
+                                    }
+                                }
+                                else
+                                {
+                                    report.ReportDate = DateTime.Now;
+                                }
+                                
+                                reportList.Add(report);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Direkt array olarak geliyorsa
+                        var rawReports = JsonConvert.DeserializeObject<List<dynamic>>(responseContent);
+                        if (rawReports != null && rawReports.Count > 0)
+                        {
+                            reportList = new List<ReportModel>();
+                            
+                            foreach (var rawReport in rawReports)
+                            {
+                                var report = new ReportModel
+                                {
+                                    ReportId = Convert.ToInt64(rawReport.reportId ?? rawReport.ReportId ?? 0),
+                                    ReportNumber = $"RAP-{rawReport.reportId ?? rawReport.ReportId ?? 0}",
+                                    ReportName = "Kredi Başvuru Raporu",
+                                    Status = 0,
+                                    StatusText = "Bekliyor",
+                                    LoanAmount = 0,
+                                    Term = 0
+                                };
+                                
+                                if (rawReport.reportDate != null)
+                                {
+                                    var dateStr = rawReport.reportDate.ToString();
+                                    if (DateTime.TryParse(dateStr, out DateTime reportDate))
+                                    {
+                                        report.ReportDate = reportDate;
+                                    }
+                                    else
+                                    {
+                                        report.ReportDate = DateTime.Now;
+                                    }
+                                }
+                                else
+                                {
+                                    report.ReportDate = DateTime.Now;
+                                }
+                                
+                                reportList.Add(report);
+                            }
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                }
 
+                // Eğer API'den boş gelirse veya parse edilemezse, boş liste döndür
+                if (reportList == null || reportList.Count == 0)
+                {
+                    _logger.LogInformation("Rapor listesi boş: CustomerId={CustomerId}", customerId);
+                    return new ApiResponse<List<ReportModel>> { Success = true, Data = new List<ReportModel>() };
+                }
+
+                _logger.LogInformation("Rapor listesi alındı: CustomerId={CustomerId}, Count={Count}", 
+                    customerId, reportList.Count);
                 return new ApiResponse<List<ReportModel>> { Success = true, Data = reportList };
             }
 
-            _logger.LogWarning("Rapor listesi alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}", 
-                response.StatusCode, customerId);
+            _logger.LogWarning("Rapor listesi alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}, Response={Response}", 
+                response.StatusCode, customerId, responseContent);
             
-            // API başarısız olsa bile dummy veri döndür
-            var dummyReports = GenerateDummyReports(customerId);
-            return new ApiResponse<List<ReportModel>> { Success = true, Data = dummyReports };
+            var errorMessage = "Rapor listesi alınamadı.";
+            try
+            {
+                var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                errorMessage = errorResponse?.message?.ToString() ?? errorMessage;
+            }
+            catch { }
+
+            return new ApiResponse<List<ReportModel>> { Success = false, Message = errorMessage, Data = new List<ReportModel>() };
         }
         catch (TaskCanceledException ex)
         {
             _logger.LogError(ex, "Rapor listesi alma timeout: CustomerId={CustomerId}", customerId);
-            // Timeout durumunda da dummy veri döndür
-            var dummyReports = GenerateDummyReports(customerId);
-            return new ApiResponse<List<ReportModel>> { Success = true, Data = dummyReports };
+            return new ApiResponse<List<ReportModel>> { Success = false, Message = "İstek zaman aşımına uğradı.", Data = new List<ReportModel>() };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Rapor listesi alma hatası: CustomerId={CustomerId}", customerId);
-            // Hata durumunda da dummy veri döndür
-            var dummyReports = GenerateDummyReports(customerId);
-            return new ApiResponse<List<ReportModel>> { Success = true, Data = dummyReports };
+            return new ApiResponse<List<ReportModel>> { Success = false, Message = "Bir hata oluştu.", Data = new List<ReportModel>() };
         }
     }
 
@@ -945,48 +1048,164 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Rapor detayı alınıyor: ReportId={ReportId}", reportId);
 
-            // Dummy API endpoint - Gerçek uygulamada değiştirilecek
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/GetReportDetail?reportId={reportId}");
+            // API code parametresini al
+            var apiCode = _configuration.GetValue<string>("ApiSettings:IdcApiReportDetailCode");
+            
+            var url = $"{IDC_API}/api/GetReportDetail?reportId={reportId}";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"&code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var reportDetail = JsonConvert.DeserializeObject<ReportDetailModel>(responseContent);
+                // API response wrapper'ı kontrol et
+                ReportDetailModel? reportDetail = null;
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    // Eğer response wrapper içeriyorsa (statusCode, value gibi alanlar varsa)
+                    if (apiResponse?.value != null)
+                    {
+                        var valueJson = apiResponse.value.ToString();
+                        var valueObj = JsonConvert.DeserializeObject<dynamic>(valueJson);
+                        
+                        // API'den gelen veriyi ReportDetailModel'e map et
+                        reportDetail = new ReportDetailModel
+                        {
+                            ReportId = Convert.ToInt64(valueObj?.reportId ?? reportId),
+                            ReportNumber = valueObj?.referansNo?.ToString() ?? $"RAP-{reportId}",
+                            ReportTitle = "Kredi Başvuru Detay Raporu",
+                            ReportDate = DateTime.Now, // API'den gelmiyorsa şimdiki zaman
+                            Status = 0, // Varsayılan: Bekliyor
+                            StatusText = "Bekliyor",
+                            LoanAmount = 0,
+                            Term = 0,
+                            MonthlyPayment = 0,
+                            TotalPayment = 0,
+                            TotalInterest = 0,
+                            InterestRate = 0
+                        };
+                        
+                        // Toplam limit varsa LoanAmount olarak kullan
+                        if (valueObj?.bkToplamLimit != null)
+                        {
+                            var limitStr = valueObj.bkToplamLimit.ToString();
+                            if (decimal.TryParse(limitStr, out decimal limit))
+                            {
+                                reportDetail.LoanAmount = limit;
+                            }
+                        }
+                        
+                        // Toplam risk varsa TotalInterest olarak kullan
+                        if (valueObj?.bkToplamRisk != null)
+                        {
+                            var riskStr = valueObj.bkToplamRisk.ToString();
+                            if (decimal.TryParse(riskStr, out decimal risk))
+                            {
+                                reportDetail.TotalInterest = risk;
+                                reportDetail.TotalPayment = reportDetail.LoanAmount + risk;
+                            }
+                        }
+                        
+                        // Kredi notu ve diğer bilgileri Content'e JSON olarak ekle
+                        var additionalData = new Dictionary<string, object>();
+                        if (valueObj?.bkKrediNotu != null)
+                            additionalData["Kredi Notu"] = valueObj.bkKrediNotu.ToString();
+                        if (valueObj?.bkToplamLimit != null)
+                            additionalData["Toplam Limit"] = valueObj.bkToplamLimit.ToString();
+                        if (valueObj?.bkToplamRisk != null)
+                            additionalData["Toplam Risk"] = valueObj.bkToplamRisk.ToString();
+                        if (valueObj?.bkBildirimdeBulunanFinansKurulusuSayisi != null)
+                            additionalData["Finans Kuruluşu Sayısı"] = valueObj.bkBildirimdeBulunanFinansKurulusuSayisi.ToString();
+                        if (valueObj?.bkToplamKrediliHesapSayisi != null)
+                            additionalData["Kredili Hesap Sayısı"] = valueObj.bkToplamKrediliHesapSayisi.ToString();
+                        
+                        // Bireysel detayları da ekle
+                        try
+                        {
+                            if (valueObj?.bireyselDetails != null)
+                            {
+                                var bireyselDetailsStr = valueObj.bireyselDetails?.ToString();
+                                if (!string.IsNullOrEmpty(bireyselDetailsStr) && bireyselDetailsStr!.StartsWith("["))
+                                {
+                                    var bireyselDetailsArray = JsonConvert.DeserializeObject<List<dynamic>>(bireyselDetailsStr!);
+                                    if (bireyselDetailsArray != null && bireyselDetailsArray!.Count > 0)
+                                    {
+                                        additionalData["Bireysel Kredi Sayısı"] = bireyselDetailsArray!.Count.ToString();
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Bireysel detayları parse edilemezse sessizce geç
+                        }
+                        
+                        if (valueObj != null)
+                        {
+                            reportDetail.Content = JsonConvert.SerializeObject(valueObj, Formatting.Indented);
+                        }
+                        reportDetail.AdditionalInfo = additionalData.ToDictionary(k => k.Key, v => v.Value?.ToString() ?? string.Empty);
+                    }
+                    else
+                    {
+                        // Direkt ReportDetailModel olarak geliyorsa
+                        reportDetail = JsonConvert.DeserializeObject<ReportDetailModel>(responseContent);
+                        if (reportDetail != null)
+                        {
+                            reportDetail.StatusText = GetStatusText(reportDetail.Status);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                }
                 
-                // Eğer API'den boş gelirse, örnek veri oluştur
+                // Eğer API'den boş gelirse veya parse edilemezse, null döndür
                 if (reportDetail == null)
                 {
-                    reportDetail = GenerateDummyReportDetail(reportId);
-                }
-                else
-                {
-                    // Status text'i doldur
-                    reportDetail.StatusText = GetStatusText(reportDetail.Status);
+                    _logger.LogWarning("Rapor detayı parse edilemedi: ReportId={ReportId}", reportId);
+                    return new ApiResponse<ReportDetailModel> 
+                    { 
+                        Success = false, 
+                        Message = "Rapor detayı parse edilemedi.",
+                        Data = null
+                    };
                 }
 
+                _logger.LogInformation("Rapor detayı alındı: ReportId={ReportId}, ReferansNo={ReferansNo}", 
+                    reportId, reportDetail.ReportNumber);
                 return new ApiResponse<ReportDetailModel> { Success = true, Data = reportDetail };
             }
 
-            _logger.LogWarning("Rapor detayı alınamadı: StatusCode={StatusCode}, ReportId={ReportId}", 
-                response.StatusCode, reportId);
+            _logger.LogWarning("Rapor detayı alınamadı: StatusCode={StatusCode}, ReportId={ReportId}, Response={Response}", 
+                response.StatusCode, reportId, responseContent);
             
-            // API başarısız olsa bile dummy veri döndür
-            var dummyDetail = GenerateDummyReportDetail(reportId);
-            return new ApiResponse<ReportDetailModel> { Success = true, Data = dummyDetail };
+            var errorMessage = "Rapor detayı alınamadı.";
+            try
+            {
+                var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                errorMessage = errorResponse?.message?.ToString() ?? errorMessage;
+            }
+            catch { }
+
+            return new ApiResponse<ReportDetailModel> { Success = false, Message = errorMessage, Data = null };
         }
         catch (TaskCanceledException ex)
         {
             _logger.LogError(ex, "Rapor detayı alma timeout: ReportId={ReportId}", reportId);
-            // Timeout durumunda da dummy veri döndür
-            var dummyDetail = GenerateDummyReportDetail(reportId);
-            return new ApiResponse<ReportDetailModel> { Success = true, Data = dummyDetail };
+            return new ApiResponse<ReportDetailModel> { Success = false, Message = "İstek zaman aşımına uğradı.", Data = null };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Rapor detayı alma hatası: ReportId={ReportId}", reportId);
-            // Hata durumunda da dummy veri döndür
-            var dummyDetail = GenerateDummyReportDetail(reportId);
-            return new ApiResponse<ReportDetailModel> { Success = true, Data = dummyDetail };
+            return new ApiResponse<ReportDetailModel> { Success = false, Message = "Bir hata oluştu.", Data = null };
         }
     }
 

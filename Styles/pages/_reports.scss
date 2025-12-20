@@ -119,8 +119,8 @@
 
 .reports_list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: $spacing_lg;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing_md;
 
     @include respond_to_max(sm) {
         grid-template-columns: 1fr;
@@ -136,10 +136,10 @@
     @include card_base;
     display: flex;
     flex-direction: column;
-    padding: $spacing_lg;
+    padding: $spacing_md;
     background-color: $bg_primary;
     border: 1px solid $border_light;
-    border-radius: $radius_lg;
+    border-radius: $radius_md;
     transition: all $transition_normal;
     position: relative;
     overflow: hidden;
@@ -176,10 +176,10 @@
     }
 
     &__icon {
-        width: 48px;
-        height: 48px;
+        width: 36px;
+        height: 36px;
         color: $text_muted;
-        margin-bottom: $spacing_md;
+        margin-bottom: $spacing_sm;
         transition: all $transition_normal;
         flex-shrink: 0;
 
@@ -191,24 +191,15 @@
 
     &__content {
         flex: 1;
-        margin-bottom: $spacing_md;
-    }
-
-    &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: $spacing_md;
-        gap: $spacing_sm;
+        margin-bottom: $spacing_sm;
     }
 
     &__title {
-        font-size: $font_size_lg;
+        font-size: $font_size_base;
         font-weight: $font_weight_semibold;
         color: $text_primary;
-        margin: 0;
+        margin: 0 0 $spacing_sm 0;
         line-height: $line_height_tight;
-        flex: 1;
     }
 
     &__badge {
@@ -247,29 +238,24 @@
     &__details {
         display: flex;
         flex-direction: column;
-        gap: $spacing_sm;
+        gap: $spacing_xs;
     }
 
     &__detail_item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: $spacing_xs 0;
-        border-bottom: 1px solid $border_light;
-
-        &:last-child {
-            border-bottom: none;
-        }
+        padding: $spacing_xs * 0.5 0;
     }
 
     &__detail_label {
-        font-size: $font_size_sm;
+        font-size: $font_size_xs;
         color: $text_secondary;
         font-weight: $font_weight_medium;
     }
 
     &__detail_value {
-        font-size: $font_size_base;
+        font-size: $font_size_sm;
         color: $text_primary;
         font-weight: $font_weight_semibold;
         text-align: right;
@@ -277,7 +263,7 @@
 
     &__actions {
         margin-top: auto;
-        padding-top: $spacing_md;
+        padding-top: $spacing_sm;
         border-top: 1px solid $border_light;
     }
 }
@@ -297,16 +283,6 @@
 
     .report_card {
         padding: $spacing_md;
-    }
-
-    .report_card__header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: $spacing_sm;
-    }
-
-    .report_card__badge {
-        align-self: flex-start;
     }
 }
 

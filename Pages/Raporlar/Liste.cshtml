@@ -48,29 +48,26 @@
                         </svg>
                     </div>
                     <div class="report_card__content">
-                        <div class="report_card__header">
-                            <h3 class="report_card__title">@report.ReportName</h3>
-                            <span class="report_card__badge report_card__badge--@GetStatusClass(report.Status)">
-                                @report.StatusText
-                            </span>
-                        </div>
+                        <h3 class="report_card__title">@report.ReportName</h3>
                         <div class="report_card__details">
                             <div class="report_card__detail_item">
-                                <span class="report_card__detail_label">Rapor No:</span>
-                                <span class="report_card__detail_value">@report.ReportNumber</span>
-                            </div>
-                            <div class="report_card__detail_item">
                                 <span class="report_card__detail_label">Tarih:</span>
-                                <span class="report_card__detail_value">@report.ReportDate.ToString("dd.MM.yyyy")</span>
+                                <span class="report_card__detail_value">@report.ReportDate.ToString("dd.MM.yyyy HH:mm")</span>
                             </div>
-                            <div class="report_card__detail_item">
-                                <span class="report_card__detail_label">Tutar:</span>
-                                <span class="report_card__detail_value">@FormatCurrency(report.LoanAmount)</span>
-                            </div>
-                            <div class="report_card__detail_item">
-                                <span class="report_card__detail_label">Vade:</span>
-                                <span class="report_card__detail_value">@report.Term Ay</span>
-                            </div>
+                            @if (report.LoanAmount > 0)
+                            {
+                                <div class="report_card__detail_item">
+                                    <span class="report_card__detail_label">Tutar:</span>
+                                    <span class="report_card__detail_value">@FormatCurrency(report.LoanAmount)</span>
+                                </div>
+                            }
+                            @if (report.Term > 0)
+                            {
+                                <div class="report_card__detail_item">
+                                    <span class="report_card__detail_label">Vade:</span>
+                                    <span class="report_card__detail_value">@report.Term Ay</span>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="report_card__actions">
@@ -85,17 +82,6 @@
 </div>
 
 @functions {
-    private string GetStatusClass(int status)
-    {
-        return status switch
-        {
-            0 => "pending",    // Bekliyor
-            1 => "approved",  // Onaylandı
-            2 => "rejected",  // Reddedildi
-            _ => "unknown"
-        };
-    }
-
     private string FormatCurrency(decimal amount)
     {
         return new System.Globalization.CultureInfo("tr-TR").NumberFormat.CurrencySymbol + 
