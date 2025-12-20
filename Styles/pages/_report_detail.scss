@@ -2,13 +2,18 @@
 @use '../abstracts' as *;
 
 // ============================================
-// REPORT DETAIL PAGE STYLES
+// REPORT DETAIL PAGE - FINANCIAL ANALYSIS
 // ============================================
 
 .report_detail_container {
-    max-width: 1000px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: $spacing_xl $spacing_lg;
+    background-color: #F5F7FB;
+
+    @include respond_to_max(sm) {
+        padding: $spacing_lg $spacing_md;
+    }
 }
 
 // ============================================
@@ -16,11 +21,11 @@
 // ============================================
 
 .report_detail__back {
-    margin-bottom: $spacing_lg;
+    margin-bottom: $spacing_xl;
 }
 
 // ============================================
-// LOADING STATE
+// LOADING & EMPTY STATES
 // ============================================
 
 .report_detail__loading {
@@ -34,8 +39,8 @@
     &__spinner {
         width: 48px;
         height: 48px;
-        border: 4px solid $bg_secondary;
-        border-top-color: $brand_primary;
+        border: 4px solid #F3F4F6;
+        border-top-color: #0EA5E9;
         border-radius: $radius_full;
         animation: spin 0.8s linear infinite;
         margin-bottom: $spacing_lg;
@@ -48,9 +53,9 @@
     }
 }
 
-// ============================================
-// EMPTY STATE
-// ============================================
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
 .report_detail__empty {
     display: flex;
@@ -66,11 +71,6 @@
         height: 80px;
         color: $text_muted;
         margin-bottom: $spacing_lg;
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
     }
 
     &__title {
@@ -89,230 +89,520 @@
 }
 
 // ============================================
-// REPORT HEADER
+// HERO SECTION - Aylık Taksit ve Durum
 // ============================================
 
-.report_detail__header {
-    margin-bottom: $spacing_xl;
-    padding-bottom: $spacing_lg;
-    border-bottom: 2px solid $border_light;
+.report_hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%);
+    border-radius: 20px;
+    padding: $spacing_xl * 1.5;
+    margin-bottom: $spacing_xl * 1.5;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    @include respond_to_max(md) {
+        flex-direction: column;
+        gap: $spacing_lg;
+        text-align: center;
+    }
+
+    &__left {
+        flex: 1;
+    }
+
+    &__right {
+        flex-shrink: 0;
+    }
+
+    &__monthly_payment {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
+
+        &__amount {
+            font-size: $font_size_2xl * 1.5;
+            font-weight: $font_weight_bold;
+            color: #1a237e;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        &__label {
+            font-size: $font_size_base;
+            color: $text_secondary;
+            font-weight: $font_weight_normal;
+        }
+    }
+
+    &__status {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: $spacing_md;
+
+        @include respond_to_max(md) {
+            align-items: center;
+        }
+    }
 
     &__meta {
         display: flex;
-        align-items: center;
-        gap: $spacing_md;
-        margin-top: $spacing_md;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: $spacing_xs;
+        font-size: $font_size_sm;
+        color: $text_secondary;
+
+        @include respond_to_max(md) {
+            align-items: center;
+        }
+
+        &__item {
+            display: block;
+        }
     }
 }
 
-.report_detail__title {
-    font-size: $font_size_2xl;
-    font-weight: $font_weight_bold;
-    color: $text_primary;
-    margin-bottom: $spacing_sm;
-    line-height: $line_height_tight;
-}
-
-.report_detail__date {
-    font-size: $font_size_base;
-    color: $text_secondary;
-}
-
-.report_detail__badge {
+// Status Badge
+.report_status_badge {
     display: inline-flex;
     align-items: center;
-    padding: $spacing_xs $spacing_sm;
-    border-radius: $radius_full;
-    font-size: $font_size_sm;
-    font-weight: $font_weight_semibold;
+    gap: $spacing_sm;
+    padding: $spacing_md $spacing_xl;
+    border-radius: 50px;
+    font-size: $font_size_base;
+    font-weight: $font_weight_bold;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-        &--pending {
-            background-color: color.mix($warning_color, #fff, 60%);
-            color: color.mix($warning_color, #000, 80%);
-        }
+    &--approved {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: $text_white;
+    }
 
-        &--approved {
-            background-color: color.mix($success_color, #fff, 60%);
-            color: color.mix($success_color, #000, 80%);
-        }
+    &--pending {
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        color: $text_white;
+    }
 
-        &--rejected {
-            background-color: color.mix($error_color, #fff, 60%);
-            color: color.mix($error_color, #000, 80%);
-        }
+    &--rejected {
+        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        color: $text_white;
+    }
 
-    &--unknown {
-        background-color: $bg_secondary;
-        color: $text_muted;
+    &__icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    &__text {
+        font-size: $font_size_base;
     }
 }
 
 // ============================================
-// REPORT CONTENT
+// CHARTS SECTION - Donut Chart ve Grid
 // ============================================
 
-.report_detail__content {
-    @include card_base;
-    padding: $spacing_xl;
-    background-color: $bg_primary;
-    border: 1px solid $border_light;
-    border-radius: $radius_lg;
-    box-shadow: $shadow_sm;
+.report_charts_section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing_xl * 1.5;
+    margin-bottom: $spacing_xl * 1.5;
+
+    @include respond_to_max(md) {
+        grid-template-columns: 1fr;
+        gap: $spacing_xl;
+    }
 }
 
-.report_detail__section {
-    margin-bottom: $spacing_xl;
+// Chart Card
+.report_chart_card,
+.report_details_card {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
 
-    &:last-child {
-        margin-bottom: 0;
+    &__header {
+        padding: $spacing_lg $spacing_xl;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
     }
 
     &__title {
         font-size: $font_size_xl;
-        font-weight: $font_weight_semibold;
+        font-weight: $font_weight_bold;
         color: $text_primary;
-        margin-bottom: $spacing_lg;
-        padding-bottom: $spacing_sm;
-        border-bottom: 1px solid $border_light;
-    }
-}
-
-// ============================================
-// REPORT TABLE (Key-Value List)
-// ============================================
-
-.report_detail__table {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid $border_light;
-    border-radius: $radius_md;
-    overflow: hidden;
-    background-color: $bg_primary;
-}
-
-.report_detail__table__row {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    border-bottom: 1px solid $border_light;
-
-    &:last-child {
-        border-bottom: none;
+        margin: 0;
+        letter-spacing: -0.3px;
     }
 
-    @include respond_to_max(sm) {
-        grid-template-columns: 1fr;
-    }
-}
-
-.report_detail__table__cell {
-    padding: $spacing_md;
-    font-size: $font_size_base;
-    line-height: $line_height_normal;
-
-    &--label {
-        background-color: $bg_secondary;
-        font-weight: $font_weight_semibold;
-        color: $text_primary;
-        border-right: 1px solid $border_light;
+    &__body {
+        padding: $spacing_xl;
 
         @include respond_to_max(sm) {
-            border-right: none;
-            border-bottom: 1px solid $border_light;
+            padding: $spacing_lg;
+        }
+    }
+}
+
+// ============================================
+// DONUT CHART
+// ============================================
+
+.donut_chart_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing_xl;
+}
+
+.donut_chart {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    border-radius: $radius_full;
+    background: conic-gradient(
+        #0EA5E9 0% var(--principal-percent, 0%),
+        #F59E0B var(--principal-percent, 0%) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: donutFadeIn 1s ease-out;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 70%;
+        height: 70%;
+        border-radius: $radius_full;
+        background-color: #FFFFFF;
+        z-index: 1;
+    }
+
+    &__inner {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+
+        &__value {
+            font-size: $font_size_xl;
+            font-weight: $font_weight_bold;
+            color: #1a237e;
+            line-height: 1.2;
+            margin-bottom: $spacing_xs;
+        }
+
+        &__label {
+            font-size: $font_size_sm;
+            color: $text_secondary;
+            font-weight: $font_weight_medium;
         }
     }
 
-    &--value {
-        color: $text_primary;
-        word-break: break-word;
+    @include respond_to_max(sm) {
+        width: 240px;
+        height: 240px;
     }
 }
 
-// ============================================
-// JSON CONTENT
-// ============================================
-
-.report_detail__content__json {
-    background-color: $bg_secondary;
-    border: 1px solid $border_light;
-    border-radius: $radius_md;
-    padding: $spacing_lg;
-    overflow-x: auto;
-    @include custom_scrollbar;
+@keyframes donutFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-.report_detail__json {
-    margin: 0;
-    font-family: 'Courier New', monospace;
-    font-size: $font_size_sm;
-    line-height: $line_height_relaxed;
-    color: $text_primary;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-}
-
-// ============================================
-// ACTIONS
-// ============================================
-
-.report_detail__actions {
-    margin-top: $spacing_xl;
-    padding-top: $spacing_lg;
-    border-top: 2px solid $border_light;
+.donut_chart__legend {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: $spacing_md;
+    width: 100%;
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: $spacing_md;
+        padding: $spacing_sm 0;
+    }
+
+    &__color {
+        width: 16px;
+        height: 16px;
+        border-radius: $radius_sm;
+        flex-shrink: 0;
+
+        &--principal {
+            background-color: #0EA5E9;
+        }
+
+        &--interest {
+            background-color: #F59E0B;
+        }
+    }
+
+    &__label {
+        flex: 1;
+        font-size: $font_size_base;
+        color: $text_primary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__value {
+        font-size: $font_size_base;
+        color: #1a237e;
+        font-weight: $font_weight_bold;
+    }
 }
 
 // ============================================
-// PRINT STYLES
+// DETAILS GRID - 4'lü Grid
 // ============================================
 
-@media print {
-    .report_detail_container {
-        max-width: 100%;
-        padding: 0;
+.report_details_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing_lg;
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+        gap: $spacing_md;
+    }
+}
+
+.report_details_grid__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $spacing_lg;
+    background-color: #FAFBFC;
+    border-radius: 12px;
+    border: 1px solid #F3F4F6;
+    transition: all $transition_normal;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .report_detail__back,
-    .report_detail__actions {
-        display: none;
+    &__icon {
+        width: 48px;
+        height: 48px;
+        color: #0EA5E9;
+        margin-bottom: $spacing_md;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(14, 165, 233, 0.1);
+        border-radius: $radius_full;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
     }
 
-    .report_detail__content {
-        box-shadow: none;
+    &__label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+        margin-bottom: $spacing_xs;
+    }
+
+    &__value {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: #1a237e;
+        line-height: 1.2;
+    }
+}
+
+// ============================================
+// TIMELINE SECTION
+// ============================================
+
+.report_timeline_section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xl * 1.5;
+}
+
+.report_timeline_card,
+.report_customer_card {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_lg $spacing_xl;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
+    }
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }
+
+    &__body {
+        padding: $spacing_xl;
+
+        @include respond_to_max(sm) {
+            padding: $spacing_lg;
+        }
+    }
+}
+
+// Timeline
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xl;
+    position: relative;
+    padding-left: $spacing_xl;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 40px;
+        bottom: 40px;
+        width: 2px;
+        background: linear-gradient(180deg, #10B981 0%, #0EA5E9 100%);
+    }
+
+    &__step {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: $spacing_lg;
+
+        &--completed {
+            .timeline__step__dot {
+                background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+                color: $text_white;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            }
+        }
+
+        &__dot {
+            width: 40px;
+            height: 40px;
+            border-radius: $radius_full;
+            background-color: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 1;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        &__content {
+            flex: 1;
+            padding-top: $spacing_xs;
+        }
+
+        &__title {
+            font-size: $font_size_base;
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+            margin-bottom: $spacing_xs;
+        }
+
+        &__date {
+            font-size: $font_size_sm;
+            color: $text_secondary;
+        }
+    }
+}
+
+// ============================================
+// CUSTOMER INFO TABLE
+// ============================================
+
+.customer_info_table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #FFFFFF;
+
+    &__row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        border-bottom: 1px solid #E5E7EB;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        @include respond_to_max(sm) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__cell {
+        padding: $spacing_md $spacing_lg;
+        font-size: $font_size_base;
+        line-height: $line_height_normal;
+
+        &--label {
+            background-color: #FAFBFC;
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+            border-right: 1px solid #E5E7EB;
+
+            @include respond_to_max(sm) {
+                border-right: none;
+                border-bottom: 1px solid #E5E7EB;
+            }
+        }
+
+        &--value {
+            color: $text_primary;
+            word-break: break-word;
+        }
+    }
+
+    &__json {
+        margin: 0;
+        font-family: 'Courier New', monospace;
+        font-size: $font_size_sm;
+        line-height: $line_height_relaxed;
+        color: $text_primary;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background-color: transparent;
         border: none;
         padding: 0;
     }
-
-    .report_detail__section {
-        page-break-inside: avoid;
-        margin-bottom: $spacing_lg;
-    }
-
-    .report_detail__table {
-        border: 1px solid #000;
-    }
-
-    .report_detail__table__cell {
-        border: 1px solid #000;
-    }
-
-    .report_detail__badge {
-        background-color: transparent !important;
-        border: 1px solid #000;
-        color: #000 !important;
-    }
 }
 
 // ============================================
-// RESPONSIVE REPORT DETAIL
+// RESPONSIVE
 // ============================================
 
 @include respond_to_max(sm) {
@@ -320,20 +610,11 @@
         padding: $spacing_lg $spacing_md;
     }
 
-    .report_detail__header {
-        &__meta {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: $spacing_sm;
-        }
-    }
-
-    .report_detail__content {
+    .report_hero {
         padding: $spacing_lg;
     }
 
-    .report_detail__section {
-        margin-bottom: $spacing_lg;
+    .report_charts_section {
+        gap: $spacing_lg;
     }
 }
-

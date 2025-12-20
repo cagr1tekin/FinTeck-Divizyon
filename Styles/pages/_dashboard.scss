@@ -2,124 +2,202 @@
 @use '../abstracts' as *;
 
 // ============================================
-// DASHBOARD PAGE STYLES
+// DASHBOARD PAGE - CLEAN DASHBOARD DESIGN (2 COLUMN)
 // ============================================
 
 .dashboard_container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: $spacing_xl $spacing_lg;
-}
-
-// ============================================
-// DASHBOARD HEADER
-// ============================================
-
-.dashboard_header {
-    margin-bottom: $spacing_xl * 2;
-
-    &__content {
-        text-align: center;
-
-        @include respond_to(sm) {
-            text-align: left;
-        }
-    }
-}
-
-.dashboard_title {
-    font-size: $font_size_2xl;
-    font-weight: $font_weight_bold;
-    color: $text_primary;
-    margin-bottom: $spacing_sm;
-    line-height: $line_height_tight;
-
-    &__name {
-        color: $brand_primary;
-    }
+    min-height: 100vh;
+    padding: $spacing_xl * 2 $spacing_lg;
+    background-color: #F5F7FB;
+    position: relative;
 
     @include respond_to_max(sm) {
-        font-size: $font_size_xl;
+        padding: $spacing_lg $spacing_md;
     }
 }
 
-.dashboard_subtitle {
-    font-size: $font_size_lg;
-    color: $text_secondary;
-    margin: 0;
-    line-height: $line_height_normal;
+// ============================================
+// 2 COLUMN GRID LAYOUT (1fr 3fr)
+// ============================================
+
+.dashboard_grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    @include respond_to_max(md) {
+        grid-template-columns: 1fr;
+        gap: $spacing_lg;
+    }
 }
 
 // ============================================
-// DASHBOARD SECTIONS
+// LEFT COLUMN - SIDEBAR (STICKY)
 // ============================================
 
-.dashboard_section {
-    margin-bottom: $spacing_xl * 2;
+.dashboard_sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: $spacing_xl;
+    height: fit-content;
+    align-self: start;
+
+    @include respond_to_max(md) {
+        position: relative;
+        top: 0;
+    }
+}
+
+// Progress Card - Compact
+.progress_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_md $spacing_lg;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
+    }
 
     &__title {
-        font-size: $font_size_xl;
-        font-weight: $font_weight_semibold;
+        font-size: $font_size_base;
+        font-weight: $font_weight_bold;
         color: $text_primary;
-        margin-bottom: $spacing_lg;
-        padding-bottom: $spacing_sm;
-        border-bottom: 2px solid $border_light;
+        margin: 0;
+        letter-spacing: -0.2px;
+    }
+
+    &__body {
+        padding: $spacing_lg;
+    }
+
+    &__motivation {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        text-align: center;
+        margin: $spacing_md 0 0 0;
+        font-weight: $font_weight_medium;
     }
 }
 
-// ============================================
-// QUICK ACTIONS
-// ============================================
-
-.quick_actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: $spacing_lg;
-    margin-bottom: $spacing_xl;
-
-    @include respond_to_max(sm) {
-        grid-template-columns: 1fr;
-        gap: $spacing_md;
-    }
-}
-
-.quick_action_card {
-    @include card_base;
+// Circular Progress - Compact
+.circular_progress_container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: $spacing_xl;
-    background-color: $bg_primary;
-    border: 2px solid $border_light;
-    border-radius: $radius_lg;
-    text-decoration: none;
-    color: $text_primary;
-    transition: all $transition_normal;
-    cursor: pointer;
+    gap: $spacing_md;
+}
 
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: $shadow_lg;
-        border-color: $brand_primary;
-        background-color: $brand_light;
+.circular_progress {
+    position: relative;
+    width: 160px;
+    height: 160px;
 
-        .quick_action_card__icon {
-            transform: scale(1.1);
-            color: $brand_primary;
+    &__svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    &__bg {
+        fill: none;
+        stroke: #F3F4F6;
+        stroke-width: 10;
+    }
+
+    &__fill {
+        fill: none;
+        stroke: #0EA5E9;
+        stroke-width: 10;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s ease-out;
+        stroke-dasharray: 565.48; // 2 * PI * 90
+        stroke-dashoffset: 565.48;
+    }
+
+    &__inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    &__value {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: #1a237e;
+        line-height: 1;
+        display: block;
+    }
+}
+
+// Missing Fields Card - Compact
+.missing_fields_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_md $spacing_lg;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
+    }
+
+    &__title {
+        font-size: $font_size_xs;
+        font-weight: $font_weight_semibold;
+        color: $text_secondary;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__body {
+        padding: $spacing_md $spacing_lg;
+    }
+}
+
+.missing_fields_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xs;
+
+    &__item {
+        margin: 0;
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+        gap: $spacing_sm;
+        padding: $spacing_sm $spacing_md;
+        border-radius: 8px;
+        text-decoration: none;
+        color: $text_primary;
+        background-color: transparent;
+        transition: all $transition_normal;
+
+        &:hover {
+            background-color: #FFF4E6;
         }
     }
 
-    &:active {
-        transform: translateY(-2px);
-    }
-
     &__icon {
-        width: 64px;
-        height: 64px;
-        margin-bottom: $spacing_md;
-        color: $brand_primary;
-        transition: all $transition_normal;
+        width: 16px;
+        height: 16px;
+        color: #F59E0B;
+        flex-shrink: 0;
 
         svg {
             width: 100%;
@@ -127,104 +205,21 @@
         }
     }
 
-    &__title {
-        font-size: $font_size_lg;
-        font-weight: $font_weight_semibold;
+    &__text {
+        flex: 1;
+        font-size: $font_size_sm;
+        font-weight: $font_weight_medium;
         color: $text_primary;
-        margin-bottom: $spacing_xs;
-        line-height: $line_height_tight;
     }
 
-    &__description {
-        font-size: $font_size_base;
-        color: $text_secondary;
-        margin: 0;
-        line-height: $line_height_normal;
+    &__action {
+        font-size: $font_size_sm;
+        color: $text_muted;
+        font-weight: $font_weight_normal;
     }
 }
 
-// ============================================
-// PROFILE SUMMARY
-// ============================================
-
-.profile_summary {
-    @include card_base;
-    padding: $spacing_xl;
-    background-color: $bg_primary;
-    border: 1px solid $border_light;
-    border-radius: $radius_lg;
-}
-
-.profile_summary__progress {
-    margin-bottom: $spacing_lg;
-}
-
-.progress_bar {
-    width: 100%;
-    height: 12px;
-    background-color: $bg_secondary;
-    border-radius: $radius_full;
-    overflow: hidden;
-    margin-bottom: $spacing_sm;
-
-    &__fill {
-        height: 100%;
-        background: linear-gradient(90deg, $brand_primary 0%, $brand_secondary 100%);
-        border-radius: $radius_full;
-        transition: width $transition_normal;
-    }
-}
-
-.profile_summary__percent {
-    display: flex;
-    align-items: baseline;
-    gap: $spacing_xs;
-
-    &__value {
-        font-size: $font_size_2xl;
-        font-weight: $font_weight_bold;
-        color: $brand_primary;
-    }
-
-    &__label {
-        font-size: $font_size_base;
-        color: $text_secondary;
-    }
-}
-
-.profile_summary__missing {
-    padding-top: $spacing_lg;
-    border-top: 1px solid $border_light;
-
-    &__title {
-        font-size: $font_size_base;
-        font-weight: $font_weight_semibold;
-        color: $text_primary;
-        margin-bottom: $spacing_md;
-    }
-
-    &__list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    &__item {
-        display: flex;
-        align-items: center;
-        gap: $spacing_sm;
-        padding: $spacing_sm 0;
-        color: $text_secondary;
-        font-size: $font_size_base;
-    }
-
-    &__icon {
-        color: $warning_color;
-        font-size: $font_size_lg;
-    }
-}
-
-.profile_summary__complete {
+.missing_fields_complete {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -232,129 +227,281 @@
     text-align: center;
 
     &__icon {
-        width: 64px;
-        height: 64px;
+        width: 48px;
+        height: 48px;
         border-radius: $radius_full;
-        background-color: $success_color;
-        color: white;
-        font-size: $font_size_2xl;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: $text_white;
+        font-size: $font_size_xl;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: $spacing_md;
+        margin-bottom: $spacing_sm;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
     }
 
     &__text {
-        font-size: $font_size_lg;
+        font-size: $font_size_sm;
         font-weight: $font_weight_semibold;
-        color: $success_color;
+        color: #10B981;
         margin: 0;
     }
 }
 
 // ============================================
-// RECENT ACTIVITIES
+// RIGHT COLUMN - MAIN CONTENT
 // ============================================
 
-.recent_activities {
-    @include card_base;
-    padding: $spacing_lg;
-    background-color: $bg_primary;
-    border: 1px solid $border_light;
-    border-radius: $radius_lg;
+.dashboard_main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.recent_activity_item {
+// Hero Card - Full Width
+.hero_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: $spacing_xl;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+    &__title {
+        font-size: $font_size_2xl;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+        margin: 0 0 $spacing_sm 0;
+        line-height: $line_height_tight;
+        letter-spacing: -0.5px;
+    }
+
+    &__name {
+        color: #0EA5E9;
+    }
+
+    &__subtitle {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        margin: 0;
+        line-height: $line_height_normal;
+    }
+}
+
+// Action Grid - 2x2 Horizontal Layout
+.action_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+        gap: $spacing_md;
+    }
+}
+
+.action_widget {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: $spacing_lg;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    text-decoration: none;
+    color: $text_primary;
     display: flex;
     align-items: center;
-    gap: $spacing_md;
-    padding: $spacing_md 0;
-    border-bottom: 1px solid $border_light;
+    gap: $spacing_lg;
+    transition: all $transition_normal;
+    border: 2px solid transparent;
+    height: auto;
 
-    &:last-child {
-        border-bottom: none;
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        border-color: #0EA5E9;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.03) 0%, rgba(255, 255, 255, 1) 100%);
+    }
+
+    &:active {
+        transform: translateY(0);
     }
 
     &__icon {
-        width: 40px;
-        height: 40px;
-        border-radius: $radius_full;
+        width: 56px;
+        height: 56px;
+        flex-shrink: 0;
+        color: #0EA5E9;
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%);
+        border-radius: 12px;
+        transition: all $transition_normal;
 
         svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        &--success {
-            background-color: color.mix($success_color, #fff, 60%);
-            color: $success_color;
-        }
-
-        &--info {
-            background-color: color.mix($info_color, #fff, 60%);
-            color: $info_color;
-        }
-
-        &--warning {
-            background-color: color.mix($warning_color, #fff, 60%);
-            color: $warning_color;
-        }
-
-        &--error {
-            background-color: color.mix($error_color, #fff, 60%);
-            color: $error_color;
+            width: 28px;
+            height: 28px;
         }
     }
 
     &__content {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
     }
 
     &__title {
-        font-size: $font_size_base;
-        font-weight: $font_weight_semibold;
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
         color: $text_primary;
-        margin-bottom: $spacing_xs;
+        margin: 0;
         line-height: $line_height_tight;
+        letter-spacing: -0.2px;
     }
 
-    &__date {
+    &__description {
         font-size: $font_size_sm;
-        color: $text_muted;
+        color: $text_secondary;
         margin: 0;
+        line-height: $line_height_normal;
+    }
+}
+
+// Timeline Card
+.timeline_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_md $spacing_lg;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
+    }
+
+    &__title {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+        margin: 0;
+        letter-spacing: -0.2px;
+    }
+
+    &__body {
+        padding: $spacing_lg;
+    }
+}
+
+// Timeline
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+    position: relative;
+    padding-left: $spacing_lg;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 40px;
+        bottom: 40px;
+        width: 2px;
+        background: linear-gradient(180deg, #10B981 0%, #0EA5E9 100%);
+    }
+
+    &__step {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: $spacing_md;
+
+        &--completed {
+            .timeline__step__dot {
+                background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+                color: $text_white;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            }
+        }
+
+        &__dot {
+            width: 40px;
+            height: 40px;
+            border-radius: $radius_full;
+            background-color: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 1;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        &__content {
+            flex: 1;
+            padding-top: $spacing_xs;
+        }
+
+        &__title {
+            font-size: $font_size_base;
+            font-weight: $font_weight_semibold;
+            color: $text_primary;
+            margin-bottom: $spacing_xs;
+        }
+
+        &__date {
+            font-size: $font_size_sm;
+            color: $text_secondary;
+        }
     }
 }
 
 // ============================================
-// RESPONSIVE DASHBOARD
+// RESPONSIVE
 // ============================================
+
+@include respond_to_max(md) {
+    .dashboard_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard_sidebar {
+        order: 2;
+    }
+
+    .dashboard_main {
+        order: 1;
+    }
+
+    .action_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
 @include respond_to_max(sm) {
     .dashboard_container {
         padding: $spacing_lg $spacing_md;
     }
 
-    .dashboard_header {
-        margin-bottom: $spacing_xl;
-    }
-
-    .dashboard_section {
-        margin-bottom: $spacing_xl;
-    }
-
-    .quick_action_card {
+    .hero_card {
         padding: $spacing_lg;
     }
 
-    .profile_summary {
-        padding: $spacing_lg;
+    .action_grid {
+        grid-template-columns: 1fr;
     }
 
-    .recent_activities {
+    .action_widget {
         padding: $spacing_md;
+    }
+
+    .circular_progress {
+        width: 140px;
+        height: 140px;
     }
 }

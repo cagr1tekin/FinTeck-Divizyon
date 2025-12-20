@@ -60,14 +60,19 @@ public class IndexModel : PageModel
             HasAddress = addressResponse.Success && addressResponse.Value != null && 
                         !string.IsNullOrEmpty(addressResponse.Value.AddressLine);
 
-            // Meslek bilgisi kontrolü (şimdilik false, API'den kontrol edilebilir)
-            HasJobProfile = false; // API'den kontrol edilecek
+            // Meslek bilgisi kontrolü
+            var jobResponse = await _apiService.GetJobInfo(customerId);
+            HasJobProfile = jobResponse.Success && jobResponse.Value != null && 
+                           jobResponse.Value.JobGroupId > 0;
 
-            // Gelir bilgisi kontrolü (şimdilik false, API'den kontrol edilebilir)
-            HasIncomeInfo = false; // API'den kontrol edilecek
+            // Gelir bilgisi kontrolü (FinanceAssets)
+            var financeResponse = await _apiService.GetFinanceAssets(customerId);
+            HasIncomeInfo = financeResponse.Success && financeResponse.Value != null && 
+                           financeResponse.Value.SalaryAmount > 0;
 
-            // Eş bilgisi kontrolü (şimdilik false, API'den kontrol edilebilir)
-            HasSpouseInfo = false; // API'den kontrol edilecek
+            // Eş bilgisi kontrolü
+            var wifeResponse = await _apiService.GetWifeInfo(customerId);
+            HasSpouseInfo = wifeResponse.Success && wifeResponse.Value != null;
 
             // Eksik alanları belirle
             if (!HasAddress) MissingFields.Add("Adres Bilgileri");
