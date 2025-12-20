@@ -1,0 +1,19 @@
+@use '../abstracts' as *;
+
+// ============================================
+// BİZ KİMİZ PAGE STYLES
+// ============================================
+
+.biz_kimiz_container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing_xl * 2 $spacing_lg;
+    background-color: #F5F7FB;
+
+    @include respond_to_max(sm) {
+        padding: $spacing_lg $spacing_md;
+    }
+}
+
+// info_section stilleri kredi_rehberi.scss'ten geliyor (aynı class'ları kullanıyoruz)
+

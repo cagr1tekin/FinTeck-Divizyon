@@ -558,11 +558,7 @@
     color: $error_color;
     line-height: $line_height_normal;
 
-    // Icon ile birlikte (opsiyonel)
-    &::before {
-        content: '⚠ ';
-        margin-right: $spacing_xs;
-    }
+    // Icon kaldırıldı
 }
 
 // ============================================

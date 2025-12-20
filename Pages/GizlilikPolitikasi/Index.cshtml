@@ -1,0 +1,49 @@
+@page
+@model InteraktifKredi.Pages.GizlilikPolitikasi.IndexModel
+@{
+    ViewData["Title"] = "Gizlilik Politikası";
+}
+
+<div class="gizlilik_politikasi_container">
+    <div class="gizlilik_politikasi_card">
+        <div class="gizlilik_politikasi_card__header">
+            <h1 class="gizlilik_politikasi_title">Gizlilik Politikası</h1>
+            <p class="gizlilik_politikasi_subtitle">Kişisel Verilerin Korunması Kanunu (KVKK) Aydınlatma Metni</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="form_error_message">
+                <span class="form_error_message__icon">⚠</span>
+                <span class="form_error_message__text">@Model.ErrorMessage</span>
+            </div>
+        }
+
+        <div class="gizlilik_politikasi_content">
+            @if (!string.IsNullOrEmpty(Model.KvkkText))
+            {
+                <div class="gizlilik_politikasi_text">
+                    @foreach (var line in Model.KvkkText.Split('\n'))
+                    {
+                        if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            <p>@line</p>
+                        }
+                        else
+                        {
+                            <br />
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="gizlilik_politikasi_loading">
+                    <div class="gizlilik_politikasi_loading__spinner"></div>
+                    <p>KVKK metni yükleniyor...</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
