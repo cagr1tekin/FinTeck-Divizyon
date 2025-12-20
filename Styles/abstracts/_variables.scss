@@ -148,3 +148,19 @@ $z_dropdown: 1000;                     // Dropdown menüler
 $z_sticky: 1020;                       // Sticky header/footer
 $z_modal: 1050;                        // Modal dialoglar
 $z_toast: 1100;                        // Toast bildirimleri
+
+// ============================================
+// CREDIT NOTE CARD VARIABLES
+// ============================================
+
+$credit_card_bg_gradient_start: #1e293b;
+$credit_card_bg_gradient_end: #0f172a;
+$credit_card_glass_bg: rgba(255, 255, 255, 0.1);
+$credit_card_glass_border: rgba(255, 255, 255, 0.2);
+$credit_card_blur: 10px;
+
+// Renkli bar renkleri
+$credit_bar_orange: #f97316;
+$credit_bar_yellow: #eab308;
+$credit_bar_light_blue: #3b82f6;
+$credit_bar_dark_blue: #1e40af;

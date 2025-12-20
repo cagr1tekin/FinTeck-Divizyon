@@ -52,12 +52,6 @@
                 </button>
             </div>
         </form>
-
-        <div class="onboarding_footer">
-            <p class="onboarding_footer__text">
-                <a href="#" id="resend_otp_link_footer" class="onboarding_footer__link onboarding_footer__link--disabled">Tekrar gönder</a>
-            </p>
-        </div>
     </div>
 </div>
 
@@ -74,7 +68,6 @@
             var $timer = $('#otp_timer');
             var $timerCountdown = $('#timer_countdown');
             var $resendLink = $('#resend_otp_link');
-            var $resendLinkFooter = $('#resend_otp_link_footer');
             var $resendContainer = $('#otp_resend');
             var $otpInputsContainer = $('#otp_inputs');
             
@@ -82,9 +75,6 @@
             var timerInterval = null;
             var retryCount = @Model.RetryCount;
 
-            // Footer link başlangıçta disabled
-            $resendLinkFooter.addClass('onboarding_footer__link--disabled').prop('disabled', true);
-            
             // Timer başlat
             startTimer();
 
@@ -199,11 +189,6 @@
                 $timer.show();
                 $resendContainer.hide();
                 
-                // Footer linkini saydam yap (disabled state)
-                $resendLinkFooter.addClass('onboarding_footer__link--disabled')
-                    .prop('disabled', true)
-                    .off('click');
-                
                 $resendLink.prop('disabled', true);
                 
                 timerInterval = setInterval(function() {
@@ -215,15 +200,6 @@
                         timerInterval = null;
                         $timer.hide();
                         $resendContainer.show();
-                        
-                        // Footer linkini aktif yap
-                        $resendLinkFooter.removeClass('onboarding_footer__link--disabled')
-                            .prop('disabled', false)
-                            .on('click', function(e) {
-                                e.preventDefault();
-                                resendOtp();
-                            });
-                        
                         $resendLink.prop('disabled', false);
                     }
                 }, 1000);
@@ -244,13 +220,6 @@
                 }
             });
 
-            $resendLinkFooter.on('click', function(e) {
-                e.preventDefault();
-                if (!$resendLinkFooter.prop('disabled')) {
-                    resendOtp();
-                }
-            });
-
             function resendOtp() {
                 var tckn = '@Model.Tckn';
                 var gsm = '@Model.Gsm';
@@ -260,12 +229,6 @@
                     return;
                 }
 
-                // Footer linkini disabled yap
-                $resendLinkFooter.addClass('onboarding_footer__link--disabled')
-                    .prop('disabled', true)
-                    .off('click')
-                    .text('Gönderiliyor...');
-                
                 $resendLink.prop('disabled', true).text('Gönderiliyor...');
                 
                 // OTP oluştur ve SMS gönder
@@ -324,16 +287,8 @@
                 });
             }
             
-            // Resend linklerini aktif et helper fonksiyonu
+            // Resend linkini aktif et helper fonksiyonu
             function enableResendLinks() {
-                $resendLinkFooter.removeClass('onboarding_footer__link--disabled')
-                    .prop('disabled', false)
-                    .text('Tekrar gönder')
-                    .on('click', function(e) {
-                        e.preventDefault();
-                        resendOtp();
-                    });
-                
                 $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
             }
 
