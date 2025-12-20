@@ -54,7 +54,7 @@
 
 .faq_item {
     @include card_base;
-    background-color: $bg_primary;
+    background-color: #FFFFFF;
     border: 1px solid $border_light;
     border-radius: $radius_lg;
     overflow: hidden;
@@ -79,12 +79,12 @@
         padding: $spacing_lg;
         text-align: left;
         cursor: pointer;
-        background-color: transparent;
+        background-color: #FFFFFF;
         transition: background-color $transition_normal;
         gap: $spacing_md;
 
         &:hover {
-            background-color: $bg_secondary;
+            background-color: #FFFFFF;
         }
 
         &:focus {
@@ -93,7 +93,7 @@
         }
 
         &:active {
-            background-color: $border_light;
+            background-color: #FFFFFF;
         }
     }
 
@@ -132,15 +132,18 @@
         }
 
         &__minus {
-            opacity: 0;
+            display: none;
         }
     }
 
     &__content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-        background-color: $bg_secondary;
+        display: none;
+        background-color: #FFFFFF;
+        
+        // Açık olduğunda göster
+        &[aria-hidden="false"] {
+            display: block;
+        }
     }
 
     &__answer {
@@ -247,11 +250,11 @@
 .faq_item--active {
     .faq_item__icon {
         &__plus {
-            opacity: 0;
+            display: none;
         }
 
         &__minus {
-            opacity: 1;
+            display: block;
         }
     }
 }

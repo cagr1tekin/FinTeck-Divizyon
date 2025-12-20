@@ -47,11 +47,19 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            console.log('SSS JavaScript yüklendi');
+            
             var $faqItems = $('.faq_item');
             var $faqHeaders = $('.faq_item__header');
 
+            console.log('FAQ items bulundu:', $faqItems.length);
+            console.log('FAQ headers bulundu:', $faqHeaders.length);
+
             // Accordion işlevselliği
-            $faqHeaders.on('click', function() {
+            $faqHeaders.on('click', function(e) {
+                e.preventDefault();
+                console.log('FAQ header tıklandı');
+                
                 var $header = $(this);
                 var $item = $header.closest('.faq_item');
                 var $content = $item.find('.faq_item__content');
@@ -59,14 +67,16 @@
                 var $iconMinus = $header.find('.faq_item__icon__minus');
                 var isExpanded = $header.attr('aria-expanded') === 'true';
 
+                console.log('Is expanded:', isExpanded);
+
                 // Eğer açıksa kapat
                 if (isExpanded) {
                     $content.slideUp(300, function() {
                         $header.attr('aria-expanded', 'false');
                         $content.attr('aria-hidden', 'true');
                         $item.removeClass('faq_item--active');
-                        $iconPlus.css('opacity', '1');
-                        $iconMinus.css('opacity', '0');
+                        $iconPlus.show();
+                        $iconMinus.hide();
                     });
                 } else {
                     // Diğer tüm item'ları kapat
@@ -81,9 +91,9 @@
                             $otherContent.slideUp(300, function() {
                                 $otherHeader.attr('aria-expanded', 'false');
                                 $otherContent.attr('aria-hidden', 'true');
-                        $otherItem.removeClass('faq_item--active');
-                        $otherIconPlus.css('opacity', '1');
-                        $otherIconMinus.css('opacity', '0');
+                                $otherItem.removeClass('faq_item--active');
+                                $otherIconPlus.show();
+                                $otherIconMinus.hide();
                             });
                         }
                     });
@@ -93,8 +103,8 @@
                         $header.attr('aria-expanded', 'true');
                         $content.attr('aria-hidden', 'false');
                         $item.addClass('faq_item--active');
-                        $iconPlus.css('opacity', '0');
-                        $iconMinus.css('opacity', '1');
+                        $iconPlus.hide();
+                        $iconMinus.show();
                     });
                 }
             });
