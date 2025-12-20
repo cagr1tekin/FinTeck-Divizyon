@@ -136,11 +136,6 @@
         align-items: center;
         justify-content: center;
         gap: $spacing_xs;
-
-        &::before {
-            content: '🔒';
-            font-size: $font_size_base;
-        }
     }
 }
 
@@ -391,9 +386,20 @@
     text-decoration: underline;
     font-weight: $font_weight_medium;
     transition: color $transition_normal;
+    cursor: pointer;
 
     &:hover {
         color: $brand_secondary;
+    }
+    
+    &--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+        
+        &:hover {
+            color: $brand_primary;
+        }
     }
 }
 
