@@ -116,6 +116,12 @@ public class AdresModel : PageModel
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
 
+    // API Response Models
+    public AddressInfo? AddressData { get; set; }
+    public JobProfileModel? JobData { get; set; }
+    public FinanceModel? FinanceData { get; set; }
+    public WifeInfoModel? WifeData { get; set; }
+
     public async Task<IActionResult> OnGetAsync()
     {
         // Session kontrolü
@@ -153,22 +159,15 @@ public class AdresModel : PageModel
             var addressResponse = await _apiService.GetCustomerAddress(customerId);
             if (addressResponse.Success && addressResponse.Value != null)
             {
-                if (!string.IsNullOrEmpty(addressResponse.Value.City))
+                AddressData = addressResponse.Value;
+                if (addressResponse.Value.CityId.HasValue)
                 {
-                    var city = Cities.FirstOrDefault(c => c.Text == addressResponse.Value.City);
-                    if (city != null)
+                    CityId = addressResponse.Value.CityId.Value;
+                    LoadDistricts(CityId);
+                    
+                    if (addressResponse.Value.TownId.HasValue)
                     {
-                        CityId = int.Parse(city.Value);
-                        LoadDistricts(CityId);
-                        
-                        if (!string.IsNullOrEmpty(addressResponse.Value.District))
-                        {
-                            var district = Districts.FirstOrDefault(d => d.Text == addressResponse.Value.District);
-                            if (district != null)
-                            {
-                                TownId = int.Parse(district.Value);
-                            }
-                        }
+                        TownId = addressResponse.Value.TownId.Value;
                     }
                 }
             }
@@ -177,48 +176,21 @@ public class AdresModel : PageModel
             var jobResponse = await _apiService.GetJobInfo(customerId);
             if (jobResponse.Success && jobResponse.Value != null)
             {
-                JobId = jobResponse.Value.JobGroupId;
-                CompanyName = jobResponse.Value.TitleCompany;
-                Position = jobResponse.Value.CompanyPosition;
-                WorkingYears = jobResponse.Value.WorkingYears;
-                WorkingMonths = jobResponse.Value.WorkingMonth;
-            }
-            else
-            {
-                // Varsayılan değerler
-                JobId = 0;
-                WorkingYears = 0;
-                WorkingMonths = 0;
+                JobData = jobResponse.Value;
             }
 
             // Finansal bilgiler
             var financeResponse = await _apiService.GetFinanceAssets(customerId);
             if (financeResponse.Success && financeResponse.Value != null)
             {
-                MonthlyIncome = financeResponse.Value.SalaryAmount;
-                SectorId = financeResponse.Value.WorkSector;
-            }
-            else
-            {
-                // Varsayılan değerler
-                MonthlyIncome = 0;
-                SectorId = 0;
+                FinanceData = financeResponse.Value;
             }
 
             // Eş bilgileri
             var wifeResponse = await _apiService.GetWifeInfo(customerId);
             if (wifeResponse.Success && wifeResponse.Value != null)
             {
-                MaritalStatus = wifeResponse.Value.MaritalStatus ? "Evli" : "Bekar";
-                WorkSpouse = wifeResponse.Value.WorkWife;
-                SpouseSalary = wifeResponse.Value.WifeSalaryAmount > 0 ? wifeResponse.Value.WifeSalaryAmount : null;
-            }
-            else
-            {
-                // Varsayılan değerler
-                MaritalStatus = "Bekar";
-                WorkSpouse = false;
-                SpouseSalary = null;
+                WifeData = wifeResponse.Value;
             }
         }
         catch (Exception ex)

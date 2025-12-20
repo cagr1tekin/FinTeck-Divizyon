@@ -75,7 +75,17 @@ public class KvkkOnayRequest
 // Legacy models (geriye dönük uyumluluk için)
 public class AddressInfo
 {
-    public string? AddressLine { get; set; }
+    public string? TCKN { get; set; }
+    public long CustomerId { get; set; }
+    public int? CityId { get; set; }
+    public int? TownId { get; set; }
+    public string? Address { get; set; }
+    public int? EmployeeId { get; set; }
+    public string? Source { get; set; }
+    public DateTime? CreateDate { get; set; }
+
+    // Legacy properties (geriye dönük uyumluluk için)
+    public string? AddressLine { get => Address; set => Address = value; }
     public string? City { get; set; }
     public string? District { get; set; }
     public string? PostalCode { get; set; }

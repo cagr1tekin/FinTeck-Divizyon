@@ -48,9 +48,9 @@ public class EsBilgileriModel : PageModel
             if (response.Success && response.Value != null)
             {
                 var wifeInfo = response.Value;
-                MaritalStatus = wifeInfo.MaritalStatus;
-                WorkWife = wifeInfo.WorkWife;
-                WifeSalaryAmount = wifeInfo.WifeSalaryAmount;
+                MaritalStatus = wifeInfo.MaritalStatus ?? false;
+                WorkWife = wifeInfo.WorkWife ?? false;
+                WifeSalaryAmount = wifeInfo.WifeSalaryAmount ?? 0;
             }
         }
         catch (Exception ex)

@@ -479,13 +479,39 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Müşteri adresi alınıyor: CustomerId={CustomerId}", customerId);
 
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/customer/{customerId}/address");
+            var apiCode = _configuration.GetValue<string>("ApiSettings:CustomersApiAddressCode");
+            var url = $"{CUSTOMERS_API}/api/customer/address/{customerId}";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var addressInfo = JsonConvert.DeserializeObject<AddressInfo>(responseContent);
-                return new ApiResponse<AddressInfo> { Success = true, Data = addressInfo };
+                AddressInfo? addressInfo = null;
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    if (apiResponse?.value != null)
+                    {
+                        addressInfo = JsonConvert.DeserializeObject<AddressInfo>(apiResponse.value.ToString());
+                    }
+                    else
+                    {
+                        addressInfo = JsonConvert.DeserializeObject<AddressInfo>(responseContent);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                    addressInfo = JsonConvert.DeserializeObject<AddressInfo>(responseContent);
+                }
+
+                return new ApiResponse<AddressInfo> { Success = true, Data = addressInfo, Value = addressInfo };
             }
 
             _logger.LogWarning("Adres bilgisi alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}", 
@@ -511,15 +537,73 @@ public class ApiService : IApiService
             _logger.LogInformation("Adres bilgisi kaydediliyor: CustomerId={CustomerId}, CityId={CityId}, TownId={TownId}", 
                 address.CustomerId, address.CityId, address.TownId);
 
-            var json = JsonConvert.SerializeObject(address);
+            // API request formatı: { customerId, adress, cityId, townId, source }
+            // source: 2 = kişi ekler, 1 = danışmanlık ekler
+            var request = new
+            {
+                customerId = address.CustomerId,
+                adress = address.Address ?? string.Empty,
+                cityId = address.CityId,
+                townId = address.TownId,
+                source = 2 // Kişi ekler
+            };
+
+            var json = JsonConvert.SerializeObject(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"{CUSTOMERS_API}/api/customer/address", content);
+            var apiCode = _configuration.GetValue<string>("ApiSettings:CustomersApiAddressSaveCode");
+            var url = $"{CUSTOMERS_API}/api/customer/address";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Adres bilgisi kaydedildi: CustomerId={CustomerId}", address.CustomerId);
-                return new ApiResponse<bool> { Success = true, Data = true };
+                // Response wrapper kontrolü
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(responseContent);
+                    bool success = false;
+                    string messageStr = "Adres bilgisi kaydedildi.";
+                    
+                    if (apiResponse != null)
+                    {
+                        var successToken = apiResponse["success"];
+                        if (successToken != null)
+                        {
+                            success = successToken.ToObject<bool>();
+                        }
+                        
+                        var messageToken = apiResponse["message"];
+                        if (messageToken != null)
+                        {
+                            messageStr = messageToken.ToString();
+                        }
+                    }
+                    
+                    if (success)
+                    {
+                        _logger.LogInformation("Adres bilgisi kaydedildi: CustomerId={CustomerId}", address.CustomerId);
+                        return new ApiResponse<bool> { Success = true, Data = true, Message = messageStr };
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Adres bilgisi kaydedilemedi: Message={Message}, CustomerId={CustomerId}", 
+                            messageStr, address.CustomerId);
+                        return new ApiResponse<bool> { Success = false, Message = messageStr };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                    // Fallback: başarılı kabul et
+                    _logger.LogInformation("Adres bilgisi kaydedildi: CustomerId={CustomerId}", address.CustomerId);
+                    return new ApiResponse<bool> { Success = true, Data = true };
+                }
             }
 
             _logger.LogWarning("Adres bilgisi kaydedilemedi: StatusCode={StatusCode}, CustomerId={CustomerId}", 
@@ -528,7 +612,6 @@ public class ApiService : IApiService
             var errorMessage = "Adres bilgisi kaydedilemedi.";
             try
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
                 var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
                 errorMessage = errorResponse?.message?.ToString() ?? errorMessage;
             }
@@ -554,13 +637,39 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Meslek bilgileri alınıyor: CustomerId={CustomerId}", customerId);
 
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/customer/job-info/new/{customerId}");
+            var apiCode = _configuration.GetValue<string>("ApiSettings:CustomersApiJobInfoCode");
+            var url = $"{CUSTOMERS_API}/api/customer/job-info/new/{customerId}";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var jobInfo = JsonConvert.DeserializeObject<JobProfileModel>(responseContent);
-                return new ApiResponse<JobProfileModel> { Success = true, Data = jobInfo };
+                JobProfileModel? jobInfo = null;
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    if (apiResponse?.value != null)
+                    {
+                        jobInfo = JsonConvert.DeserializeObject<JobProfileModel>(apiResponse.value.ToString());
+                    }
+                    else
+                    {
+                        jobInfo = JsonConvert.DeserializeObject<JobProfileModel>(responseContent);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                    jobInfo = JsonConvert.DeserializeObject<JobProfileModel>(responseContent);
+                }
+
+                return new ApiResponse<JobProfileModel> { Success = true, Data = jobInfo, Value = jobInfo };
             }
 
             _logger.LogWarning("Meslek bilgileri alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}", 
@@ -619,13 +728,39 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Finansal bilgiler alınıyor: CustomerId={CustomerId}", customerId);
 
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/customer/finance-assets/{customerId}");
+            var apiCode = _configuration.GetValue<string>("ApiSettings:CustomersApiFinanceAssetsCode");
+            var url = $"{CUSTOMERS_API}/api/customer/finance-assets/{customerId}";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var financeInfo = JsonConvert.DeserializeObject<FinanceModel>(responseContent);
-                return new ApiResponse<FinanceModel> { Success = true, Data = financeInfo };
+                FinanceModel? financeInfo = null;
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    if (apiResponse?.value != null)
+                    {
+                        financeInfo = JsonConvert.DeserializeObject<FinanceModel>(apiResponse.value.ToString());
+                    }
+                    else
+                    {
+                        financeInfo = JsonConvert.DeserializeObject<FinanceModel>(responseContent);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                    financeInfo = JsonConvert.DeserializeObject<FinanceModel>(responseContent);
+                }
+
+                return new ApiResponse<FinanceModel> { Success = true, Data = financeInfo, Value = financeInfo };
             }
 
             _logger.LogWarning("Finansal bilgiler alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}", 
@@ -728,13 +863,39 @@ public class ApiService : IApiService
         {
             _logger.LogInformation("Eş bilgileri alınıyor: CustomerId={CustomerId}", customerId);
 
-            var response = await _httpClient.GetAsync($"{CUSTOMERS_API}/api/customer/wife-info/{customerId}");
+            var apiCode = _configuration.GetValue<string>("ApiSettings:CustomersApiWifeInfoCode");
+            var url = $"{CUSTOMERS_API}/api/customer/wife-info/{customerId}";
+            if (!string.IsNullOrEmpty(apiCode))
+            {
+                url += $"?code={Uri.EscapeDataString(apiCode)}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
-                var wifeInfo = JsonConvert.DeserializeObject<WifeInfoModel>(responseContent);
-                return new ApiResponse<WifeInfoModel> { Success = true, Data = wifeInfo };
+                WifeInfoModel? wifeInfo = null;
+                try
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    
+                    if (apiResponse?.value != null)
+                    {
+                        wifeInfo = JsonConvert.DeserializeObject<WifeInfoModel>(apiResponse.value.ToString());
+                    }
+                    else
+                    {
+                        wifeInfo = JsonConvert.DeserializeObject<WifeInfoModel>(responseContent);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Response deserialize hatası: Response={Response}", responseContent);
+                    wifeInfo = JsonConvert.DeserializeObject<WifeInfoModel>(responseContent);
+                }
+
+                return new ApiResponse<WifeInfoModel> { Success = true, Data = wifeInfo, Value = wifeInfo };
             }
 
             _logger.LogWarning("Eş bilgileri alınamadı: StatusCode={StatusCode}, CustomerId={CustomerId}", 

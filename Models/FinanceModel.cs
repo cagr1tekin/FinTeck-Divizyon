@@ -12,9 +12,14 @@ public class FinanceModel
     public long CustomerId { get; set; }
 
     /// <summary>
-    /// Çalışma sektörü ID
+    /// TC Kimlik No
     /// </summary>
-    public int WorkSector { get; set; }
+    public string? TCKN { get; set; }
+
+    /// <summary>
+    /// Meslek grubu adı
+    /// </summary>
+    public string? JobGroupName { get; set; }
 
     /// <summary>
     /// Maaş bankası
@@ -22,18 +27,21 @@ public class FinanceModel
     public string? SalaryBank { get; set; }
 
     /// <summary>
-    /// Maaş miktarı (decimal - ZORUNLU!)
+    /// Maaş miktarı (decimal - nullable)
     /// </summary>
-    public decimal SalaryAmount { get; set; }
+    public decimal? SalaryAmount { get; set; }
 
     /// <summary>
     /// Araba durumu (var mı?)
     /// </summary>
-    public bool CarStatus { get; set; }
+    public bool? CarStatus { get; set; }
 
     /// <summary>
     /// Ev durumu (var mı?)
     /// </summary>
-    public bool HouseStatus { get; set; }
+    public bool? HouseStatus { get; set; }
+
+    // Legacy properties (geriye dönük uyumluluk için)
+    public int WorkSector { get; set; }
 }
 
