@@ -34,4 +34,7 @@ public interface IApiService
 
     // doviz.dev API metodları
     Task<ApiResponse<CurrencyResponseModel>> GetCurrencyRate(string currencyCode);
+
+    // CoinMarketCap API metodları
+    Task<ApiResponse<CryptoCurrencyResponseModel>> GetCryptoCurrencyPrices(string symbols = "BTC,ETH,BNB,SOL", string convert = "TRY");
 }

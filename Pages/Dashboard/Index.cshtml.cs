@@ -31,7 +31,6 @@ public class IndexModel : PageModel
     public CurrencyResponseModel? AudCurrencyData { get; set; }
     public CurrencyResponseModel? DkkCurrencyData { get; set; }
     public CurrencyResponseModel? CadCurrencyData { get; set; }
-    public CurrencyResponseModel? PlnCurrencyData { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -60,6 +59,9 @@ public class IndexModel : PageModel
 
         // Currency verilerini çek (Server-side initial load)
         await LoadCurrencyData();
+        
+        // Crypto currency verilerini çek (Server-side initial load)
+        await LoadCryptoCurrencyData();
 
         return Page();
     }
@@ -81,12 +83,28 @@ public class IndexModel : PageModel
                 AudCurrencyData = tryResponse.Data;
                 DkkCurrencyData = tryResponse.Data;
                 CadCurrencyData = tryResponse.Data;
-                PlnCurrencyData = tryResponse.Data;
             }
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Currency data yüklenemedi (server-side)");
+            // Hata durumunda sessizce devam et, client-side dener
+        }
+    }
+    
+    private async Task LoadCryptoCurrencyData()
+    {
+        try
+        {
+            var response = await _apiService.GetCryptoCurrencyPrices("BTC,ETH,BNB,SOL", "TRY");
+            if (response.Success && response.Data != null)
+            {
+                CryptoCurrencyData = response.Data;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Crypto currency data yüklenemedi (server-side)");
             // Hata durumunda sessizce devam et, client-side dener
         }
     }

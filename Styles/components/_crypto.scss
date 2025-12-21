@@ -1,0 +1,128 @@
+@use '../abstracts' as *;
+
+// Kripto Para Widget
+.crypto_widget {
+    background: $bg_secondary;
+    border-radius: $border_radius_lg;
+    padding: $spacing_unit * 3;
+    margin-bottom: $spacing_unit * 4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing_unit * 3;
+    }
+    
+    &__title {
+        font-size: $font_size_lg;
+        font-weight: 600;
+        color: $text_primary;
+        margin: 0;
+    }
+    
+    &__badge {
+        display: flex;
+        align-items: center;
+        gap: $spacing_unit;
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        
+        &_dot {
+            width: 8px;
+            height: 8px;
+            background-color: $success_color;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        &_text {
+            font-weight: 500;
+        }
+    }
+    
+    &__body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing_unit * 2;
+        
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+// Kripto Para Item
+.crypto_item {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing_unit * 2;
+    background: $bg_secondary;
+    border-radius: $border_radius;
+    border: 1px solid $border_color;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        border-color: $brand_primary;
+        box-shadow: 0 2px 8px rgba($brand_primary, 0.1);
+    }
+    
+    &__symbol {
+        font-size: $font_size_xl;
+        font-weight: 700;
+        color: $brand_primary;
+        margin-bottom: $spacing_unit * 0.5;
+    }
+    
+    &__label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        margin-bottom: $spacing_unit;
+    }
+    
+    &__value {
+        font-size: $font_size_lg;
+        font-weight: 600;
+        color: $text_primary;
+        margin-bottom: $spacing_unit;
+    }
+    
+    &__change {
+        display: flex;
+        align-items: center;
+        gap: $spacing_unit * 0.5;
+        font-size: $font_size_sm;
+        
+        &_percent {
+            font-weight: 600;
+        }
+        
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        &--up {
+            color: $success_color;
+        }
+        
+        &--down {
+            color: $error_color;
+        }
+        
+        &--neutral {
+            color: $text_secondary;
+        }
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
