@@ -1,0 +1,347 @@
+@page
+@model InteraktifKredi.Pages.KrediKartiModel
+@{
+    ViewData["Title"] = "Kredi Kartları";
+}
+
+<div class="credit_card_page">
+    <!-- Header -->
+    <div class="credit_card_header">
+        <h1 class="credit_card_header__title">Kredi Kartları</h1>
+        <p class="credit_card_header__subtitle">Size en uygun kredi kartını bulun</p>
+    </div>
+
+    <!-- Credit Card List -->
+    <div class="credit_card_list">
+        <!-- Axess (Akbank) -->
+        <div class="credit_card_item" id="card_axess">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | 25.000 TL'ye varan %0 faizli Taksitli Avans!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--axess">
+                        <div class="credit_card_preview__logo">axess</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">Axess</h3>
+                            <p class="credit_card_item__bank">Akbank</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>909,50 TL</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>%0 Faizli 25.000 TL'ye Varan Taksitli Avans!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Ayda 22.000 TL'ye Varan Chip-Para!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_axess">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus (Garanti BBVA) -->
+        <div class="credit_card_item" id="card_bonus">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | 25.000 TL'ye varan %0 faizli Taksitli Nakit Avans!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--bonus">
+                        <div class="credit_card_preview__logo">bonus</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">Bonus</h3>
+                            <p class="credit_card_item__bank">Garanti BBVA</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>841,50 TL</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>25.000 TL' ye Varan Taksitli Nakit Avans Fırsatı!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Ayda 15.000 TL'ye Varan Bonus!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_bonus">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maximum (İş Bankası) -->
+        <div class="credit_card_item" id="card_maximum">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | 25.000 TL'ye varan %0 faizli Taksitli Nakit Avans!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--maximum">
+                        <div class="credit_card_preview__logo">maximum</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-visa"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">Maximum</h3>
+                            <p class="credit_card_item__bank">İş Bankası</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>851,50 TL</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Maximum'dan 30.000 TL'yi Aşan MaxiPuan!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>25.000 TL'ye varan Faizsiz Taksitli Nakit Avans!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_maximum">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QNB Kredi Kartı -->
+        <div class="credit_card_item" id="card_qnb">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | 85.000 TL'ye Varan Faizsiz Nakit!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--qnb">
+                        <div class="credit_card_preview__logo">QNB</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">QNB Kredi Kartı</h3>
+                            <p class="credit_card_item__bank">QNB</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>982,50 TL</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Yeni Müşterilere Özel 85.000 TL'ye varan Nakit!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Yılbaşına Özel 3.000 TL ParaPuan Kazanın!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_qnb">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enpara.com Kredi Kartı -->
+        <div class="credit_card_item" id="card_enpara">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | HangiKredi'ye Özel 1.000 TL Ödüllü Aidatsız Kart!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--enpara">
+                        <div class="credit_card_preview__logo">enpara.com</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">Enpara.com Kredi Kartı</h3>
+                            <p class="credit_card_item__bank">Enpara.com</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>Ücretsiz</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>1.000 TL Ödüllü ve Aidatsız Kredi Kartı!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Ödemelerinizi Faizsiz Sonradan Taksitlendirin!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_enpara">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bankkart (Ziraat Bankası) -->
+        <div class="credit_card_item" id="card_bankkart">
+            <div class="credit_card_item__sponsor_banner">
+                <i class="fa-solid fa-star"></i>
+                <span>Sponsor Banka | Özel Kampanya Fırsatları!</span>
+            </div>
+            <div class="credit_card_item__content">
+                <!-- Sol: Kart Görseli -->
+                <div class="credit_card_item__image">
+                    <div class="credit_card_preview credit_card_preview--bankkart">
+                        <div class="credit_card_preview__logo">bankkart</div>
+                        <div class="credit_card_preview__brand">
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orta: Yazılar -->
+                <div class="credit_card_item__main">
+                    <div class="credit_card_item__info_header">
+                        <div class="credit_card_item__info">
+                            <h3 class="credit_card_item__name">Bankkart</h3>
+                            <p class="credit_card_item__bank">Ziraat Bankası</p>
+                        </div>
+                        <div class="credit_card_item__fee_container">
+                            <div class="credit_card_item__annual_fee">
+                                <span>Yıllık ücret</span>
+                                <strong>750,00 TL</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit_card_item__benefits">
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Özel Kampanya Fırsatları!</span>
+                        </div>
+                        <div class="credit_card_benefit">
+                            <i class="fa-solid fa-percent"></i>
+                            <span>Geniş ATM ve Şube Ağı!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: Butonlar -->
+                <div class="credit_card_item__actions">
+                    <button type="button" class="btn_secondary" data-toggle-detail="card_bankkart">Detay</button>
+                    <button type="button" class="btn_primary">Hemen başvur</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const detailButtons = document.querySelectorAll('[data-toggle-detail]');
+        
+        detailButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const cardId = this.getAttribute('data-toggle-detail');
+                const cardItem = document.getElementById(cardId);
+                
+                if (cardItem) {
+                    cardItem.classList.toggle('credit_card_item--expanded');
+                    
+                    // Buton metnini değiştir
+                    if (cardItem.classList.contains('credit_card_item--expanded')) {
+                        this.textContent = 'Gizle';
+                    } else {
+                        this.textContent = 'Detay';
+                    }
+                }
+            });
+        });
+    });
+</script>
+

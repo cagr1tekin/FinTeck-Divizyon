@@ -1,0 +1,392 @@
+@use '../abstracts' as *;
+
+// ============================================
+// OPPORTUNITIES PAGE - CAMPAIGN CARDS
+// ============================================
+
+.opportunities_page {
+    min-height: calc(100vh - 200px);
+    padding: $spacing_xl * 2 $spacing_lg;
+    background-color: #fff;
+
+    @include respond_to_max(sm) {
+        padding: $spacing_lg $spacing_md;
+    }
+}
+
+.opportunities_container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+// ============================================
+// PAGE HEADER
+// ============================================
+
+.opportunities_header {
+    text-align: center;
+    margin-bottom: $spacing_2xl;
+
+    &__title {
+        font-size: $font_size_3xl;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+        margin: 0 0 $spacing_sm 0;
+
+        @include respond_to_max(sm) {
+            font-size: $font_size_2xl;
+        }
+    }
+
+    &__subtitle {
+        font-size: $font_size_lg;
+        color: $text_secondary;
+        margin: 0;
+    }
+}
+
+// ============================================
+// NEWS SLIDER
+// ============================================
+
+.opportunities_news_slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    margin-bottom: $spacing_2xl;
+    height: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+    @include respond_to_max(sm) {
+        height: 300px;
+    }
+
+    &__wrapper {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        height: 100%;
+    }
+
+    &__slide {
+        min-width: 100%;
+        flex-shrink: 0;
+        position: relative;
+        height: 100%;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        padding: $spacing_xl;
+        color: #fff;
+
+        h3 {
+            font-size: $font_size_2xl;
+            font-weight: $font_weight_bold;
+            margin: 0 0 $spacing_xs 0;
+            color: #fff;
+
+            @include respond_to_max(sm) {
+                font-size: $font_size_xl;
+            }
+        }
+
+        p {
+            font-size: $font_size_base;
+            margin: 0;
+            opacity: 0.9;
+            color: #fff;
+        }
+    }
+
+    &__controls {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 $spacing_md;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    &__btn {
+        width: 48px;
+        height: 48px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2E6DF8;
+        cursor: pointer;
+        pointer-events: all;
+        transition: all 0.3s;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        font-size: $font_size_base;
+
+        &:hover {
+            background-color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    &__indicators {
+        position: absolute;
+        bottom: $spacing_md;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: $spacing_xs;
+        z-index: 2;
+    }
+
+    &__indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        padding: 0;
+
+        &--active {
+            background-color: #fff;
+            width: 32px;
+            border-radius: 6px;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    }
+}
+
+// ============================================
+// OPPORTUNITIES GRID (4 Cards)
+// ============================================
+
+.opportunities_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing_lg;
+    margin-bottom: $spacing_2xl;
+
+    @include respond_to_max(lg) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond_to_max(sm) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ============================================
+// CAMPAIGN CARD (Compact)
+// ============================================
+
+.campaign_card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// ============================================
+// CARD IMAGE
+// ============================================
+
+.campaign_card__image {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.campaign_card__badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+}
+
+.campaign_card__tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+
+    &--orange {
+        color: #e67e22;
+    }
+
+    &--blue {
+        color: #2E6DF8;
+    }
+}
+
+.campaign_card__badge {
+    padding: 4px 10px;
+    background: rgba(46, 109, 248, 0.95);
+    border: none;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &--new {
+        // Badge stili
+    }
+}
+
+// ============================================
+// CARD CONTENT (No Dark Background)
+// ============================================
+
+.campaign_card__content {
+    padding: $spacing_lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+    flex: 1;
+}
+
+.campaign_card__amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $text_primary;
+    line-height: 1;
+    font-family: 'Courier New', monospace;
+    letter-spacing: -1px;
+}
+
+.campaign_card__rate {
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    color: #2E6DF8;
+    margin-bottom: $spacing_xs;
+}
+
+.campaign_card__description {
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    line-height: $line_height_normal;
+    margin-bottom: $spacing_sm;
+    flex: 1;
+}
+
+// ============================================
+// FOOTER
+// ============================================
+
+.campaign_card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing_md;
+    margin-top: auto;
+    padding-top: $spacing_md;
+    border-top: 1px solid #f0f0f0;
+}
+
+.campaign_card__bank_logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2E6DF8 0%, #0056B3 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.campaign_card__apply_button {
+    flex: 1;
+    padding: 10px $spacing_md;
+    background: linear-gradient(90deg, #2E6DF8 0%, #0056B3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(46, 109, 248, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 109, 248, 0.3);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond_to_max(sm) {
+    .opportunities_news_slider {
+        height: 250px;
+        border-radius: 12px;
+    }
+
+    .campaign_card__image {
+        height: 150px;
+    }
+
+    .campaign_card__content {
+        padding: $spacing_md;
+    }
+
+    .campaign_card__amount {
+        font-size: 1.5rem;
+    }
+}

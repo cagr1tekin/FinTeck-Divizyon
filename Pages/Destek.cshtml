@@ -1,0 +1,149 @@
+@page
+@model InteraktifKredi.Pages.DestekModel
+@{
+    ViewData["Title"] = "Destek ve SSS";
+}
+
+<div class="support_container">
+    <!-- Hero Section -->
+    <div class="support_hero">
+        <div class="support_hero__content">
+            <h1 class="support_hero__title">Destek ve SSS</h1>
+            <div class="support_hero__search">
+                <input type="text" class="support_hero__search_input" placeholder="Aradığınız soruyu yazın...">
+                <button type="button" class="support_hero__search_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Grid (2 Columns) -->
+    <div class="support_content">
+        <!-- Left Column: FAQ Accordion -->
+        <div class="support_content__left">
+            <h2 class="support_section__title">Sıkça Sorulan Sorular</h2>
+            <div class="faq_accordion">
+                @if (Model.FaqItems != null && Model.FaqItems.Any())
+                {
+                    @foreach (var faq in Model.FaqItems.OrderBy(f => f.Order))
+                    {
+                        <div class="faq_accordion__item" data-faq-id="@faq.Id">
+                            <button type="button" class="faq_accordion__header">
+                                <span class="faq_accordion__question">@faq.Question</span>
+                                <svg class="faq_accordion__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="faq_accordion__content">
+                                <p class="faq_accordion__answer">
+                                    @faq.Answer
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Right Column: Contact Form -->
+        <div class="support_content__right">
+            <h2 class="support_section__title">Bize Ulaşın</h2>
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="support_message support_message--success">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="support_message support_message--error">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            }
+
+            <form method="post" class="support_form">
+                <div class="form_group">
+                    <label for="Subject" class="form_label">Destek Talebi</label>
+                    <select id="Subject" name="Subject" class="form_select" asp-for="Subject" required>
+                        <option value="">Lütfen bir destek talebi seçin</option>
+                        <option value="Genel Bilgi">Genel Bilgi</option>
+                        <option value="Teknik Destek">Teknik Destek</option>
+                        <option value="Kredi Başvurusu">Kredi Başvurusu</option>
+                        <option value="Rapor Sorunu">Rapor Sorunu</option>
+                        <option value="Hesap Yönetimi">Hesap Yönetimi</option>
+                        <option value="Ödeme İşlemi">Ödeme İşlemi</option>
+                        <option value="Diğer">Diğer</option>
+                    </select>
+                </div>
+
+                <div class="form_group">
+                    <label for="Message" class="form_label">Mesaj</label>
+                    <textarea id="Message" name="Message" class="form_textarea" asp-for="Message" rows="6" placeholder="Sorunuzu veya talebinizi detaylı bir şekilde yazın" required></textarea>
+                </div>
+
+                <button type="submit" class="btn_primary btn--block">
+                    <span>Gönder</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Customer Service Card -->
+            <div class="support_contact_card">
+                <div class="support_contact_card__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <div class="support_contact_card__content">
+                    <h3 class="support_contact_card__title">Müşteri Hizmetleri</h3>
+                    <p class="support_contact_card__phone">0850 123 45 67</p>
+                    <p class="support_contact_card__hours">Pazartesi - Cuma: 09:00 - 18:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // FAQ Accordion functionality
+            $('.faq_accordion__header').on('click', function() {
+                var $item = $(this).closest('.faq_accordion__item');
+                var $content = $item.find('.faq_accordion__content');
+                var $icon = $(this).find('.faq_accordion__icon');
+                
+                // Close other items
+                $('.faq_accordion__item').not($item).removeClass('faq_accordion__item--active')
+                    .find('.faq_accordion__content').slideUp(300);
+                $('.faq_accordion__item').not($item).find('.faq_accordion__icon').css('transform', 'rotate(0deg)');
+                
+                // Toggle current item
+                $item.toggleClass('faq_accordion__item--active');
+                $content.slideToggle(300);
+                $icon.css('transform', function() {
+                    return $item.hasClass('faq_accordion__item--active') ? 'rotate(180deg)' : 'rotate(0deg)';
+                });
+            });
+        });
+    </script>
+}
+

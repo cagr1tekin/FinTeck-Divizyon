@@ -50,7 +50,7 @@
     &__nav {
         display: flex;
         align-items: center;
-        gap: $spacing_lg;
+        gap: $spacing_md;
         flex: 1 1 auto;
         justify-content: center;
 
@@ -61,13 +61,14 @@
 
     &__link {
         color: $text_primary;
-        font-size: $font_size_base;
+        font-size: $font_size_sm;
         font-weight: $font_weight_medium;
         text-decoration: none;
-        padding: $spacing_xs $spacing_md;
+        padding: $spacing_xs $spacing_sm;
         border-radius: $radius_sm;
         transition: all $transition_normal;
         position: relative;
+        white-space: nowrap;
 
         &:hover {
             color: $brand_primary;

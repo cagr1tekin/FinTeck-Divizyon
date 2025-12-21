@@ -35,6 +35,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <!-- Skip to main content (Accessibility) -->
@@ -57,12 +60,13 @@
                     <a href="/Profile/Adres" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Profile") == true ? "header__link--active" : "")">Profilim</a>
                     <a href="/Raporlar/Liste" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Raporlar") == true ? "header__link--active" : "")">Raporlar</a>
                 }
-                <a href="/KrediRehberi" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/KrediRehberi") == true ? "header__link--active" : "")">Kredi Rehberi</a>
-                <a href="/SSS" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/SSS") == true ? "header__link--active" : "")">SSS</a>
                 @if (!isAuthenticated)
                 {
+                    <a href="/" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/" ? "header__link--active" : "")">Anasayfa</a>
                     <a href="/BizKimiz" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/BizKimiz") == true ? "header__link--active" : "")">Biz Kimiz</a>
                 }
+                <a href="/KrediRehberi" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/KrediRehberi") == true ? "header__link--active" : "")">Kredi Rehberi</a>
+                <a href="/Destek" class="header__link @(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("/Destek") == true ? "header__link--active" : "")">Destek</a>
             </nav>
             
             @if (isAuthenticated)
@@ -97,12 +101,13 @@
                 <a href="/Profile/Adres" class="header__link">Profilim</a>
                 <a href="/Raporlar/Liste" class="header__link">Raporlar</a>
             }
-            <a href="/KrediRehberi" class="header__link">Kredi Rehberi</a>
-            <a href="/SSS" class="header__link">SSS</a>
             @if (!isAuthenticated)
             {
+                <a href="/" class="header__link">Anasayfa</a>
                 <a href="/BizKimiz" class="header__link">Biz Kimiz</a>
             }
+            <a href="/KrediRehberi" class="header__link">Kredi Rehberi</a>
+            <a href="/Destek" class="header__link">Destek</a>
             @if (!isAuthenticated)
             {
                 <div class="header__mobile_menu__auth">
@@ -126,7 +131,6 @@
                         <a href="/Dashboard" class="footer__section__link">Dashboard</a>
                         <a href="/Profile/Adres" class="footer__section__link">Profilim</a>
                         <a href="/Raporlar/Liste" class="footer__section__link">Raporlar</a>
-                        <a href="/SSS" class="footer__section__link">Sık Sorulan Sorular</a>
                     </div>
                 </div>
                 

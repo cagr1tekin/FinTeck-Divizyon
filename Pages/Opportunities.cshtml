@@ -1,0 +1,222 @@
+@page
+@model InteraktifKredi.Pages.OpportunitiesModel
+@{
+    ViewData["Title"] = "Yılın Son Fırsatları";
+}
+
+<div class="opportunities_page">
+    <div class="opportunities_container">
+        <!-- Page Header -->
+        <div class="opportunities_header">
+            <h1 class="opportunities_header__title">Yılın Son Fırsatları</h1>
+            <p class="opportunities_header__subtitle">Size özel kampanyalar ve avantajlı kredi fırsatları</p>
+        </div>
+
+        <!-- News Slider -->
+        <div class="opportunities_news_slider" id="news_slider">
+            <div class="opportunities_news_slider__wrapper">
+                <div class="opportunities_news_slider__slide">
+                    <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1200&h=400&fit=crop" alt="Kredi Haberi 1" />
+                    <div class="opportunities_news_slider__content">
+                        <h3>Yeni Yıl Kredi Kampanyaları Başladı!</h3>
+                        <p>2024'e özel faizsiz kredi fırsatları sizi bekliyor</p>
+                    </div>
+                </div>
+                <div class="opportunities_news_slider__slide">
+                    <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1200&h=400&fit=crop" alt="Kredi Haberi 2" />
+                    <div class="opportunities_news_slider__content">
+                        <h3>İhtiyaç Kredisi Faizleri Düştü</h3>
+                        <p>En avantajlı faiz oranları ile hemen başvurabilirsiniz</p>
+                    </div>
+                </div>
+                <div class="opportunities_news_slider__slide">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=400&fit=crop" alt="Kredi Haberi 3" />
+                    <div class="opportunities_news_slider__content">
+                        <h3>Konut Kredisi Fırsatları</h3>
+                        <p>Düşük faizli konut kredisi seçenekleri</p>
+                    </div>
+                </div>
+            </div>
+            <div class="opportunities_news_slider__controls">
+                <button type="button" class="opportunities_news_slider__btn opportunities_news_slider__btn--prev" id="news_slider_prev" aria-label="Önceki">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button type="button" class="opportunities_news_slider__btn opportunities_news_slider__btn--next" id="news_slider_next" aria-label="Sonraki">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="opportunities_news_slider__indicators" id="news_slider_indicators">
+                <button type="button" class="opportunities_news_slider__indicator opportunities_news_slider__indicator--active" data-slide="0"></button>
+                <button type="button" class="opportunities_news_slider__indicator" data-slide="1"></button>
+                <button type="button" class="opportunities_news_slider__indicator" data-slide="2"></button>
+            </div>
+        </div>
+
+        <!-- Campaigns Grid (4 Cards) -->
+        <div class="opportunities_grid">
+            <!-- İş Bankası -->
+            <div class="campaign_card">
+                <div class="campaign_card__image">
+                    <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&h=200&fit=crop" alt="İş Bankası" />
+                    <div class="campaign_card__badges">
+                        <span class="campaign_card__tag campaign_card__tag--orange">Faizsiz Fırsat</span>
+                        <span class="campaign_card__badge campaign_card__badge--new">Yeni Müşteri</span>
+                    </div>
+                </div>
+                <div class="campaign_card__content">
+                    <div class="campaign_card__amount">55.000₺</div>
+                    <div class="campaign_card__rate">Faiz Oranı %0</div>
+                    <div class="campaign_card__description">
+                        25.000 TL'ye varan taksitli nakit avans fırsatı! 3 ay vadeli, masrafsız ve sigortasız.
+                    </div>
+                    <div class="campaign_card__footer">
+                        <div class="campaign_card__bank_logo">İŞ</div>
+                        <button type="button" class="campaign_card__apply_button">Hemen Başvur</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garanti BBVA -->
+            <div class="campaign_card">
+                <div class="campaign_card__image">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop" alt="Garanti BBVA" />
+                    <div class="campaign_card__badges">
+                        <span class="campaign_card__tag campaign_card__tag--orange">Faizsiz Fırsat</span>
+                        <span class="campaign_card__badge campaign_card__badge--new">Yeni Müşteri</span>
+                    </div>
+                </div>
+                <div class="campaign_card__content">
+                    <div class="campaign_card__amount">75.000₺</div>
+                    <div class="campaign_card__rate">Faiz Oranı %0</div>
+                    <div class="campaign_card__description">
+                        Masrafsız, sigortasız, faizsiz 50.000 TL'ye varan kredi fırsatı! 6 ay vadeli özel kampanya.
+                    </div>
+                    <div class="campaign_card__footer">
+                        <div class="campaign_card__bank_logo">GB</div>
+                        <button type="button" class="campaign_card__apply_button">Hemen Başvur</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QNB -->
+            <div class="campaign_card">
+                <div class="campaign_card__image">
+                    <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=200&fit=crop" alt="QNB" />
+                    <div class="campaign_card__badges">
+                        <span class="campaign_card__tag campaign_card__tag--orange">Faizsiz Fırsat</span>
+                        <span class="campaign_card__badge campaign_card__badge--new">Yeni Müşteri</span>
+                    </div>
+                </div>
+                <div class="campaign_card__content">
+                    <div class="campaign_card__amount">85.000₺</div>
+                    <div class="campaign_card__rate">Faiz Oranı %0</div>
+                    <div class="campaign_card__description">
+                        3 ay ötelemeli, faizsiz nakit avans! Yeni müşterilere özel 85.000 TL'ye varan limit.
+                    </div>
+                    <div class="campaign_card__footer">
+                        <div class="campaign_card__bank_logo">QNB</div>
+                        <button type="button" class="campaign_card__apply_button">Hemen Başvur</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Akbank -->
+            <div class="campaign_card">
+                <div class="campaign_card__image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop" alt="Akbank" />
+                    <div class="campaign_card__badges">
+                        <span class="campaign_card__tag campaign_card__tag--blue">Özel Fırsat</span>
+                        <span class="campaign_card__badge campaign_card__badge--new">Yeni Müşteri</span>
+                    </div>
+                </div>
+                <div class="campaign_card__content">
+                    <div class="campaign_card__amount">100.000₺</div>
+                    <div class="campaign_card__rate">Faiz Oranı %0,99</div>
+                    <div class="campaign_card__description">
+                        Mobilden Akbanklı olanlara özel %0,99 faizli, 6 ay vadeli 100.000 TL kredi fırsatı!
+                    </div>
+                    <div class="campaign_card__footer">
+                        <div class="campaign_card__bank_logo">AK</div>
+                        <button type="button" class="campaign_card__apply_button">Hemen Başvur</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('news_slider');
+            const wrapper = slider.querySelector('.opportunities_news_slider__wrapper');
+            const slides = slider.querySelectorAll('.opportunities_news_slider__slide');
+            const prevBtn = document.getElementById('news_slider_prev');
+            const nextBtn = document.getElementById('news_slider_next');
+            const indicators = slider.querySelectorAll('.opportunities_news_slider__indicator');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            let autoSlideInterval = null;
+
+            function showSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                
+                currentSlide = index;
+                wrapper.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+                
+                indicators.forEach((ind, i) => {
+                    ind.classList.toggle('opportunities_news_slider__indicator--active', i === currentSlide);
+                });
+            }
+
+            prevBtn.addEventListener('click', () => {
+                showSlide(currentSlide - 1);
+                resetAutoSlide();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                showSlide(currentSlide + 1);
+                resetAutoSlide();
+            });
+
+            indicators.forEach((ind, index) => {
+                ind.addEventListener('click', () => {
+                    showSlide(index);
+                    resetAutoSlide();
+                });
+            });
+
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(() => {
+                    showSlide(currentSlide + 1);
+                }, 5000);
+            }
+
+            function resetAutoSlide() {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+                startAutoSlide();
+            }
+
+            showSlide(0);
+            if (totalSlides > 1) {
+                startAutoSlide();
+            }
+
+            slider.addEventListener('mouseenter', () => {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                if (totalSlides > 1) {
+                    startAutoSlide();
+                }
+            });
+        });
+    </script>
+}
