@@ -1,19 +1,399 @@
-@use '../abstracts' as *;
+@use "../abstracts" as *;
 
 // ============================================
-// BİZ KİMİZ PAGE STYLES
+// BİZ KİMİZ PAGE STYLES - Modern Tasarım
 // ============================================
 
 .biz_kimiz_container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: $spacing_xl * 2 $spacing_lg;
-    background-color: #F5F7FB;
-
-    @include respond_to_max(sm) {
-        padding: $spacing_lg $spacing_md;
-    }
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 $spacing_lg;
 }
 
-// info_section stilleri kredi_rehberi.scss'ten geliyor (aynı class'ları kullanıyoruz)
+// ============================================
+// HERO SECTION
+// ============================================
 
+.biz_kimiz_hero {
+  background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+  border-radius: 24px;
+  padding: $spacing_2xl * 1.5 $spacing_xl;
+  margin-bottom: $spacing_2xl;
+  color: $text_white;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    z-index: 0;
+  }
+
+  &__content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__title {
+    font-size: $font_size_2xl;
+    font-weight: $font_weight_bold;
+    color: $text_white;
+    margin: 0 0 $spacing_lg 0;
+    line-height: $line_height_tight;
+
+    @include respond_to_max(sm) {
+      font-size: $font_size_xl;
+    }
+  }
+
+  &__subtitle {
+    font-size: $font_size_lg;
+    font-weight: $font_weight_semibold;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 0 $spacing_md 0;
+    line-height: $line_height_normal;
+
+    @include respond_to_max(sm) {
+      font-size: $font_size_base;
+    }
+  }
+
+  &__description {
+    font-size: $font_size_sm;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: $line_height_relaxed;
+    margin: 0;
+
+    @include respond_to_max(sm) {
+      font-size: $font_size_xs;
+    }
+  }
+}
+
+// ============================================
+// STATS SECTION
+// ============================================
+
+.biz_kimiz_stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing_lg;
+  margin-bottom: $spacing_2xl;
+
+  @include respond_to_max(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond_to_max(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.biz_kimiz_stats__item {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: $spacing_xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing_lg;
+  border: 1px solid rgba(0, 86, 179, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 86, 179, 0.08);
+  transition: all $transition_normal;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(46, 109, 248, 0.15);
+    border-color: rgba(46, 109, 248, 0.2);
+  }
+}
+
+.biz_kimiz_stats__icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 28px;
+    height: 28px;
+    color: $text_white;
+  }
+}
+
+.biz_kimiz_stats__content {
+  flex: 1;
+}
+
+.biz_kimiz_stats__number {
+  font-size: $font_size_xl;
+  font-weight: $font_weight_bold;
+  color: $text_primary;
+  margin: 0 0 $spacing_xs 0;
+  line-height: 1.2;
+}
+
+.biz_kimiz_stats__label {
+  font-size: $font_size_sm;
+  color: $text_secondary;
+  margin: 0;
+}
+
+// ============================================
+// CONTENT SECTIONS
+// ============================================
+
+.biz_kimiz_content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing_2xl;
+  margin-bottom: $spacing_2xl;
+}
+
+.biz_kimiz_section {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: $spacing_xl * 2;
+  border: 1px solid rgba(0, 86, 179, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 86, 179, 0.06);
+
+  @include respond_to_max(md) {
+    padding: $spacing_xl;
+    border-radius: 16px;
+  }
+
+  &--reverse {
+    .biz_kimiz_section__content {
+      @media (min-width: 769px) {
+        grid-template-columns: 1fr 1fr;
+
+        .biz_kimiz_section__image {
+          order: -1;
+        }
+      }
+    }
+  }
+}
+
+.biz_kimiz_section__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing_xl * 2;
+  align-items: center;
+
+  @include respond_to_max(md) {
+    grid-template-columns: 1fr;
+    gap: $spacing_xl;
+  }
+}
+
+.biz_kimiz_section__text {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing_lg;
+}
+
+.biz_kimiz_section__title {
+  font-size: $font_size_xl;
+  font-weight: $font_weight_bold;
+  background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 $spacing_md 0;
+  line-height: $line_height_tight;
+
+  @include respond_to_max(sm) {
+    font-size: $font_size_lg;
+  }
+}
+
+.biz_kimiz_section__description {
+  font-size: $font_size_sm;
+  color: $text_secondary;
+  line-height: $line_height_relaxed;
+  margin: 0;
+
+  @include respond_to_max(sm) {
+    font-size: $font_size_xs;
+  }
+}
+
+.biz_kimiz_section__image {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 300px;
+
+  @include respond_to_max(md) {
+    min-height: 250px;
+  }
+}
+
+.biz_kimiz_section__image_real {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+// ============================================
+// FEATURES GRID
+// ============================================
+
+.biz_kimiz_features {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing_md;
+  margin-top: $spacing_lg;
+}
+
+.biz_kimiz_features__item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing_md;
+  padding: $spacing_md;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 86, 179, 0.05) 0%,
+    rgba(46, 109, 248, 0.03) 100%
+  );
+  border: 1px solid rgba(0, 86, 179, 0.1);
+  transition: all $transition_normal;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 86, 179, 0.08) 0%,
+      rgba(46, 109, 248, 0.05) 100%
+    );
+    transform: translateX(4px);
+    border-color: rgba(46, 109, 248, 0.2);
+  }
+}
+
+.biz_kimiz_features__icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $text_white;
+  }
+}
+
+.biz_kimiz_features__text {
+  flex: 1;
+
+  h3 {
+    font-size: $font_size_sm;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin: 0 0 $spacing_xs 0;
+  }
+
+  p {
+    font-size: $font_size_xs;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+  }
+}
+
+// ============================================
+// TIMELINE
+// ============================================
+
+.biz_kimiz_timeline {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing_lg;
+  margin-top: $spacing_lg;
+  position: relative;
+  padding-left: $spacing_xl;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #0056b3 0%, #2e6df8 100%);
+    border-radius: $radius_full;
+  }
+}
+
+.biz_kimiz_timeline__item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing_lg;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -$spacing_xl - 5px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px #0056b3;
+  }
+}
+
+.biz_kimiz_timeline__year {
+  font-size: $font_size_base;
+  font-weight: $font_weight_bold;
+  background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.biz_kimiz_timeline__content {
+  flex: 1;
+
+  h3 {
+    font-size: $font_size_sm;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin: 0 0 $spacing_xs 0;
+  }
+
+  p {
+    font-size: $font_size_xs;
+    color: $text_secondary;
+    margin: 0;
+    line-height: $line_height_normal;
+  }
+}

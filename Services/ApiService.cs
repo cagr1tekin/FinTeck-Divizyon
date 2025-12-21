@@ -17,6 +17,7 @@ public class ApiService : IApiService
     private const string IDC_API = "https://api-idc.azurewebsites.net";
     private const string TURKEY_API = "https://api.turkiyeapi.dev";
     private const string DOVIZ_API = "https://doviz.dev";
+    private const string COINMARKETCAP_API = "https://pro-api.coinmarketcap.com";
     private const string DEFAULT_TOKEN = "fe7vSdh1QqqcdRzZO4HqG7TvDL5zEoF2bwKzOzAGJE67s";
     private const int TIMEOUT_SECONDS = 30;
 
@@ -1828,6 +1829,72 @@ public class ApiService : IApiService
         {
             _logger.LogError(ex, "Döviz kuru alma hatası: CurrencyCode={CurrencyCode}", currencyCode);
             return new ApiResponse<CurrencyResponseModel> { Success = false, Message = "Bir hata oluştu." };
+        }
+    }
+
+    // ============================================
+    // COINMARKETCAP API METODLARI
+    // ============================================
+
+    public async Task<ApiResponse<CryptoCurrencyResponseModel>> GetCryptoCurrencyPrices(string symbols = "BTC,ETH,BNB,SOL", string convert = "TRY")
+    {
+        try
+        {
+            _logger.LogInformation("Kripto para fiyatları alınıyor (CoinMarketCap): Symbols={Symbols}, Convert={Convert}", symbols, convert);
+
+            var apiKey = _configuration.GetValue<string>("ApiSettings:CoinMarketCapApiKey");
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                _logger.LogWarning("CoinMarketCap API key bulunamadı");
+                return new ApiResponse<CryptoCurrencyResponseModel> { Success = false, Message = "API key yapılandırılmamış." };
+            }
+
+            var url = $"{COINMARKETCAP_API}/v1/cryptocurrency/quotes/latest?symbol={symbols}&convert={convert}";
+
+            // CoinMarketCap için ayrı HttpClient (Authorization header farklı)
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            httpClient.DefaultRequestHeaders.Add("X-CMC_PRO_API_KEY", apiKey);
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode && !string.IsNullOrEmpty(responseContent))
+            {
+                try
+                {
+                    var cryptoData = JsonConvert.DeserializeObject<CryptoCurrencyResponseModel>(responseContent);
+                    
+                    if (cryptoData != null && cryptoData.Status?.ErrorCode == 0)
+                    {
+                        _logger.LogInformation("Kripto para fiyatları alındı: Symbols={Symbols}", symbols);
+                        return new ApiResponse<CryptoCurrencyResponseModel> { Success = true, Data = cryptoData };
+                    }
+                    else
+                    {
+                        _logger.LogWarning("CoinMarketCap API hatası: {Error}", cryptoData?.Status?.ErrorMessage);
+                        return new ApiResponse<CryptoCurrencyResponseModel> { 
+                            Success = false, 
+                            Message = cryptoData?.Status?.ErrorMessage ?? "Veri alınamadı." 
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Kripto para parse hatası: Response={Response}", 
+                        responseContent?.Substring(0, Math.Min(200, responseContent?.Length ?? 0)));
+                }
+            }
+
+            _logger.LogWarning("Kripto para fiyatları alınamadı: StatusCode={StatusCode}", response.StatusCode);
+            return new ApiResponse<CryptoCurrencyResponseModel> { Success = false, Message = "Kripto para fiyatları alınamadı." };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Kripto para fiyatları alma hatası: Symbols={Symbols}", symbols);
+            return new ApiResponse<CryptoCurrencyResponseModel> { Success = false, Message = "Bir hata oluştu." };
         }
     }
 }
