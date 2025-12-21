@@ -52,9 +52,29 @@ public class TcknGsmModel : PageModel
                 HttpContext.Session.SetString("CustomerId", response.Value.CustomerId.ToString());
                 HttpContext.Session.SetString("TCKN", Tckn);
                 HttpContext.Session.SetString("GSM", Gsm);
+                
+                // Müşteri adını session'a kaydet (Name ve Surname birleştirilerek)
+                var customerName = string.Empty;
+                if (!string.IsNullOrEmpty(response.Value.Name) || !string.IsNullOrEmpty(response.Value.Surname))
+                {
+                    var nameParts = new List<string>();
+                    if (!string.IsNullOrEmpty(response.Value.Name))
+                        nameParts.Add(response.Value.Name);
+                    if (!string.IsNullOrEmpty(response.Value.Surname))
+                        nameParts.Add(response.Value.Surname);
+                    customerName = string.Join(" ", nameParts);
+                }
+                
+                // Eğer ad soyad yoksa varsayılan değer kullan
+                if (string.IsNullOrEmpty(customerName))
+                {
+                    customerName = "Müşteri";
+                }
+                
+                HttpContext.Session.SetString("CustomerName", customerName);
 
-                _logger.LogInformation("TCKN-GSM doğrulama başarılı: CustomerId={CustomerId}", 
-                    response.Value.CustomerId);
+                _logger.LogInformation("TCKN-GSM doğrulama başarılı: CustomerId={CustomerId}, CustomerName={CustomerName}", 
+                    response.Value.CustomerId, customerName);
 
                 // OTP oluştur ve SMS gönder
                 try
