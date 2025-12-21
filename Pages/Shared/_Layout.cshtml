@@ -47,9 +47,16 @@
         @{
             var customerId = Context.Session.GetString("CustomerId");
             var customerName = Context.Session.GetString("CustomerName");
+            var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+            
+            // Onboarding sayfalarında (TcknGsm, OtpDogrula, KvkkOnay) henüz login olmamış sayılır
+            // Bu sayfalarda login olmayan kullanıcının header'ı gösterilmeli
+            var isOnboardingPage = currentPage?.Contains("/Onboarding/") == true;
+            
             // OTP doğrulaması yapılmışsa (CustomerName varsa) kullanıcı menüsünü göster
-            var isAuthenticated = !string.IsNullOrEmpty(customerId) && !string.IsNullOrEmpty(customerName);
-            var isHomePage = ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/";
+            // Ancak onboarding sayfalarındayken henüz login olmamış sayılır, bu yüzden false döndür
+            var isAuthenticated = !isOnboardingPage && !string.IsNullOrEmpty(customerId) && !string.IsNullOrEmpty(customerName);
+            var isHomePage = currentPage == "/Index" || currentPage == "/";
         }
         
         <div class="header__container">
