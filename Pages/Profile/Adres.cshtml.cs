@@ -12,13 +12,23 @@ namespace InteraktifKredi.Pages.Profile;
 public class JobItem
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string OccupationName { get; set; } = string.Empty;
 }
 
 public class SectorItem
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string JobGroupName { get; set; } = string.Empty;
+}
+
+public class JobListResponse
+{
+    public List<JobItem>? Value { get; set; }
+}
+
+public class SectorListResponse
+{
+    public List<SectorItem>? Value { get; set; }
 }
 
 public class AdresModel : PageModel
@@ -147,7 +157,7 @@ public class AdresModel : PageModel
         }
 
         // Select listelerini doldur
-        LoadCities();
+        await LoadCitiesAsync();
         LoadJobs();
         LoadSectors();
         LoadMaritalStatuses();
@@ -163,7 +173,7 @@ public class AdresModel : PageModel
                 if (addressResponse.Value.CityId.HasValue)
                 {
                     CityId = addressResponse.Value.CityId.Value;
-                    LoadDistricts(CityId);
+                    await LoadDistrictsAsync(CityId);
                     
                     if (addressResponse.Value.TownId.HasValue)
                     {
@@ -224,8 +234,11 @@ public class AdresModel : PageModel
         }
 
         // Select listelerini doldur
-        LoadCities();
-        LoadDistricts(CityId);
+        await LoadCitiesAsync();
+        if (CityId > 0)
+        {
+            await LoadDistrictsAsync(CityId);
+        }
         LoadJobs();
         LoadSectors();
         LoadMaritalStatuses();
@@ -304,11 +317,11 @@ public class AdresModel : PageModel
     }
 
     // AJAX Handler'ları - Edit/Save işlemleri için
-    public IActionResult OnGetGetDistricts([FromQuery] int cityId)
+    public async Task<IActionResult> OnGetGetDistrictsAsync([FromQuery] int cityId)
     {
         try
         {
-            LoadDistricts(cityId);
+            await LoadDistrictsAsync(cityId);
             var districts = Districts.Select(d => new { value = d.Value, text = d.Text }).ToList();
             return new JsonResult(new { districts = districts });
         }
@@ -360,6 +373,67 @@ public class AdresModel : PageModel
             if (result.Success)
             {
                 _logger.LogInformation("Adres kaydedildi: CustomerId={CustomerId}", addressModel.CustomerId);
+                
+                // İl ve ilçe isimlerini al ve JSON olarak session'a kaydet
+                try
+                {
+                    string cityName = string.Empty;
+                    string districtName = string.Empty;
+                    
+                    // İl ismini al
+                    var provincesResponse = await _apiService.GetProvinces();
+                    if (provincesResponse.Success && provincesResponse.Data != null)
+                    {
+                        var province = provincesResponse.Data.FirstOrDefault(p => p.Id == addressModel.CityId);
+                        cityName = province?.Name ?? string.Empty;
+                    }
+                    
+                    // İlçe ismini al
+                    var districtsResponse = await _apiService.GetDistrictsByProvinceId(addressModel.CityId);
+                    if (districtsResponse.Success && districtsResponse.Data != null)
+                    {
+                        var district = districtsResponse.Data.FirstOrDefault(d => d.Id == addressModel.TownId);
+                        districtName = district?.Name ?? string.Empty;
+                    }
+                    
+                    // Eğer API'den isim gelmediyse, mevcut listelerden al (fallback)
+                    if (string.IsNullOrEmpty(cityName) || string.IsNullOrEmpty(districtName))
+                    {
+                        await LoadCitiesAsync();
+                        await LoadDistrictsAsync(addressModel.CityId);
+                        
+                        if (string.IsNullOrEmpty(cityName))
+                        {
+                            cityName = Cities.FirstOrDefault(c => c.Value == addressModel.CityId.ToString())?.Text ?? string.Empty;
+                        }
+                        if (string.IsNullOrEmpty(districtName))
+                        {
+                            districtName = Districts.FirstOrDefault(d => d.Value == addressModel.TownId.ToString())?.Text ?? string.Empty;
+                        }
+                    }
+                    
+                    // JSON formatında session'a kaydet
+                    var addressJson = new
+                    {
+                        CustomerId = addressModel.CustomerId,
+                        CityId = addressModel.CityId,
+                        CityName = cityName,
+                        TownId = addressModel.TownId,
+                        DistrictName = districtName,
+                        Address = addressModel.Address ?? string.Empty,
+                        PostalCode = addressModel.PostalCode
+                    };
+                    
+                    var addressJsonString = JsonSerializer.Serialize(addressJson);
+                    HttpContext.Session.SetString("CustomerAddress", addressJsonString);
+                    
+                    _logger.LogInformation("Adres bilgisi session'a kaydedildi (JSON): CustomerId={CustomerId}, City={CityName}, District={DistrictName}", 
+                        addressModel.CustomerId, cityName, districtName);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Adres bilgisi session'a kaydedilemedi, ancak API'ye kayıt başarılı: {Error}", ex.Message);
+                }
             }
             else
             {
@@ -450,13 +524,46 @@ public class AdresModel : PageModel
         }
     }
 
-    private void LoadCities()
+    private async Task LoadCitiesAsync()
     {
         Cities = new List<SelectListItem>
         {
             new SelectListItem { Value = "", Text = "İl Seçiniz", Selected = CityId == 0 }
         };
 
+        try
+        {
+            var response = await _apiService.GetProvinces();
+            if (response.Success && response.Data != null && response.Data.Any())
+            {
+                foreach (var province in response.Data)
+                {
+                    Cities.Add(new SelectListItem
+                    {
+                        Value = province.Id.ToString(),
+                        Text = province.Name,
+                        Selected = CityId == province.Id
+                    });
+                }
+                _logger.LogInformation("İller TurkeyAPI'den yüklendi: Count={Count}", response.Data.Count);
+                return;
+            }
+            else
+            {
+                _logger.LogWarning("İller TurkeyAPI'den alınamadı, fallback liste kullanılıyor");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İller yükleme hatası (TurkeyAPI), fallback liste kullanılıyor");
+        }
+
+        // Fallback: Hardcoded liste (API başarısız olursa)
+        LoadCitiesFallback();
+    }
+
+    private void LoadCitiesFallback()
+    {
         var cities = new[]
         {
             "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin",
@@ -482,13 +589,48 @@ public class AdresModel : PageModel
         }
     }
 
-    private void LoadDistricts(int cityId)
+    private async Task LoadDistrictsAsync(int cityId)
     {
         Districts = new List<SelectListItem>
         {
             new SelectListItem { Value = "", Text = "İlçe Seçiniz", Selected = TownId == 0 }
         };
 
+        if (cityId <= 0) return;
+
+        try
+        {
+            var response = await _apiService.GetDistrictsByProvinceId(cityId);
+            if (response.Success && response.Data != null && response.Data.Any())
+            {
+                foreach (var district in response.Data)
+                {
+                    Districts.Add(new SelectListItem
+                    {
+                        Value = district.Id.ToString(),
+                        Text = district.Name,
+                        Selected = TownId == district.Id
+                    });
+                }
+                _logger.LogInformation("İlçeler TurkeyAPI'den yüklendi: CityId={CityId}, Count={Count}", cityId, response.Data.Count);
+                return;
+            }
+            else
+            {
+                _logger.LogWarning("İlçeler TurkeyAPI'den alınamadı: CityId={CityId}", cityId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İlçeler yükleme hatası (TurkeyAPI): CityId={CityId}", cityId);
+        }
+
+        // Fallback: Hardcoded liste (API başarısız olursa)
+        LoadDistrictsFallback(cityId);
+    }
+
+    private void LoadDistrictsFallback(int cityId)
+    {
         var districtMap = new Dictionary<int, string[]>
         {
             { 34, new[] { "Adalar", "Bakırköy", "Beşiktaş", "Beykoz", "Beyoğlu", "Çatalca", "Eyüp", "Fatih", "Gaziosmanpaşa", "Kadıköy", "Kartal", "Sarıyer", "Silivri", "Şile", "Şişli", "Üsküdar", "Zeytinburnu" } },
@@ -520,24 +662,38 @@ public class AdresModel : PageModel
 
         try
         {
-            var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "job_id.json");
+            // JSON dosyası root dizinde
+            var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "job_id.json");
+            if (!System.IO.File.Exists(jsonPath))
+            {
+                // Alternatif olarak wwwroot/data klasöründe de bak
+                jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "job_id.json");
+            }
+            
             if (System.IO.File.Exists(jsonPath))
             {
                 var jsonContent = System.IO.File.ReadAllText(jsonPath);
-                var jobs = JsonSerializer.Deserialize<List<JobItem>>(jsonContent);
-                
-                if (jobs != null)
+                var response = JsonSerializer.Deserialize<JobListResponse>(jsonContent, new JsonSerializerOptions
                 {
-                    foreach (var job in jobs)
+                    PropertyNameCaseInsensitive = true
+                });
+                
+                if (response?.Value != null)
+                {
+                    foreach (var job in response.Value)
                     {
                         Jobs.Add(new SelectListItem
                         {
                             Value = job.Id.ToString(),
-                            Text = job.Name,
+                            Text = job.OccupationName,
                             Selected = JobId == job.Id
                         });
                     }
                 }
+            }
+            else
+            {
+                _logger.LogWarning("job_id.json dosyası bulunamadı: {Path}", jsonPath);
             }
         }
         catch (Exception ex)
@@ -561,36 +717,50 @@ public class AdresModel : PageModel
     {
         Sectors = new List<SelectListItem>
         {
-            new SelectListItem { Value = "", Text = "Sektör Seçiniz", Selected = SectorId == 0 }
+            new SelectListItem { Value = "", Text = "Meslek Grubu Seçiniz", Selected = SectorId == 0 }
         };
 
         try
         {
-            var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "sektor_id.json");
+            // JSON dosyası root dizinde
+            var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "sektor_id.json");
+            if (!System.IO.File.Exists(jsonPath))
+            {
+                // Alternatif olarak wwwroot/data klasöründe de bak
+                jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "sektor_id.json");
+            }
+            
             if (System.IO.File.Exists(jsonPath))
             {
                 var jsonContent = System.IO.File.ReadAllText(jsonPath);
-                var sectors = JsonSerializer.Deserialize<List<SectorItem>>(jsonContent);
-                
-                if (sectors != null)
+                var response = JsonSerializer.Deserialize<SectorListResponse>(jsonContent, new JsonSerializerOptions
                 {
-                    foreach (var sector in sectors)
+                    PropertyNameCaseInsensitive = true
+                });
+                
+                if (response?.Value != null)
+                {
+                    foreach (var sector in response.Value)
                     {
                         Sectors.Add(new SelectListItem
                         {
                             Value = sector.Id.ToString(),
-                            Text = sector.Name,
+                            Text = sector.JobGroupName,
                             Selected = SectorId == sector.Id
                         });
                     }
                 }
             }
+            else
+            {
+                _logger.LogWarning("sektor_id.json dosyası bulunamadı: {Path}", jsonPath);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Sektör listesi yüklenemedi, varsayılan liste kullanılıyor");
+            _logger.LogWarning(ex, "Meslek grubu listesi yüklenemedi, varsayılan liste kullanılıyor");
             // Fallback: Basit liste
-            var defaultSectors = new[] { "Kamu", "Özel Sektör", "Sağlık", "Eğitim", "Finans", "Diğer" };
+            var defaultSectors = new[] { "Kamu Çalışanıyım", "Özel Sektör Çalışanıyım", "İşyerim var /Ortağım", "Emekliyim", "Diğer" };
             for (int i = 0; i < defaultSectors.Length; i++)
             {
                 Sectors.Add(new SelectListItem

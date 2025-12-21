@@ -15,6 +15,7 @@ public class ApiService : IApiService
 
     private const string CUSTOMERS_API = "https://customers-api.azurewebsites.net";
     private const string IDC_API = "https://api-idc.azurewebsites.net";
+    private const string TURKEY_API = "https://api.turkiyeapi.dev";
     private const string DEFAULT_TOKEN = "fe7vSdh1QqqcdRzZO4HqG7TvDL5zEoF2bwKzOzAGJE67s";
     private const int TIMEOUT_SECONDS = 30;
 
@@ -1620,6 +1621,143 @@ public class ApiService : IApiService
             _logger.LogWarning(ex, "Token'dan CustomerId parse edilemedi: Token={Token}", 
                 token.Substring(0, Math.Min(20, token.Length)) + "...");
             return 0;
+        }
+    }
+
+    // ============================================
+    // TURKEYAPI METODLARI
+    // ============================================
+
+    public async Task<ApiResponse<List<ProvinceModel>>> GetProvinces()
+    {
+        try
+        {
+            _logger.LogInformation("İller alınıyor (TurkeyAPI)");
+
+            var url = $"{TURKEY_API}/v1/provinces";
+
+            // TurkeyAPI public bir API, Authorization header'a gerek yok
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode && !string.IsNullOrEmpty(responseContent))
+            {
+                try
+                {
+                    // TurkeyAPI response formatı: { "status": "success", "data": [...] }
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    var provinces = new List<ProvinceModel>();
+
+                    if (apiResponse?.data != null)
+                    {
+                        var dataArray = apiResponse.data as Newtonsoft.Json.Linq.JArray;
+                        if (dataArray != null)
+                        {
+                            foreach (var item in dataArray)
+                            {
+                                var province = new ProvinceModel
+                                {
+                                    Id = item["id"]?.ToObject<int>() ?? 0,
+                                    Name = item["name"]?.ToString() ?? string.Empty
+                                };
+                                provinces.Add(province);
+                            }
+                        }
+                    }
+
+                    _logger.LogInformation("İller alındı: Count={Count}", provinces.Count);
+                    return new ApiResponse<List<ProvinceModel>> { Success = true, Data = provinces };
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "İller parse hatası: Response={Response}", 
+                        responseContent?.Substring(0, Math.Min(200, responseContent?.Length ?? 0)));
+                }
+            }
+
+            _logger.LogWarning("İller alınamadı: StatusCode={StatusCode}", response.StatusCode);
+            return new ApiResponse<List<ProvinceModel>> { Success = false, Message = "İller alınamadı." };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İller alma hatası");
+            return new ApiResponse<List<ProvinceModel>> { Success = false, Message = "Bir hata oluştu." };
+        }
+    }
+
+    public async Task<ApiResponse<List<DistrictModel>>> GetDistrictsByProvinceId(int provinceId)
+    {
+        try
+        {
+            _logger.LogInformation("İlçeler alınıyor (TurkeyAPI): ProvinceId={ProvinceId}", provinceId);
+
+            var url = $"{TURKEY_API}/v1/districts?province_id={provinceId}";
+
+            // TurkeyAPI public bir API, Authorization header'a gerek yok
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode && !string.IsNullOrEmpty(responseContent))
+            {
+                try
+                {
+                    // TurkeyAPI response formatı: { "status": "success", "data": [...] }
+                    var apiResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    var districts = new List<DistrictModel>();
+
+                    if (apiResponse?.data != null)
+                    {
+                        var dataArray = apiResponse.data as Newtonsoft.Json.Linq.JArray;
+                        if (dataArray != null)
+                        {
+                            foreach (var item in dataArray)
+                            {
+                                // API'den gelen provinceId alanını oku (camelCase)
+                                var itemProvinceId = item["provinceId"]?.ToObject<int>() ?? 
+                                                    item["province_id"]?.ToObject<int>() ?? 0;
+                                
+                                // Sadece seçilen ile ait ilçeleri al
+                                if (itemProvinceId == provinceId)
+                                {
+                                    var district = new DistrictModel
+                                    {
+                                        Id = item["id"]?.ToObject<int>() ?? 0,
+                                        Name = item["name"]?.ToString() ?? string.Empty,
+                                        ProvinceId = itemProvinceId
+                                    };
+                                    districts.Add(district);
+                                }
+                            }
+                        }
+                    }
+
+                    _logger.LogInformation("İlçeler alındı: ProvinceId={ProvinceId}, Count={Count}", provinceId, districts.Count);
+                    return new ApiResponse<List<DistrictModel>> { Success = true, Data = districts };
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "İlçeler parse hatası: Response={Response}", 
+                        responseContent?.Substring(0, Math.Min(200, responseContent?.Length ?? 0)));
+                }
+            }
+
+            _logger.LogWarning("İlçeler alınamadı: ProvinceId={ProvinceId}, StatusCode={StatusCode}", provinceId, response.StatusCode);
+            return new ApiResponse<List<DistrictModel>> { Success = false, Message = "İlçeler alınamadı." };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İlçeler alma hatası: ProvinceId={ProvinceId}", provinceId);
+            return new ApiResponse<List<DistrictModel>> { Success = false, Message = "Bir hata oluştu." };
         }
     }
 }

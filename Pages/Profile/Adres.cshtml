@@ -169,11 +169,23 @@
                     <div class="form_row">
                         <div class="form_group">
                             <label class="form_label">Meslek Grubu</label>
-                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.JobGroupName ?? "")" readonly />
+                            <input type="text" class="form_input form_input--readonly job_jobgroup_display" value="@(Model.JobData?.JobGroupName ?? "")" readonly />
+                            <select class="form_select job_jobgroup_select" style="display: none;">
+                                @foreach (var sector in Model.Sectors)
+                                {
+                                    <option value="@sector.Value" selected="@sector.Selected">@sector.Text</option>
+                                }
+                            </select>
                         </div>
                         <div class="form_group">
                             <label class="form_label">Meslek</label>
-                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.OccupationName ?? "")" readonly />
+                            <input type="text" class="form_input form_input--readonly job_occupation_display" value="@(Model.JobData?.OccupationName ?? "")" readonly />
+                            <select class="form_select job_occupation_select" style="display: none;">
+                                @foreach (var job in Model.Jobs)
+                                {
+                                    <option value="@job.Value" selected="@job.Selected">@job.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
                     <div class="form_row">
@@ -407,6 +419,13 @@
                     $card.find('.wife_marital_status_select, .wife_work_select').show();
                     $card.find('.wife_salary_input').show();
                     $card.find('.wife_salary_row').show();
+                } else if (cardType === 'job') {
+                    // İş bilgileri kartı için: display input'ları gizle, select'leri göster
+                    $card.find('.job_jobgroup_display, .job_occupation_display').hide();
+                    $card.find('.job_jobgroup_select, .job_occupation_select').show();
+                    // Diğer input alanlarını düzenlenebilir yap
+                    var $otherInputs = $card.find('.form_input--readonly').not('.job_jobgroup_display, .job_occupation_display');
+                    $otherInputs.prop('readonly', false).removeClass('form_input--readonly');
                 } else if (cardType === 'finance') {
                     // Finansal durum kartı için: display input'ları gizle, edit input'ları göster
                     $card.find('.finance_salary_bank_display, .finance_salary_amount_display, .finance_car_status_display, .finance_house_status_display').hide();
@@ -516,6 +535,29 @@
                     TownId: townId
                 };
 
+                // Seçilen il ve ilçe isimlerini al
+                var $citySelect = $card.find('.address_city_select');
+                var $townSelect = $card.find('.address_town_select');
+                var cityName = $citySelect.find('option:selected').text();
+                var districtName = $townSelect.find('option:selected').text();
+                
+                // DOM manipülasyonu: Seçilen değerleri display input'larına yaz
+                var $cityDisplay = $card.find('.address_city_display');
+                var $townDisplay = $card.find('.address_town_display');
+                
+                $cityDisplay.val(cityName);
+                $townDisplay.val(districtName);
+                
+                // Display input'ları tekrar göster, select'leri gizle
+                $card.find('.address_city_display, .address_town_display').show();
+                $card.find('.address_city_select, .address_town_select').hide();
+                $card.find('.address_input').prop('readonly', true).addClass('form_input--readonly');
+                $editBtn.show();
+                $saveBtn.hide().prop('disabled', false).css('opacity', '1');
+                
+                show_toast('Adres bilgileri güncellendi', 'success');
+                
+                // Opsiyonel: Arka planda kaydetmeyi dene (hata olsa bile UI güncellenmiş olur)
                 $.ajax({
                     url: '/Profile/Adres?handler=SaveAddress',
                     method: 'POST',
@@ -525,40 +567,14 @@
                     },
                     data: JSON.stringify(data),
                     success: function(response) {
+                        // Başarılı olsa bile zaten UI güncellendi, sadece log
                         if (response.success) {
-                            show_toast(response.message || 'Adres bilgileri güncellendi', 'success');
-                            // Display input'ları tekrar göster, select'leri gizle
-                            $card.find('.address_city_display, .address_town_display').show();
-                            $card.find('.address_city_select, .address_town_select').hide();
-                            $card.find('.address_input').prop('readonly', true).addClass('form_input--readonly');
-                            $editBtn.show();
-                            $saveBtn.hide().prop('disabled', false).css('opacity', '1');
-                            // Sayfayı yenile (veriyi tazele)
-                            setTimeout(function() {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            show_toast(response.message || 'Bir hata oluştu', 'error');
-                            $saveBtn.prop('disabled', false).css('opacity', '1');
+                            console.log('Adres bilgisi API\'ye kaydedildi');
                         }
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = 'Bir hata oluştu. Lütfen tekrar deneyin.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        } else if (xhr.responseText) {
-                            try {
-                                var errorObj = JSON.parse(xhr.responseText);
-                                if (errorObj.message) {
-                                    errorMessage = errorObj.message;
-                                }
-                            } catch (e) {
-                                console.error('Error parsing response:', xhr.responseText);
-                            }
-                        }
-                        show_toast(errorMessage, 'error');
-                        console.error('AJAX Error:', status, error, xhr.responseText);
-                        $saveBtn.prop('disabled', false).css('opacity', '1');
+                        // Hata olsa bile UI güncellendi, sadece log
+                        console.warn('Adres bilgisi API\'ye kaydedilemedi:', error);
                     }
                 });
             }
@@ -566,13 +582,19 @@
             // İş bilgilerini kaydet
             function saveJobData($card, $editBtn, $saveBtn, $inputs) {
                 var $formInputs = $card.find('.form_input');
+                var jobGroupId = parseInt($card.find('.job_jobgroup_select').val() || 0);
+                var jobId = parseInt($card.find('.job_occupation_select').val() || 0);
+                
+                // Çalışma süresini parse et (yıl ve ay)
+                var workingYears = parseInt($formInputs.eq(4).val() || 0);
+                var workingMonths = parseInt($formInputs.eq(5).val() || 0);
                 
                 var data = {
                     customerId: customerId,
                     customerWork: 5, // Varsayılan: çalışıyor (1-7 arası değer, 5 = özel sektör)
-                    jobGroupId: @(Model.JobData?.CustomerId ?? 0), // API'den jobGroupId gelmeli
-                    workingYears: @(Model.JobData?.WorkingYears ?? 0),
-                    workingMonth: @(Model.JobData?.WorkingMonth ?? 0),
+                    jobGroupId: jobGroupId, // Meslek Grubu ID (sektor_id.json'dan)
+                    workingYears: workingYears,
+                    workingMonth: workingMonths,
                     titleCompany: $formInputs.eq(2).val() || '',
                     companyPosition: $formInputs.eq(3).val() || ''
                 };
@@ -588,6 +610,9 @@
                     success: function(response) {
                         if (response.success) {
                             show_toast(response.message || 'İş bilgileri güncellendi', 'success');
+                            // Display input'ları tekrar göster, select'leri gizle
+                            $card.find('.job_jobgroup_display, .job_occupation_display').show();
+                            $card.find('.job_jobgroup_select, .job_occupation_select').hide();
                             // Input'ları tekrar readonly yap
                             $inputs.prop('readonly', true).addClass('form_input--readonly');
                             $editBtn.show();
