@@ -42,7 +42,10 @@
     
     <header class="header" role="banner">
         @{
-            var isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("CustomerId"));
+            var customerId = Context.Session.GetString("CustomerId");
+            var customerName = Context.Session.GetString("CustomerName");
+            // OTP doğrulaması yapılmışsa (CustomerName varsa) kullanıcı menüsünü göster
+            var isAuthenticated = !string.IsNullOrEmpty(customerId) && !string.IsNullOrEmpty(customerName);
             var isHomePage = ViewContext.RouteData.Values["page"]?.ToString() == "/Index" || ViewContext.RouteData.Values["page"]?.ToString() == "/";
         }
         
@@ -67,11 +70,11 @@
             
             @if (isAuthenticated)
             {
-                <div class="header__user">
+                <div class="header__user" id="header_user_container">
                     <div class="header__user__avatar" id="user_menu_toggle" aria-label="Kullanıcı menüsü">
-                        <span id="user_avatar_initial">K</span>
+                        <span id="user_avatar_initial"></span>
                     </div>
-                    <span class="header__user__name" id="user_name">Kullanıcı</span>
+                    <span class="header__user__name" id="user_name"></span>
                     <div class="header__user__menu" id="user_menu">
                         <a href="/Profile/Adres" class="header__user__menu_item">Profil</a>
                         <a href="/Logout" class="header__user__menu_item header__user__menu_item--danger">Çıkış Yap</a>
@@ -185,16 +188,14 @@
         });
 
         function loadUserInfo() {
-            // Session'dan kullanıcı bilgilerini al (örnek)
-            var customerName = '@(Context.Session.GetString("CustomerName") ?? "Kullanıcı")';
-            var tckn = '@(Context.Session.GetString("TCKN") ?? "")';
+            // Session'dan kullanıcı bilgilerini al
+            var customerName = '@(Context.Session.GetString("CustomerName") ?? "")';
             
-            if (customerName && customerName !== 'Kullanıcı') {
-                $('#user_name').text(customerName);
-                $('#user_avatar_initial').text(customerName.charAt(0).toUpperCase());
-            } else if (tckn) {
-                // TCKN'dan isim çıkarılamaz, bu yüzden sadece baş harf göster
-                $('#user_avatar_initial').text('M');
+            // OTP doğrulaması yapılmışsa (CustomerName varsa) kullanıcı adını göster
+            if (customerName && customerName.trim() !== '') {
+                $('#user_name').text(customerName.trim());
+                var firstChar = customerName.trim().charAt(0).toUpperCase();
+                $('#user_avatar_initial').text(firstChar);
             }
         }
     </script>

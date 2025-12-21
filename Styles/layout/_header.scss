@@ -105,6 +105,26 @@
             display: none;
         }
 
+        // OTP doğrulaması yapılmamışsa devre dışı
+        &--disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            .header__user__avatar {
+                cursor: not-allowed;
+                pointer-events: none;
+
+                &:hover {
+                    border-color: $border_light;
+                }
+            }
+
+            .header__user__name {
+                color: $text_secondary;
+            }
+        }
+
         &__avatar {
             width: 36px;
             height: 36px;
