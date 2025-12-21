@@ -679,9 +679,11 @@
 
 .superapp_services {
     width: 1000px;
+    max-width: 100%;
     overflow: hidden; // Taşan scrollbar'ı gizlemek için dış katman
     padding: 10px 0 20px 0;
     margin-bottom: $spacing_xl;
+    box-sizing: border-box;
 
     &__container {
         display: flex;
@@ -698,6 +700,7 @@
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch; // Mobil akıcılığı
         width: 100%;
+        box-sizing: border-box;
 
         // Scrollbar Gizleme
         &::-webkit-scrollbar { 
@@ -705,6 +708,13 @@
         }
         -ms-overflow-style: none;
         scrollbar-width: none;
+    }
+    
+    // Mobil için önceden hazır - daha sonra media query ile override edilecek
+    @media screen and (max-width: 992px) {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow: visible !important;
     }
 }
 
@@ -2205,41 +2215,194 @@
 }
 
 // ============================================
-// MOBILE RESPONSIVE PATCH (992px ve altı)
+// MOBILE RESPONSIVE PATCH (992px ve altı) - EN SON EKLENEN (YÜKSEK ÖNCELİK)
 // ============================================
 
-@media (max-width: 992px) {
+// 992px ve altı için agresif mobil düzenlemeler
+@media screen and (max-width: 992px) {
     
-    // 1. GENEL LAYOUT DÜZELTMESİ
+    // 1. GENEL LAYOUT DÜZELTMESİ - ÇOK ÖNEMLİ!
     .dashboard_container {
         width: 100% !important;
+        max-width: 100vw !important;
         padding: 16px !important;
-        margin-left: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .dashboard_grid {
+        display: grid !important;
         grid-template-columns: 1fr !important;
-        gap: $spacing_lg !important;
-        margin-left: 0 !important;
+        gap: $spacing_md !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .dashboard_main {
         width: 100% !important;
+        max-width: 100% !important;
         padding: 0 !important;
-        margin-left: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .dashboard_sidebar {
         position: relative !important;
         top: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
+        gap: $spacing_sm !important;
+        order: 1 !important;
+        box-sizing: border-box !important;
+        
+        // Mobilde sidebar kompakt - sadece önemli widget'lar göster
+        .user_profile_widget {
+            padding: 12px !important;
+            margin: 0 !important;
+            
+            // Dijital kartı küçült
+            .digital_wallet_card {
+                min-height: auto !important;
+                padding: 12px !important;
+                margin-top: 8px !important;
+                
+                &__balance_amount {
+                    font-size: 1.2rem !important;
+                }
+                
+                &__holder_name {
+                    font-size: 0.75rem !important;
+                }
+                
+                &__chip {
+                    width: 40px !important;
+                    height: 32px !important;
+                }
+            }
+            
+            // Son işlemler listesini gizle (mobilde yer kaplıyor)
+            .digital_wallet_transactions {
+                display: none !important;
+            }
+        }
+        
+        // Profil özeti widget'ını gizle (mobilde çok yer kaplıyor)
+        .profile_summary_widget {
+            display: none !important;
+        }
+        
+        // Piyasa özeti widget'ını gizle (mobilde çok yer kaplıyor)
+        .market_widget {
+            display: none !important;
+        }
+        
+        // Finansal koç kartını küçült
+        .advisor_card {
+            padding: $spacing_sm !important;
+            margin: 0 !important;
+            
+            &__text {
+                font-size: $font_size_xs !important;
+            }
+        }
+    }
+    
+    // Dashboard main'i sidebar'dan sonra göster
+    .dashboard_main {
+        order: 2 !important;
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+    }
+    
+    // Parent container'ları da kontrol et - overflow engelle
+    .dashboard_container,
+    .dashboard_grid {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+    
+    // Body ve HTML overflow kontrolü (global)
+    body,
+    html {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
     }
 
-    // 2. DİJİTAL CÜZDAN WİDGET
-    .digital_wallet_card {
-        min-height: auto !important;
-        padding: 20px !important;
-        margin-top: 16px !important;
+    // 2. HİZMET MENÜSÜ SLIDER (Yatay Kaydırma Düzeltmesi) - ÇOK ÖNEMLİ!
+    .superapp_services {
+        width: 100% !important;
+        max-width: 100vw !important;
+        min-width: 0 !important;
+        padding: 10px 0 20px 0 !important;
+        margin: 0 0 $spacing_md 0 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        
+        &__container {
+            display: flex !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            padding: 5px 16px 15px 16px !important; // Mobilde sağ/sol padding
+            scroll-behavior: smooth !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            gap: 10px !important;
+            position: relative !important;
+            
+            // Scrollbar gizleme
+            &::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+            }
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+    }
+    
+    // Parent container'ları da kontrol et
+    .dashboard_main,
+    .dashboard_container {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+    
+    .superapp_service_card {
+        flex: 0 0 auto !important; // Sıkışmasın
+        min-width: 110px !important; // Minimum genişlik
+        width: 110px !important; // Mobilde küçük
+        height: 130px !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        
+        &--featured {
+            width: 150px !important; // Featured kart biraz daha geniş
+            min-width: 150px !important;
+        }
+        
+        &__icon {
+            width: 44px !important;
+            height: 44px !important;
+            margin-bottom: 6px !important;
+            
+            i {
+                font-size: 1.4rem !important;
+            }
+        }
+        
+        &__title {
+            font-size: 0.65rem !important;
+            line-height: 1.2 !important;
+        }
     }
 
     // 3. HIZLI İŞLEMLER VE KARTLAR
@@ -2255,32 +2418,76 @@
     // 4. ÖN ONAYLI FIRSATLAR
     .offers_grid {
         grid-template-columns: 1fr !important;
+        gap: $spacing_md !important;
+    }
+    
+    .offer_card {
+        padding: $spacing_md !important;
+        
+        &__campaign {
+            font-size: $font_size_sm !important;
+        }
+        
+        &__rate {
+            font-size: $font_size_xs !important;
+        }
     }
 
     // 5. MONEY FLOW GRAFİĞİ
     .money_flow_widget {
         padding: 16px !important;
+        border-radius: 16px !important;
+        
+        &__title {
+            font-size: $font_size_lg !important;
+        }
+        
+        &__subtitle {
+            font-size: $font_size_xs !important;
+        }
+        
+        &__chart {
+            height: 250px !important; // Mobilde biraz daha küçük
+            margin-top: 24px !important;
+        }
     }
     
     .money_flow_summary {
         grid-template-columns: 1fr !important;
         gap: 12px !important;
+        margin-bottom: 24px !important;
+        
+        &__card {
+            padding: 16px !important;
+        }
+        
+        &__value {
+            font-size: $font_size_xl !important;
+        }
+        
+        &__badge {
+            font-size: 0.75rem !important;
+        }
     }
 
     // 6. KREDİ NOTU KARTI
     .credit_note_card {
         padding: $spacing_lg !important;
         
+        &__title {
+            font-size: $font_size_base !important;
+        }
+        
         &__score {
             font-size: 3rem !important;
         }
         
         &__actions {
-            flex-direction: column;
-            gap: $spacing_sm;
+            flex-direction: column !important;
+            gap: $spacing_sm !important;
             
             .credit_note_card__button {
-                width: 100%;
+                width: 100% !important;
             }
         }
     }
@@ -2289,6 +2496,7 @@
     .payment_item {
         flex-wrap: wrap;
         gap: $spacing_sm;
+        padding: $spacing_md !important;
         
         &__amount {
             margin: 0 !important;
@@ -2321,6 +2529,42 @@
             position: static !important;
             margin-top: $spacing_xs;
         }
+    }
+    
+    // 10. GRAFİK KONTEYNERLERİ
+    .chart_container {
+        min-width: 100% !important;
+        overflow-x: auto !important;
+        
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+        }
+    }
+    
+    // 11. KARTLAR GENEL PADDING AZALTMA
+    .card,
+    .offer_card,
+    .advisor_card,
+    .timeline_card {
+        padding: $spacing_md !important;
+    }
+    
+    // 12. FONT BOYUTLARI KÜÇÜLTME
+    h1, .big_amount {
+        font-size: 1.5rem !important;
+    }
+    
+    h2, .offers_section__title {
+        font-size: $font_size_lg !important;
+    }
+    
+    h3 {
+        font-size: $font_size_base !important;
     }
 }
 
