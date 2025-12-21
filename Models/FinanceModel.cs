@@ -41,7 +41,9 @@ public class FinanceModel
     /// </summary>
     public bool? HouseStatus { get; set; }
 
-    // Legacy properties (geriye dönük uyumluluk için)
-    public int WorkSector { get; set; }
+    /// <summary>
+    /// Çalışma sektörü (POST için gerekli)
+    /// </summary>
+    public int? WorkSector { get; set; }
 }
 

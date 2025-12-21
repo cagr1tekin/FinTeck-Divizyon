@@ -94,8 +94,12 @@ public class AddressInfo
 public class JobProfileRequest
 {
     public long CustomerId { get; set; }
-    public int JobId { get; set; }
-    public int SectorId { get; set; }
+    public int CustomerWork { get; set; }
+    public int JobGroupId { get; set; }
+    public int WorkingYears { get; set; }
+    public int WorkingMonth { get; set; }
+    public string TitleCompany { get; set; } = string.Empty;
+    public string CompanyPosition { get; set; } = string.Empty;
 }
 
 public class IncomeInfoRequest

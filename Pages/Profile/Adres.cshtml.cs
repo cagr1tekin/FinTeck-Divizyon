@@ -171,6 +171,17 @@ public class AdresModel : PageModel
                     }
                 }
             }
+            else
+            {
+                // API'den veri gelmediyse boş AddressInfo oluştur
+                AddressData = new AddressInfo
+                {
+                    CustomerId = customerId,
+                    CityId = null,
+                    TownId = null,
+                    Address = string.Empty
+                };
+            }
 
             // Meslek bilgileri
             var jobResponse = await _apiService.GetJobInfo(customerId);
@@ -247,8 +258,12 @@ public class AdresModel : PageModel
             var jobRequest = new JobProfileRequest
             {
                 CustomerId = customerId,
-                JobId = JobId,
-                SectorId = SectorId
+                CustomerWork = 5, // Varsayılan: çalışıyor (5 = özel sektör)
+                JobGroupId = JobId,
+                WorkingYears = WorkingYears,
+                WorkingMonth = WorkingMonths,
+                TitleCompany = CompanyName ?? string.Empty,
+                CompanyPosition = Position ?? string.Empty
             };
             await _apiService.SaveJobProfile(jobRequest);
 
@@ -285,6 +300,153 @@ public class AdresModel : PageModel
             _logger.LogError(ex, "Profil bilgisi kaydetme hatası");
             ErrorMessage = "Bir hata oluştu. Lütfen tekrar deneyin.";
             return Page();
+        }
+    }
+
+    // AJAX Handler'ları - Edit/Save işlemleri için
+    public IActionResult OnGetGetDistricts([FromQuery] int cityId)
+    {
+        try
+        {
+            LoadDistricts(cityId);
+            var districts = Districts.Select(d => new { value = d.Value, text = d.Text }).ToList();
+            return new JsonResult(new { districts = districts });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İlçe listesi yükleme hatası");
+            return new JsonResult(new { districts = new List<object>() });
+        }
+    }
+
+    public async Task<IActionResult> OnPostSaveAddressAsync([FromBody] AddressModel addressModel)
+    {
+        try
+        {
+            // Session kontrolü
+            var customerIdStr = HttpContext.Session.GetString("CustomerId");
+            if (string.IsNullOrEmpty(customerIdStr) || !long.TryParse(customerIdStr, out var sessionCustomerId))
+            {
+                _logger.LogWarning("Adres kaydetme: Session'da CustomerId yok");
+                return new JsonResult(new { success = false, message = "Oturum süresi dolmuş. Lütfen tekrar giriş yapın." });
+            }
+
+            // Model validation
+            if (addressModel == null)
+            {
+                _logger.LogWarning("Adres kaydetme: Model null");
+                return new JsonResult(new { success = false, message = "Geçersiz veri gönderildi." });
+            }
+
+            // CustomerId'yi session'dan al (güvenlik için)
+            addressModel.CustomerId = sessionCustomerId;
+
+            // Validation
+            if (addressModel.CityId <= 0)
+            {
+                return new JsonResult(new { success = false, message = "Lütfen bir il seçiniz." });
+            }
+
+            if (addressModel.TownId <= 0)
+            {
+                return new JsonResult(new { success = false, message = "Lütfen bir ilçe seçiniz." });
+            }
+
+            _logger.LogInformation("Adres kaydediliyor: CustomerId={CustomerId}, CityId={CityId}, TownId={TownId}, Address={Address}", 
+                addressModel.CustomerId, addressModel.CityId, addressModel.TownId, addressModel.Address);
+
+            var result = await _apiService.SaveAddress(addressModel);
+            
+            if (result.Success)
+            {
+                _logger.LogInformation("Adres kaydedildi: CustomerId={CustomerId}", addressModel.CustomerId);
+            }
+            else
+            {
+                _logger.LogWarning("Adres kaydedilemedi: CustomerId={CustomerId}, Message={Message}", 
+                    addressModel.CustomerId, result.Message);
+            }
+
+            return new JsonResult(new { success = result.Success, message = result.Message ?? "Adres bilgileri güncellendi" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Adres kaydetme hatası: CustomerId={CustomerId}", addressModel?.CustomerId ?? 0);
+            return new JsonResult(new { success = false, message = "Bir hata oluştu: " + ex.Message });
+        }
+    }
+
+    public async Task<IActionResult> OnPostSaveJobAsync([FromBody] JobProfileRequest jobRequest)
+    {
+        try
+        {
+            var result = await _apiService.SaveJobProfile(jobRequest);
+            return new JsonResult(new { success = result.Success, message = result.Message ?? "İş bilgileri güncellendi" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "İş bilgileri kaydetme hatası");
+            return new JsonResult(new { success = false, message = "Bir hata oluştu" });
+        }
+    }
+
+    public async Task<IActionResult> OnPostSaveWifeAsync([FromBody] WifeInfoModel wifeInfo)
+    {
+        try
+        {
+            // Session kontrolü
+            var customerIdStr = HttpContext.Session.GetString("CustomerId");
+            if (string.IsNullOrEmpty(customerIdStr) || !long.TryParse(customerIdStr, out var sessionCustomerId))
+            {
+                _logger.LogWarning("Eş bilgileri kaydetme: Session'da CustomerId yok");
+                return new JsonResult(new { success = false, message = "Oturum süresi dolmuş. Lütfen tekrar giriş yapın." });
+            }
+
+            // Model validation
+            if (wifeInfo == null)
+            {
+                _logger.LogWarning("Eş bilgileri kaydetme: Model null");
+                return new JsonResult(new { success = false, message = "Geçersiz veri gönderildi." });
+            }
+
+            // CustomerId'yi session'dan al (güvenlik için)
+            wifeInfo.CustomerId = sessionCustomerId;
+
+            _logger.LogInformation("Eş bilgileri kaydediliyor: CustomerId={CustomerId}, MaritalStatus={MaritalStatus}, WorkWife={WorkWife}, WifeSalaryAmount={WifeSalaryAmount}", 
+                wifeInfo.CustomerId, wifeInfo.MaritalStatus, wifeInfo.WorkWife, wifeInfo.WifeSalaryAmount);
+
+            var result = await _apiService.SaveWifeInfo(wifeInfo);
+            
+            if (result.Success)
+            {
+                _logger.LogInformation("Eş bilgileri kaydedildi: CustomerId={CustomerId}", wifeInfo.CustomerId);
+            }
+            else
+            {
+                _logger.LogWarning("Eş bilgileri kaydedilemedi: CustomerId={CustomerId}, Message={Message}", 
+                    wifeInfo.CustomerId, result.Message);
+            }
+
+            return new JsonResult(new { success = result.Success, message = result.Message ?? "Eş bilgileri güncellendi" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Eş bilgileri kaydetme hatası: CustomerId={CustomerId}", wifeInfo?.CustomerId ?? 0);
+            return new JsonResult(new { success = false, message = "Bir hata oluştu: " + ex.Message });
+        }
+    }
+
+    public async Task<IActionResult> OnPostSaveFinanceAsync([FromBody] FinanceModel financeModel)
+    {
+        try
+        {
+            var result = await _apiService.SaveFinanceAssets(financeModel);
+            return new JsonResult(new { success = result.Success, message = result.Message ?? "Finansal bilgiler güncellendi" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Finansal bilgiler kaydetme hatası");
+            return new JsonResult(new { success = false, message = "Bir hata oluştu" });
         }
     }
 

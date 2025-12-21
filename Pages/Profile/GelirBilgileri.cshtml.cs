@@ -71,7 +71,7 @@ public class GelirBilgileriModel : PageModel
                 var financeInfo = response.Value;
                 SalaryAmount = financeInfo.SalaryAmount ?? 0;
                 SalaryBank = financeInfo.SalaryBank ?? string.Empty;
-                WorkSector = financeInfo.WorkSector;
+                WorkSector = financeInfo.WorkSector ?? 0;
                 CarStatus = financeInfo.CarStatus ?? false;
                 HouseStatus = financeInfo.HouseStatus ?? false;
             }
