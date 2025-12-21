@@ -31,9 +31,6 @@ public class IndexModel : PageModel
     public CurrencyResponseModel? AudCurrencyData { get; set; }
     public CurrencyResponseModel? DkkCurrencyData { get; set; }
     public CurrencyResponseModel? CadCurrencyData { get; set; }
-    
-    // Crypto currency data
-    public CryptoCurrencyResponseModel? CryptoCurrencyData { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
