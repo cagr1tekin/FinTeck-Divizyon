@@ -107,7 +107,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="12" y1="1" x2="12" y2="23"/>
                                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                                </svg>
+                            </svg>
                             </div>
                             <div class="digital_wallet_transaction__info">
                                 <div class="digital_wallet_transaction__name">Kredi Başvurusu</div>
@@ -184,36 +184,70 @@
                     </div>
                 </div>
                 <div class="market_widget__body">
-                    <div class="market_item" data-symbol="USDTRY">
+                    <!-- USD/TRY -->
+                    <div class="market_item" data-symbol="USDTRY" data-currency-code="USD">
                         <div class="market_item__label">USD/TRY</div>
-                        <div class="market_item__value" data-price="34.15">34.15</div>
-                        <div class="market_item__change market_item__change--up">
+                        <div class="market_item__value" data-price="@(Model.UsdCurrencyData?.USDTRY?.ToString("F2") ?? "0.00")">
+                            @(Model.UsdCurrencyData?.USDTRY?.ToString("N2") ?? "-")
+                        </div>
+                        <div class="market_item__change market_item__change--neutral">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="18 15 12 9 6 15"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="market_item" data-symbol="EURTRY">
+                    <!-- EUR/TRY -->
+                    <div class="market_item" data-symbol="EURTRY" data-currency-code="EUR">
                         <div class="market_item__label">EUR/TRY</div>
-                        <div class="market_item__value" data-price="36.80">36.80</div>
-                        <div class="market_item__change market_item__change--down">
+                        <div class="market_item__value" data-price="@(Model.EurCurrencyData?.EURTRY?.ToString("F2") ?? "0.00")">
+                            @(Model.EurCurrencyData?.EURTRY?.ToString("N2") ?? "-")
+                        </div>
+                        <div class="market_item__change market_item__change--neutral">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="market_item" data-symbol="GOLD">
-                        <div class="market_item__label">GRAM ALTIN</div>
-                        <div class="market_item__value" data-price="2950">2950</div>
-                        <div class="market_item__change market_item__change--up">
+                    <!-- TRY/TRY (1.00 - base currency) -->
+                    <div class="market_item" data-symbol="TRYTRY" data-currency-code="TRY">
+                        <div class="market_item__label">TRY/TRY</div>
+                        <div class="market_item__value" data-price="1.00">1.00</div>
+                        <div class="market_item__change market_item__change--neutral">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="18 15 12 9 6 15"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="market_item" data-symbol="BIST100">
-                        <div class="market_item__label">BIST 100</div>
-                        <div class="market_item__value" data-price="9800">9800</div>
+                    <!-- AUD/TRY -->
+                    <div class="market_item" data-symbol="AUDTRY" data-currency-code="AUD">
+                        <div class="market_item__label">AUD/TRY</div>
+                        <div class="market_item__value" data-price="@(Model.TryCurrencyData?.AUDTRY?.ToString("F2") ?? "0.00")">
+                            @(Model.TryCurrencyData?.AUDTRY?.ToString("N2") ?? "-")
+                        </div>
+                        <div class="market_item__change market_item__change--neutral">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- DKK/TRY -->
+                    <div class="market_item" data-symbol="DKKTRY" data-currency-code="DKK">
+                        <div class="market_item__label">DKK/TRY</div>
+                        <div class="market_item__value" data-price="@(Model.TryCurrencyData?.DKKTRY?.ToString("F2") ?? "0.00")">
+                            @(Model.TryCurrencyData?.DKKTRY?.ToString("N2") ?? "-")
+                        </div>
+                        <div class="market_item__change market_item__change--neutral">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- CAD/TRY -->
+                    <div class="market_item" data-symbol="CADTRY" data-currency-code="CAD">
+                        <div class="market_item__label">CAD/TRY</div>
+                        <div class="market_item__value" data-price="@(Model.TryCurrencyData?.CADTRY?.ToString("F2") ?? "0.00")">
+                            @(Model.TryCurrencyData?.CADTRY?.ToString("N2") ?? "-")
+                        </div>
                         <div class="market_item__change market_item__change--neutral">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
@@ -443,9 +477,9 @@
                         </div>
                         <div class="usage_area_card">
                             <div class="usage_area_card__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                                </svg>
+                        </svg>
                             </div>
                             <span class="usage_area_card__label">Konut Kredisi</span>
                         </div>
@@ -654,8 +688,8 @@
                         </div>
                         <div class="superapp_service_card__content">
                             <h3 class="superapp_service_card__title">Haftalık Bülten</h3>
-                        </div>
-                    </a>
+                    </div>
+                </a>
 
                     <!-- Video Rehber -->
                     <a href="#" class="superapp_service_card">
@@ -691,7 +725,7 @@
                         <div class="money_flow_summary__icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="18 15 12 9 6 15"/>
-                            </svg>
+                        </svg>
                         </div>
                         <div class="money_flow_summary__content">
                             <h3 class="money_flow_summary__label">Toplam Gelir</h3>
@@ -828,7 +862,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -958,56 +992,96 @@
                     }
                 });
             }
-            // Canlı Piyasa Simülasyonu
-            function updateMarketPrices() {
-                $('.market_item').each(function() {
-                    var $item = $(this);
-                    var $value = $item.find('.market_item__value');
-                    var $change = $item.find('.market_item__change');
-                    var currentPrice = parseFloat($value.data('price')) || parseFloat($value.text().replace(/[^\d.]/g, ''));
-                    
-                    // Rastgele değişim (-0.05 ile +0.05 arası)
-                    var change = (Math.random() * 0.1 - 0.05);
-                    var newPrice = currentPrice + change;
-                    
-                    // Yeni fiyatı güncelle (2 ondalık basamak)
-                    newPrice = Math.round(newPrice * 100) / 100;
-                    $value.data('price', newPrice);
-                    
-                    // Fiyatı göster (ondalık kısmı kontrol et)
-                    var displayPrice = newPrice % 1 === 0 ? newPrice.toFixed(0) : newPrice.toFixed(2);
-                    $value.text(displayPrice);
-                    
-                    // Değişim yönünü belirle ve ikonu güncelle
-                    var isUp = change > 0.01;
-                    var isDown = change < -0.01;
+            // Currency API'den veri çekme fonksiyonu - TRY base endpoint'inden tüm kurları tek seferde al
+            function fetchAllCurrencyRates() {
+                return $.ajax({
+                    url: '/Api/CurrencyRate?currencyCode=TRY',
+                    method: 'GET',
+                    timeout: 10000, // 10 saniye timeout
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var currencyData = response.data;
+                            
+                            // Tüm currency'leri tek response'dan güncelle
+                            updateCurrencyDisplay('USD', currencyData);
+                            updateCurrencyDisplay('EUR', currencyData);
+                            updateCurrencyDisplay('TRY', currencyData);
+                            updateCurrencyDisplay('AUD', currencyData);
+                            updateCurrencyDisplay('DKK', currencyData);
+                            updateCurrencyDisplay('CAD', currencyData);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.warn('Currency rates alınamadı:', error);
+                    }
+                });
+            }
+
+            // Currency display güncelleme
+            function updateCurrencyDisplay(currencyCode, currencyData) {
+                var symbol = currencyCode.toUpperCase() + 'TRY';
+                var $item = $('.market_item[data-currency-code="' + currencyCode.toUpperCase() + '"]');
+                
+                if ($item.length === 0) return;
+                
+                var $value = $item.find('.market_item__value');
+                var $change = $item.find('.market_item__change');
+                var oldPrice = parseFloat($value.data('price')) || 0;
+                var newPrice = currencyData[symbol];
+                
+                // TRY/TRY için özel durum
+                if (currencyCode.toUpperCase() === 'TRY') {
+                    newPrice = 1.00;
+                }
+                
+                if (!newPrice || isNaN(newPrice)) return;
+                
+                // Fiyatı güncelle
+                $value.data('price', newPrice);
+                $value.text(newPrice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                
+                // Değişim yönünü belirle (sadece eski fiyat varsa)
+                if (oldPrice > 0 && oldPrice !== newPrice) {
+                    var change = newPrice - oldPrice;
+                    var isUp = change > 0.001;
+                    var isDown = change < -0.001;
                     var isNeutral = !isUp && !isDown;
                     
-                    // Klasları temizle
                     $change.removeClass('market_item__change--up market_item__change--down market_item__change--neutral');
                     
                     if (isUp) {
                         $change.addClass('market_item__change--up');
                         $change.html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>');
                         $value.addClass('market_item__value--flash-up');
+                        setTimeout(function() {
+                            $value.removeClass('market_item__value--flash-up');
+                        }, 600);
                     } else if (isDown) {
                         $change.addClass('market_item__change--down');
                         $change.html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
                         $value.addClass('market_item__value--flash-down');
+                        setTimeout(function() {
+                            $value.removeClass('market_item__value--flash-down');
+                        }, 600);
                     } else {
                         $change.addClass('market_item__change--neutral');
                         $change.html('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>');
                     }
-                    
-                    // Flash animasyonunu kaldır (animasyon bittikten sonra)
-                    setTimeout(function() {
-                        $value.removeClass('market_item__value--flash-up market_item__value--flash-down');
-                    }, 600);
-                });
+                }
             }
-            
-            // Her 3 saniyede bir güncelle
-            setInterval(updateMarketPrices, 3000);
+
+            // Sayfa yüklendiğinde currency verilerini çek (client-side)
+            $(document).ready(function() {
+                // İlk yükleme - TRY base endpoint'inden tüm kurları tek seferde çek
+                fetchAllCurrencyRates();
+                
+                // Her 60 saniyede bir güncelle
+                // NOT: doviz.dev API'si TCMB verilerini kullanıyor ve genellikle günlük güncelleniyor
+                // 60 saniye cache için yeterli, gerçek güncelleme sıklığı daha az olabilir
+                setInterval(function() {
+                    fetchAllCurrencyRates();
+                }, 30000); // 60 saniye (1 dakika)
+            });
 
             // Örnek Rapor Modal
             var $sampleReportBtn = $('#sample_report_btn');

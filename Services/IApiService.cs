@@ -31,4 +31,7 @@ public interface IApiService
     // TurkeyAPI metodları
     Task<ApiResponse<List<ProvinceModel>>> GetProvinces();
     Task<ApiResponse<List<DistrictModel>>> GetDistrictsByProvinceId(int provinceId);
+
+    // doviz.dev API metodları
+    Task<ApiResponse<CurrencyResponseModel>> GetCurrencyRate(string currencyCode);
 }

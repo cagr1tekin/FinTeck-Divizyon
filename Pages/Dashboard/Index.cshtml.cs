@@ -1,3 +1,4 @@
+using InteraktifKredi.Models;
 using InteraktifKredi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -22,6 +23,14 @@ public class IndexModel : PageModel
     public bool HasIncomeInfo { get; set; }
     public bool HasSpouseInfo { get; set; }
     public List<string> MissingFields { get; set; } = new();
+    
+    // Currency data
+    public CurrencyResponseModel? UsdCurrencyData { get; set; }
+    public CurrencyResponseModel? EurCurrencyData { get; set; }
+    public CurrencyResponseModel? TryCurrencyData { get; set; }
+    public CurrencyResponseModel? AudCurrencyData { get; set; }
+    public CurrencyResponseModel? DkkCurrencyData { get; set; }
+    public CurrencyResponseModel? CadCurrencyData { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -48,7 +57,37 @@ public class IndexModel : PageModel
         // Profil tamamlama durumunu kontrol et
         await CheckProfileCompletion(customerId);
 
+        // Currency verilerini çek (Server-side initial load)
+        await LoadCurrencyData();
+
         return Page();
+    }
+    
+    private async Task LoadCurrencyData()
+    {
+        try
+        {
+            // TRY base endpoint'inden tüm kurları tek seferde al
+            // Bu endpoint AUDTRY, DKKTRY, CADTRY, PLNTRY dahil tüm kurları içerir
+            var tryResponse = await _apiService.GetCurrencyRate("TRY");
+            
+            if (tryResponse.Success && tryResponse.Data != null)
+            {
+                // Tüm currency data'ları aynı response'dan al
+                UsdCurrencyData = tryResponse.Data;
+                EurCurrencyData = tryResponse.Data;
+                TryCurrencyData = tryResponse.Data;
+                AudCurrencyData = tryResponse.Data;
+                DkkCurrencyData = tryResponse.Data;
+                CadCurrencyData = tryResponse.Data;
+                PlnCurrencyData = tryResponse.Data;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Currency data yüklenemedi (server-side)");
+            // Hata durumunda sessizce devam et, client-side dener
+        }
     }
 
     private async Task CheckProfileCompletion(long customerId)

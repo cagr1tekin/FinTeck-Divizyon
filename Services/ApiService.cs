@@ -16,6 +16,7 @@ public class ApiService : IApiService
     private const string CUSTOMERS_API = "https://customers-api.azurewebsites.net";
     private const string IDC_API = "https://api-idc.azurewebsites.net";
     private const string TURKEY_API = "https://api.turkiyeapi.dev";
+    private const string DOVIZ_API = "https://doviz.dev";
     private const string DEFAULT_TOKEN = "fe7vSdh1QqqcdRzZO4HqG7TvDL5zEoF2bwKzOzAGJE67s";
     private const int TIMEOUT_SECONDS = 30;
 
@@ -1763,6 +1764,64 @@ public class ApiService : IApiService
         {
             _logger.LogError(ex, "İlçeler alma hatası: ProvinceId={ProvinceId}", provinceId);
             return new ApiResponse<List<DistrictModel>> { Success = false, Message = "Bir hata oluştu." };
+        }
+    }
+
+    // ============================================
+    // DOVIZ.DEV API METODLARI
+    // ============================================
+
+    public async Task<ApiResponse<CurrencyResponseModel>> GetCurrencyRate(string currencyCode)
+    {
+        try
+        {
+            _logger.LogInformation("Döviz kuru alınıyor (doviz.dev): CurrencyCode={CurrencyCode}", currencyCode);
+
+            // Currency code küçük harf olmalı
+            var url = $"{DOVIZ_API}/v1/{currencyCode.ToLower()}.json";
+
+            // doviz.dev public bir API, Authorization header'a gerek yok
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode && !string.IsNullOrEmpty(responseContent))
+            {
+                try
+                {
+                    // JSON deserialize (Newtonsoft.Json kullanıyoruz)
+                    var currencyData = JsonConvert.DeserializeObject<CurrencyResponseModel>(responseContent, new JsonSerializerSettings
+                    {
+                        DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ",
+                        DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                    });
+                    
+                    if (currencyData != null)
+                    {
+                        _logger.LogInformation("Döviz kuru alındı: CurrencyCode={CurrencyCode}, Base={Base}", 
+                            currencyCode, currencyData._meta?.Base);
+                        return new ApiResponse<CurrencyResponseModel> { Success = true, Data = currencyData };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Döviz kuru parse hatası: Response={Response}", 
+                        responseContent?.Substring(0, Math.Min(200, responseContent?.Length ?? 0)));
+                }
+            }
+
+            _logger.LogWarning("Döviz kuru alınamadı: CurrencyCode={CurrencyCode}, StatusCode={StatusCode}", 
+                currencyCode, response.StatusCode);
+            return new ApiResponse<CurrencyResponseModel> { Success = false, Message = "Döviz kuru alınamadı." };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Döviz kuru alma hatası: CurrencyCode={CurrencyCode}", currencyCode);
+            return new ApiResponse<CurrencyResponseModel> { Success = false, Message = "Bir hata oluştu." };
         }
     }
 }
