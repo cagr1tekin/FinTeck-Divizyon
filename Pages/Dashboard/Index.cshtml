@@ -257,6 +257,146 @@
                 </div>
             </div>
 
+            <!-- Kripto Para Widget -->
+            <div class="crypto_widget" id="crypto_widget">
+                <div class="crypto_widget__header">
+                    <h3 class="crypto_widget__title">Kripto Para Fiyatları</h3>
+                    <div class="crypto_widget__badge">
+                        <span class="crypto_widget__badge_dot"></span>
+                        <span class="crypto_widget__badge_text">Canlı</span>
+                    </div>
+                </div>
+                <div class="crypto_widget__body">
+                    <!-- BTC/TRY -->
+                    <div class="crypto_item" data-symbol="BTC" data-crypto-symbol="BTC">
+                        <div class="crypto_item__symbol">BTC</div>
+                        <div class="crypto_item__label">Bitcoin</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var btcChange = Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var btcChangeClass = btcChange > 0 ? "crypto_item__change--up" : btcChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @btcChangeClass">
+                                @(btcChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (btcChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (btcChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- ETH/TRY -->
+                    <div class="crypto_item" data-symbol="ETH" data-crypto-symbol="ETH">
+                        <div class="crypto_item__symbol">ETH</div>
+                        <div class="crypto_item__label">Ethereum</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var ethChange = Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var ethChangeClass = ethChange > 0 ? "crypto_item__change--up" : ethChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @ethChangeClass">
+                                @(ethChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (ethChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (ethChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- BNB/TRY -->
+                    <div class="crypto_item" data-symbol="BNB" data-crypto-symbol="BNB">
+                        <div class="crypto_item__symbol">BNB</div>
+                        <div class="crypto_item__label">Binance Coin</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var bnbChange = Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var bnbChangeClass = bnbChange > 0 ? "crypto_item__change--up" : bnbChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @bnbChangeClass">
+                                @(bnbChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (bnbChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (bnbChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- SOL/TRY -->
+                    <div class="crypto_item" data-symbol="SOL" data-crypto-symbol="SOL">
+                        <div class="crypto_item__symbol">SOL</div>
+                        <div class="crypto_item__label">Solana</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var solChange = Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var solChangeClass = solChange > 0 ? "crypto_item__change--up" : solChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @solChangeClass">
+                                @(solChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (solChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (solChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Finansal Koç Kartı -->
             <div class="advisor_card">
                 <div class="advisor_card__icon">
@@ -551,7 +691,7 @@
                     </a>
 
                     <!-- Mevduat / Yatırım -->
-                    <a href="#" class="superapp_service_card">
+                    <a href="#crypto_widget" class="superapp_service_card">
                         <div class="superapp_service_card__badge">YENİ</div>
                         <div class="superapp_service_card__icon superapp_service_card__icon--green">
                             <i class="fa-solid fa-chart-line"></i>
@@ -1080,7 +1220,79 @@
                 // 60 saniye cache için yeterli, gerçek güncelleme sıklığı daha az olabilir
                 setInterval(function() {
                     fetchAllCurrencyRates();
-                }, 30000); // 60 saniye (1 dakika)
+                }, 30000); // 30 saniye
+            });
+
+            // Kripto para fiyatlarını çek
+            function fetchCryptoPrices() {
+                return $.ajax({
+                    url: '/Api/CryptoPrice?symbols=BTC,ETH,BNB,SOL&convert=TRY',
+                    method: 'GET',
+                    timeout: 10000,
+                    success: function(response) {
+                        if (response.success && response.data && response.data.Data) {
+                            updateCryptoDisplay(response.data.Data);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.warn('Kripto para fiyatları alınamadı:', error);
+                    }
+                });
+            }
+
+            // Kripto para display güncelleme
+            function updateCryptoDisplay(cryptoData) {
+                ['BTC', 'ETH', 'BNB', 'SOL'].forEach(function(symbol) {
+                    var cryptoInfo = cryptoData[symbol];
+                    if (!cryptoInfo || !cryptoInfo.Quote || !cryptoInfo.Quote.TRY) return;
+                    
+                    var $item = $('.crypto_item[data-crypto-symbol="' + symbol + '"]');
+                    if ($item.length === 0) return;
+                    
+                    var price = cryptoInfo.Quote.TRY.Price;
+                    var change24h = cryptoInfo.Quote.TRY.PercentChange24h || 0;
+                    var $value = $item.find('.crypto_item__value');
+                    var $change = $item.find('.crypto_item__change');
+                    var $changePercent = $item.find('.crypto_item__change_percent');
+                    
+                    // Fiyatı güncelle
+                    $value.data('price', price);
+                    $value.text(price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ₺');
+                    
+                    // Değişim yüzdesini güncelle
+                    var changeClass = change24h > 0 ? 'crypto_item__change--up' : 
+                                     change24h < 0 ? 'crypto_item__change--down' : 
+                                     'crypto_item__change--neutral';
+                    
+                    $change.removeClass('crypto_item__change--up crypto_item__change--down crypto_item__change--neutral')
+                           .addClass(changeClass);
+                    
+                    $changePercent.removeClass('crypto_item__change--up crypto_item__change--down crypto_item__change--neutral')
+                                 .addClass(changeClass)
+                                 .text(change24h.toFixed(2) + '%');
+                    
+                    // SVG ikonu güncelle
+                    var svgIcon = '';
+                    if (change24h > 0) {
+                        svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>';
+                    } else if (change24h < 0) {
+                        svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+                    } else {
+                        svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+                    }
+                    $change.find('svg').replaceWith(svgIcon);
+                });
+            }
+
+            // Sayfa yüklendiğinde kripto para fiyatlarını çek
+            $(document).ready(function() {
+                // İlk yükleme
+                fetchCryptoPrices();
+                
+                // Her 60 saniyede bir güncelle
+                setInterval(function() {
+                    fetchCryptoPrices();
+                }, 60000); // 60 saniye
             });
 
             // Örnek Rapor Modal
