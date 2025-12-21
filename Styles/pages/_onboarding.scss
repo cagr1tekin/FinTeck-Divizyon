@@ -11,7 +11,51 @@
     align-items: center;
     justify-content: center;
     padding: $spacing_xl $spacing_lg;
-    background: linear-gradient(135deg, $bg_secondary 0%, $bg_primary 100%);
+    background: $bg_primary;
+    position: relative;
+    overflow: hidden;
+    
+    // Modern Mesh Gradient Arka Plan - Base Layer
+    background-image: 
+        radial-gradient(circle at 0% 100%, rgba($brand_primary, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba($brand_secondary, 0.06) 0%, transparent 50%);
+    background-size: 100% 100%, 100% 100%;
+    background-position: 0% 100%, 100% 0%;
+    background-repeat: no-repeat;
+    
+    // Modern Mesh Gradient Arka Plan - Overlay Layer
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba($brand_secondary, 0.12) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba($brand_primary, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba($brand_light, 0.15) 0%, transparent 60%);
+        background-size: 100% 100%, 100% 100%, 100% 100%;
+        background-position: 0% 0%, 100% 100%, 50% 50%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    // Flu Daireler - Sağ Üst Köşe
+    &::after {
+        content: '';
+        position: absolute;
+        top: -150px;
+        right: -150px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba($brand_secondary, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(100px);
+        pointer-events: none;
+        z-index: 0;
+        animation: float_background 20s ease-in-out infinite;
+    }
 }
 
 // ============================================
@@ -24,12 +68,65 @@
     max-width: 500px;
     padding: $spacing_xl;
     background-color: $bg_primary;
-    box-shadow: $shadow_lg;
-    border: 1px solid $border_light;
+    border-radius: 24px;
+    box-shadow: 
+        0 20px 60px -12px rgba(0, 0, 0, 0.08),
+        0 8px 24px -4px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba($border_color, 0.5);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    transition: box-shadow $transition_slow, transform $transition_normal;
+    
+    &:hover {
+        box-shadow: 
+            0 24px 72px -12px rgba(0, 0, 0, 0.12),
+            0 12px 32px -4px rgba(0, 0, 0, 0.06),
+            0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
 
     &__header {
         text-align: center;
         margin-bottom: $spacing_xl;
+        position: relative;
+        padding: $spacing_xl;
+        border-radius: $radius_lg;
+        background: linear-gradient(135deg, rgba($brand_primary, 0.05) 0%, rgba($brand_secondary, 0.08) 100%);
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba($brand_secondary, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba($brand_primary, 0.1) 0%, transparent 50%),
+            linear-gradient(135deg, rgba($brand_primary, 0.03) 0%, rgba($brand_secondary, 0.05) 100%);
+        background-size: 200% 200%, 150% 150%, 100% 100%;
+        background-position: 0% 0%, 100% 100%, 0% 0%;
+        overflow: hidden;
+        
+        // Dekoratif elementler
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba($brand_secondary, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba($brand_primary, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite reverse;
+        }
     }
 }
 
@@ -39,6 +136,8 @@
     color: $brand_primary;
     margin-bottom: $spacing_sm;
     line-height: $line_height_tight;
+    position: relative;
+    z-index: 1;
 }
 
 .onboarding_subtitle {
@@ -46,6 +145,8 @@
     color: $text_secondary;
     margin: 0;
     line-height: $line_height_normal;
+    position: relative;
+    z-index: 1;
 }
 
 // ============================================
@@ -69,10 +170,20 @@
         padding: $spacing_md $spacing_lg;
         border: 2px solid $border_color;
         transition: all $transition_normal;
+        background-color: $bg_primary;
 
         &:focus {
             border-color: $brand_primary;
-            box-shadow: 0 0 0 4px rgba($brand_primary, 0.1);
+            box-shadow: 
+                0 0 0 4px rgba($brand_primary, 0.12),
+                0 4px 12px -2px rgba($brand_primary, 0.15),
+                0 0 0 1px rgba($brand_primary, 0.2);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        
+        &:hover:not(:focus) {
+            border-color: color.mix($border_color, $brand_primary, 80%);
         }
 
         &[data-mask="tckn"] {
@@ -287,6 +398,15 @@
     margin-bottom: 0;
     font-family: 'Courier New', monospace;
     letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: $spacing_sm $spacing_lg;
+    background: rgba($bg_primary, 0.9);
+    border-radius: $radius_md;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba($brand_primary, 0.1);
+    border: 1px solid rgba($brand_primary, 0.1);
 }
 
 .otp_inputs {
@@ -539,6 +659,28 @@
     }
     75% {
         transform: translateX(10px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(20px, -20px) scale(1.1);
+        opacity: 1;
+    }
+}
+
+@keyframes float_background {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(-30px, 30px) scale(1.1);
+        opacity: 0.8;
     }
 }
 

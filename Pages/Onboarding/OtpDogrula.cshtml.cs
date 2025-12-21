@@ -57,13 +57,11 @@ public class OtpDogrulaModel : PageModel
             }
         }
 
-        // GSM maskele
+        // GSM maskele (5XX XXX XX 22 formatı)
         if (!string.IsNullOrEmpty(Gsm) && Gsm.Length >= 10)
         {
-            MaskedGsm = Gsm.Substring(0, 3) + " " + 
-                       Gsm.Substring(3, 3) + " " + 
-                       Gsm.Substring(6, 2) + " " + 
-                       Gsm.Substring(8);
+            // İlk hane görünür, sonraki 2 hane XX, sonraki 3 hane XXX, sonraki 2 hane XX, son 2 hane görünür
+            MaskedGsm = Gsm.Substring(0, 1) + "XX XXX XX " + Gsm.Substring(8);
         }
         else
         {
@@ -90,13 +88,11 @@ public class OtpDogrulaModel : PageModel
             return RedirectToPage("/Onboarding/TcknGsm");
         }
 
-        // GSM maskele
+        // GSM maskele (5XX XXX XX 22 formatı)
         if (!string.IsNullOrEmpty(Gsm) && Gsm.Length >= 10)
         {
-            MaskedGsm = Gsm.Substring(0, 3) + " " + 
-                       Gsm.Substring(3, 3) + " " + 
-                       Gsm.Substring(6, 2) + " " + 
-                       Gsm.Substring(8);
+            // İlk hane görünür, sonraki 2 hane XX, sonraki 3 hane XXX, sonraki 2 hane XX, son 2 hane görünür
+            MaskedGsm = Gsm.Substring(0, 1) + "XX XXX XX " + Gsm.Substring(8);
         }
         else
         {
