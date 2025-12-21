@@ -68,7 +68,7 @@ public class TcknGsmModel : PageModel
                 // Eğer ad soyad yoksa varsayılan değer kullan
                 if (string.IsNullOrEmpty(customerName))
                 {
-                    customerName = "Müşteri";
+                    customerName = "Efe Siltak";
                 }
                 
                 HttpContext.Session.SetString("CustomerName", customerName);
