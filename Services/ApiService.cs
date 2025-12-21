@@ -1133,6 +1133,9 @@ public class ApiService : IApiService
                 // Response wrapper kontrolü
                 try
                 {
+                    if (string.IsNullOrEmpty(responseContent))
+                        return new ApiResponse<bool> { Success = false, Message = "Boş yanıt alındı" };
+                    
                     var apiResponse = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(responseContent);
                     bool success = false;
                     string messageStr = "Eş bilgileri kaydedildi.";
@@ -1179,8 +1182,11 @@ public class ApiService : IApiService
             var errorMessage = "Eş bilgileri kaydedilemedi.";
             try
             {
-                var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
-                errorMessage = errorResponse?.message?.ToString() ?? errorMessage;
+                if (!string.IsNullOrEmpty(responseContent))
+                {
+                    var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    errorMessage = errorResponse?.message?.ToString() ?? errorMessage;
+                }
             }
             catch { }
 
