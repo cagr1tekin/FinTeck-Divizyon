@@ -17,10 +17,11 @@ public class ListeModel : PageModel
     }
 
     public List<ReportModel> Reports { get; set; } = new();
+    public ReportDetailModel? LatestReportDetail { get; set; }
     public string? ErrorMessage { get; set; }
     public bool IsLoading { get; set; } = true;
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(long? id = null)
     {
         // Session kontrolü
         var customerIdStr = HttpContext.Session.GetString("CustomerId");
@@ -37,9 +38,21 @@ public class ListeModel : PageModel
             var response = await _apiService.GetReportList(customerId);
             if (response.Success && response.Value != null)
             {
-                Reports = response.Value;
+                Reports = response.Value.OrderByDescending(r => r.ReportDate).ToList();
                 _logger.LogInformation("Rapor listesi yüklendi: CustomerId={CustomerId}, Count={Count}", 
                     customerId, Reports.Count);
+
+                // En güncel raporun detayını çek
+                if (Reports.Any())
+                {
+                    var reportIdToLoad = id ?? Reports.First().ReportId;
+                    var detailResponse = await _apiService.GetReportDetail(reportIdToLoad);
+                    if (detailResponse.Success && detailResponse.Value != null)
+                    {
+                        LatestReportDetail = detailResponse.Value;
+                        _logger.LogInformation("En güncel rapor detayı yüklendi: ReportId={ReportId}", reportIdToLoad);
+                    }
+                }
             }
             else
             {

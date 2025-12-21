@@ -67,6 +67,31 @@ public class ReportDetailModel
     /// </summary>
     public string? CreditScoreReasonCode4 { get; set; }
 
+    /// <summary>
+    /// Tarihsel en kötü ödeme durumu (bkWorstPaymetStatusEver)
+    /// </summary>
+    public int WorstPaymentStatusEver { get; set; }
+
+    /// <summary>
+    /// Mevcut en uzun gecikme süresi (ay) (bkMevcutEnUzunGecikmeSuresi)
+    /// </summary>
+    public int CurrentLongestDelayMonths { get; set; }
+
+    /// <summary>
+    /// Son kredi kullanım tarihi (bkSonKrediKullandirimTarihi)
+    /// </summary>
+    public DateTime? LastCreditUsageDate { get; set; }
+
+    /// <summary>
+    /// Sorgu numarası (bkSorguNo)
+    /// </summary>
+    public string? QueryNumber { get; set; }
+
+    /// <summary>
+    /// Hariç tutma kodu (bkExclusionCode)
+    /// </summary>
+    public string? ExclusionCode { get; set; }
+
     // BİREYSEL DETAYLAR
     /// <summary>
     /// Aktif krediler listesi
