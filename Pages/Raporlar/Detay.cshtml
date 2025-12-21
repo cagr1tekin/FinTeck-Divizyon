@@ -104,28 +104,93 @@
                 </div>
                 <div class="dashboard_card__body">
                     <div class="credit_score_analysis">
-                        <div class="credit_score_analysis__main">
-                            <div class="credit_score_analysis__score">@report.CreditScore</div>
-                            <div class="credit_score_analysis__label">Kredi Notu</div>
+                        <div class="credit_score_analysis__top">
+                            <div class="credit_score_analysis__main">
+                                <div class="credit_score_analysis__header">
+                                    <div class="credit_score_analysis__title">Kredi Notunuz</div>
+                                    <div class="credit_score_analysis__score credit_score_analysis__score--@GetCreditScoreClass(report.CreditScore)">
+                                        @report.CreditScore
+                                    </div>
+                                </div>
+                                <div class="credit_score_analysis__scale">
+                                    <div class="credit_score_scale">
+                                        <div class="credit_score_scale__bar">
+                                            <div class="credit_score_scale__segment credit_score_scale__segment--very_risky"></div>
+                                            <div class="credit_score_scale__segment credit_score_scale__segment--risky"></div>
+                                            <div class="credit_score_scale__segment credit_score_scale__segment--moderate"></div>
+                                            <div class="credit_score_scale__segment credit_score_scale__segment--good"></div>
+                                            <div class="credit_score_scale__segment credit_score_scale__segment--excellent"></div>
+                                            <div class="credit_score_scale__indicator" style="left: @GetCreditScorePosition(report.CreditScore)%">
+                                                <div class="credit_score_scale__indicator__arrow"></div>
+                                            </div>
+                                        </div>
+                                        <div class="credit_score_scale__labels">
+                                            <span class="credit_score_scale__label">1</span>
+                                            <span class="credit_score_scale__label">1900</span>
+                                        </div>
+                                        <div class="credit_score_scale__segments">
+                                            <span class="credit_score_scale__segment_label">EN RİSKLİ</span>
+                                            <span class="credit_score_scale__segment_label">ORTA RİSKLİ</span>
+                                            <span class="credit_score_scale__segment_label">AZ RİSKLİ</span>
+                                            <span class="credit_score_scale__segment_label">İYİ</span>
+                                            <span class="credit_score_scale__segment_label">ÇOK İYİ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="credit_score_analysis__side">
+                                <div class="credit_score_analysis__metrics">
+                                    <div class="credit_score_metric">
+                                        <span class="credit_score_metric__label">Tarihsel En Kötü Durum</span>
+                                        <span class="credit_score_metric__value">@report.WorstPaymentStatusEver dönem</span>
+                                    </div>
+                                    @if (report.LastCreditUsageDate.HasValue)
+                                    {
+                                        <div class="credit_score_metric">
+                                            <span class="credit_score_metric__label">Son Kredi Kullanımı</span>
+                                            <span class="credit_score_metric__value">@report.LastCreditUsageDate.Value.ToString("dd.MM.yyyy")</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(report.QueryNumber))
+                                    {
+                                        <div class="credit_score_metric">
+                                            <span class="credit_score_metric__label">Sorgu No</span>
+                                            <span class="credit_score_metric__value credit_score_metric__value--mono">@report.QueryNumber</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
                         </div>
                         <div class="credit_score_analysis__reasons">
-                            <h3 class="credit_score_analysis__reasons_title">Sebep Kodları</h3>
+                            <h3 class="credit_score_analysis__reasons_title">Öncelik Sebepler</h3>
                             <div class="credit_score_analysis__reasons_list">
                                 @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode1))
                                 {
-                                    <div class="reason_code_badge">@report.CreditScoreReasonCode1</div>
+                                    <div class="reason_code_item">
+                                        <div class="reason_code_badge">@report.CreditScoreReasonCode1</div>
+                                        <div class="reason_code_description">@GetReasonCodeDescription(report.CreditScoreReasonCode1)</div>
+                                    </div>
                                 }
                                 @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode2))
                                 {
-                                    <div class="reason_code_badge">@report.CreditScoreReasonCode2</div>
+                                    <div class="reason_code_item">
+                                        <div class="reason_code_badge">@report.CreditScoreReasonCode2</div>
+                                        <div class="reason_code_description">@GetReasonCodeDescription(report.CreditScoreReasonCode2)</div>
+                                    </div>
                                 }
                                 @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode3))
                                 {
-                                    <div class="reason_code_badge">@report.CreditScoreReasonCode3</div>
+                                    <div class="reason_code_item">
+                                        <div class="reason_code_badge">@report.CreditScoreReasonCode3</div>
+                                        <div class="reason_code_description">@GetReasonCodeDescription(report.CreditScoreReasonCode3)</div>
+                                    </div>
                                 }
                                 @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode4))
                                 {
-                                    <div class="reason_code_badge">@report.CreditScoreReasonCode4</div>
+                                    <div class="reason_code_item">
+                                        <div class="reason_code_badge">@report.CreditScoreReasonCode4</div>
+                                        <div class="reason_code_description">@GetReasonCodeDescription(report.CreditScoreReasonCode4)</div>
+                                    </div>
                                 }
                             </div>
                         </div>
@@ -155,11 +220,17 @@
                                         </div>
                                         <div class="credit_item__reference">@credit.RecordReferenceNumber</div>
                                     </div>
-                                    <div class="credit_item__details">
-                                        <div class="credit_item__detail_row">
-                                            <span class="credit_item__detail_label">Limit:</span>
-                                            <span class="credit_item__detail_value">@FormatCurrency(credit.CreditLimit)</span>
+                                    <div class="credit_item__limit_info">
+                                        <div class="credit_item__limit_label">Limit:</div>
+                                        <div class="credit_item__limit_value">@FormatCurrency(credit.CreditLimit)</div>
+                                    </div>
+                                    <div class="credit_item__limit_usage">
+                                        <div class="credit_item__limit_usage_label">Limit Kullanımı</div>
+                                        <div class="credit_item__progress_bar">
+                                            <div class="credit_item__progress_fill" style="width: @(Math.Min(credit.LimitUsageRatio * 100, 100))%"></div>
                                         </div>
+                                    </div>
+                                    <div class="credit_item__details">
                                         <div class="credit_item__detail_row">
                                             <span class="credit_item__detail_label">Bakiye:</span>
                                             <span class="credit_item__detail_value">@FormatCurrency(credit.TotalBalance)</span>
@@ -169,19 +240,43 @@
                                             <span class="credit_item__detail_value">@FormatCurrency(credit.DelayedBalance)</span>
                                         </div>
                                     </div>
-                                    <div class="credit_item__progress">
-                                        <div class="credit_item__progress_label">
-                                            <span>Limit Kullanımı</span>
-                                            <span class="credit_item__progress_percent">%@(credit.LimitUsageRatio.ToString("P0"))</span>
-                                        </div>
-                                        <div class="credit_item__progress_bar">
-                                            <div class="credit_item__progress_fill" style="width: @(credit.LimitUsageRatio * 100)%"></div>
-                                        </div>
-                                    </div>
                                     @if (credit.OpeningDate.HasValue)
                                     {
                                         <div class="credit_item__meta">
                                             <span>Açılış: @credit.OpeningDate.Value.ToString("dd.MM.yyyy")</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(credit.PaymentHistory))
+                                    {
+                                        <div class="credit_item__payment_history">
+                                            <div class="payment_history_label">Ödeme Geçmişi (En güncel ay sağ)</div>
+                                            <div class="payment_history_chart">
+                                                @foreach (var payment in credit.PaymentHistory.Reverse().Take(24))
+                                                {
+                                                    var statusClass = GetPaymentStatusClass(payment);
+                                                    <div class="payment_history_item payment_history_item--@statusClass" title="@GetPaymentStatusTooltip(payment)">
+                                                        @if (statusClass == "paid")
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                        }
+                                                        else if (statusClass == "delayed")
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                <path d="M3 3L9 9M9 3L3 9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                                            </svg>
+                                                        }
+                                                        else if (statusClass == "unknown")
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                <circle cx="6" cy="6" r="4.5" stroke="white" stroke-width="1.5" fill="none"/>
+                                                                <text x="6" y="8.5" font-size="7" fill="white" text-anchor="middle" font-weight="bold" font-family="Arial, sans-serif">?</text>
+                                                            </svg>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
                                     }
                                 </div>
@@ -231,11 +326,32 @@
                                         @if (!string.IsNullOrEmpty(credit.PaymentHistory))
                                         {
                                             <div class="timeline_item__payment_history">
-                                                <div class="payment_history_label">Ödeme Geçmişi:</div>
+                                                <div class="payment_history_label">Ödeme Geçmişi (En güncel ay sağ):</div>
                                                 <div class="payment_history_chart">
-                                                    @foreach (var payment in credit.PaymentHistory.Take(24))
+                                                    @foreach (var payment in credit.PaymentHistory.Reverse().Take(24))
                                                     {
-                                                        <div class="payment_history_item payment_history_item--@GetPaymentStatusClass(payment)"></div>
+                                                        var statusClass = GetPaymentStatusClass(payment);
+                                                        <div class="payment_history_item payment_history_item--@statusClass" title="@GetPaymentStatusTooltip(payment)">
+                                                            @if (statusClass == "paid")
+                                                            {
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                    <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                </svg>
+                                                            }
+                                                            else if (statusClass == "delayed")
+                                                            {
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                    <path d="M3 3L9 9M9 3L3 9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                                                </svg>
+                                                            }
+                                                            else if (statusClass == "unknown")
+                                                            {
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" style="width: 100%; height: 100%;">
+                                                                    <circle cx="6" cy="6" r="4.5" stroke="white" stroke-width="1.5" fill="none"/>
+                                                                    <text x="6" y="8.5" font-size="7" fill="white" text-anchor="middle" font-weight="bold" font-family="Arial, sans-serif">?</text>
+                                                                </svg>
+                                                            }
+                                                        </div>
                                                     }
                                                 </div>
                                             </div>
@@ -260,22 +376,146 @@
 
     private string GetCreditTypeName(string creditType)
     {
+        // cursorrulesreport.md'ye göre kredi türü karşılıkları
         return creditType switch
         {
             "23" => "Kredi Kartı",
-            "26" => "Tüketici Kredisi",
+            "26" => "KMH (Kredili Mevduat Hesabı)",
+            "02" => "İhtiyaç Kredisi",
+            "03" => "Konut Kredisi",
+            "TK" => "Taşıt Kredisi",
             _ => $"Kredi Türü {creditType}"
         };
     }
 
     private string GetPaymentStatusClass(char payment)
     {
-        return payment switch
+        // cursorrulesreport.md'ye göre ödeme performans durum kodları
+        // '0' = Başarılı (Yeşil + Check İkonu)
+        // 'K' veya 0'dan büyük sayı = Gecikme (Kırmızı + Çarpı İkonu)
+        // 'X' = Bilinmiyor (Gri + Soru İşareti İkonu)
+        if (payment == '0')
         {
-            '0' => "paid",      // Ödendi
-            '1' => "delayed",   // Gecikme
-            'X' => "default",   // Takip
-            _ => "unknown"
+            return "paid";
+        }
+        else if (payment == 'X' || payment == 'x')
+        {
+            return "unknown";
+        }
+        else if (char.IsDigit(payment) && payment > '0')
+        {
+            return "delayed";
+        }
+        else if (payment == 'K' || payment == 'k')
+        {
+            return "delayed";
+        }
+        else
+        {
+            return "unknown";
+        }
+    }
+
+    private string GetPaymentStatusTooltip(char payment)
+    {
+        if (payment == '0')
+        {
+            return "Ödeme zamanında yapılmıştır";
+        }
+        else if (payment == 'X' || payment == 'x')
+        {
+            return "Bilinmiyor - İşlem yapılmamış veya veri eksik";
+        }
+        else if (char.IsDigit(payment) && payment > '0')
+        {
+            return $"Gecikme - {payment} dönemlik gecikme";
+        }
+        else if (payment == 'K' || payment == 'k')
+        {
+            return "Gecikme";
+        }
+        else
+        {
+            return "Bilinmeyen durum";
+        }
+    }
+
+    private string GetCreditScoreClass(string creditScore)
+    {
+        if (int.TryParse(creditScore, out int score))
+        {
+            if (score >= 1500) return "excellent";
+            if (score >= 1200) return "good";
+            if (score >= 900) return "fair";
+            if (score >= 600) return "poor";
+            return "very_poor";
+        }
+        return "unknown";
+    }
+
+    private string GetCreditScoreStatus(string creditScore)
+    {
+        if (int.TryParse(creditScore, out int score))
+        {
+            if (score >= 1500) return "Mükemmel";
+            if (score >= 1200) return "İyi";
+            if (score >= 900) return "Orta";
+            if (score >= 600) return "Düşük";
+            return "Çok Düşük";
+        }
+        return "Bilinmiyor";
+    }
+
+    private string GetReasonCodeDescription(string? reasonCode)
+    {
+        if (string.IsNullOrEmpty(reasonCode)) return "";
+        
+        // KKB sebep kodları açıklamaları (genel kategoriler)
+        return reasonCode switch
+        {
+            "01" => "Kredi geçmişi yetersiz",
+            "02" => "Yüksek limit kullanımı",
+            "03" => "Gecikme geçmişi",
+            "04" => "Takip kaydı",
+            "05" => "Yüksek borç yükü",
+            "06" => "Kredi geçmişi kısa",
+            "07" => "Çoklu kredi başvurusu",
+            "08" => "Gelir yetersizliği",
+            "09" => "Meslek riski",
+            "10" => "Yaş faktörü",
+            "11" => "Eğitim durumu",
+            "12" => "Medeni durum",
+            "13" => "İkamet süresi",
+            "14" => "İş süresi",
+            "15" => "Sektör riski",
+            "16" => "Gelir düzensizliği",
+            "17" => "Kredi kartı kullanımı",
+            "18" => "Nakit kredi kullanımı",
+            "19" => "Konut kredisi yükü",
+            "20" => "Taşıt kredisi yükü",
+            "21" => "İhtiyaç kredisi yükü",
+            "22" => "Kredi kartı limiti yüksek",
+            "23" => "Toplam limit yüksek",
+            "24" => "Risk oranı yüksek",
+            "25" => "Gecikme sıklığı",
+            "26" => "Ödeme düzensizliği",
+            "27" => "Kredi geçmişi olumsuz",
+            "28" => "Takip süreci",
+            "29" => "Yüksek borç/limit oranı",
+            "30" => "Çoklu finansal kurum",
+            _ => $"Sebep Kodu: {reasonCode}"
         };
+    }
+
+    private string GetCreditScorePosition(string creditScore)
+    {
+        // Kredi notunu 1-1900 arası skala üzerinde pozisyon olarak hesapla
+        if (int.TryParse(creditScore, out int score))
+        {
+            // 1-1900 arası skala, yüzde olarak pozisyon
+            double position = ((score - 1) / 1899.0) * 100;
+            return Math.Max(0, Math.Min(100, position)).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        return "0";
     }
 }
