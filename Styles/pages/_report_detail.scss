@@ -96,7 +96,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: $spacing_lg;
-    margin-bottom: $spacing_xl * 1.5;
 
     @include respond_to_max(lg) {
         grid-template-columns: repeat(2, 1fr);
@@ -110,13 +109,15 @@
 .scoreboard_card {
     background-color: #FFFFFF;
     border-radius: 16px;
-    padding: $spacing_xl;
+    padding: $spacing_lg; // $spacing_xl'den $spacing_lg'ye azaltıldı
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     display: flex;
-    align-items: center;
-    gap: $spacing_lg;
+    flex-direction: column; // Yataydan dikeye değiştirildi
+    align-items: center; // Ortalama
+    gap: $spacing_md; // $spacing_lg'den $spacing_md'ye azaltıldı
     transition: all $transition_normal;
     border: 1px solid #F3F4F6;
+    text-align: center; // Metinleri ortala
 
     &:hover {
         transform: translateY(-2px);
@@ -131,24 +132,31 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        color: #FFFFFF;
+        color: #FFFFFF; // İkon rengi beyaz
 
         svg {
             width: 28px;
             height: 28px;
+            fill: currentColor; // SVG'yi beyaz yap
         }
     }
 
     &__content {
         flex: 1;
         min-width: 0;
+        width: 100%; // Tam genişlik
+        display: flex;
+        flex-direction: column;
+        align-items: center; // İçeriği ortala
+        gap: $spacing_xs; // Label ve value arası boşluk
     }
 
     &__label {
         font-size: $font_size_sm;
         color: $text_secondary;
         font-weight: $font_weight_medium;
-        margin-bottom: $spacing_xs;
+        margin-bottom: 0; // gap kullanıldığı için kaldırıldı
+        text-align: center;
     }
 
     &__value {
@@ -157,29 +165,30 @@
         color: $text_primary;
         line-height: 1.2;
         word-break: break-word;
+        text-align: center;
     }
 
     &--credit_score {
         .scoreboard_card__icon {
-            background: linear-gradient(135deg, #2e6df8 0%, #1e40af 100%);
+            background: linear-gradient(135deg, $brand_primary 0%, $brand_dark 100%);
         }
     }
 
     &--total_limit {
         .scoreboard_card__icon {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            background: linear-gradient(135deg, $brand_primary 0%, $brand_dark 100%);
         }
     }
 
     &--total_risk {
         .scoreboard_card__icon {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            background: linear-gradient(135deg, $brand_primary 0%, $brand_dark 100%);
         }
     }
 
     &--delayed {
         .scoreboard_card__icon {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            background: linear-gradient(135deg, $brand_primary 0%, $brand_dark 100%);
         }
     }
 }
@@ -198,6 +207,40 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     border: 1px solid #F3F4F6;
     overflow: hidden;
+    position: relative;
+
+    // Kredi Notu Analizi içeren card için mavi gradient
+    &:has(.credit_score_analysis) {
+        background: linear-gradient(135deg, #0056B3 0%, #0056B3 100%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: $text_white;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 0;
+        }
+
+        .dashboard_card__header {
+            background-color: transparent;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard_card__title {
+            color: $text_white;
+        }
+
+        .dashboard_card__body {
+            position: relative;
+            z-index: 1;
+        }
+    }
 
     &__header {
         padding: $spacing_lg $spacing_xl;
@@ -243,52 +286,127 @@
 
 .credit_score_analysis {
     display: flex;
-    align-items: center;
-    gap: $spacing_xl * 2;
-    padding: $spacing_xl;
+    flex-direction: column;
+    gap: $spacing_xl;
+    padding: $spacing_lg;
 
-    @include respond_to_max(md) {
-        flex-direction: column;
-        gap: $spacing_xl;
-        text-align: center;
+    &__top {
+        display: flex;
+        align-items: flex-start;
+        gap: $spacing_xl * 2;
+
+        @include respond_to_max(md) {
+            flex-direction: column;
+            gap: $spacing_lg;
+        }
     }
 
     &__main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__header {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing_sm;
+        align-items: baseline;
+        gap: $spacing_md;
+        margin-bottom: $spacing_lg;
+    }
+
+    &__title {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+
+        // Dashboard card içindeyse beyaz yap
+        .dashboard_card:has(.credit_score_analysis) & {
+            color: $text_white;
+        }
     }
 
     &__score {
         font-size: $font_size_3xl * 1.5;
         font-weight: $font_weight_bold;
-        color: #2e6df8;
         line-height: 1;
+        transition: color 0.3s ease;
+        color: $text_white; // Varsayılan olarak beyaz
+
+        &--excellent {
+            color: #10B981;
+        }
+
+        &--good {
+            color: #2e6df8;
+        }
+
+        &--fair {
+            color: #F59E0B;
+        }
+
+        &--poor {
+            color: #EF4444;
+        }
+
+        &--very_poor {
+            color: #DC2626;
+        }
+
+        &--unknown {
+            color: $text_secondary;
+        }
     }
 
-    &__label {
-        font-size: $font_size_base;
-        color: $text_secondary;
-        font-weight: $font_weight_medium;
+    &__scale {
+        margin-top: $spacing_md;
+    }
+
+    &__side {
+        flex: 0 0 300px;
+        display: flex;
+        flex-direction: column;
+
+        @include respond_to_max(md) {
+            flex: 1;
+            width: 100%;
+        }
     }
 
     &__reasons {
-        flex: 1;
+        margin-top: $spacing_lg;
+        padding-top: $spacing_lg;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     &__reasons_title {
         font-size: $font_size_base;
         font-weight: $font_weight_semibold;
-        color: $text_primary;
+        color: $text_white;
         margin-bottom: $spacing_md;
     }
 
     &__reasons_list {
         display: flex;
         flex-wrap: wrap;
+        gap: $spacing_lg;
+    }
+
+    &__metrics {
+        display: flex;
+        flex-direction: column;
         gap: $spacing_md;
     }
+}
+
+.reason_code_item {
+    display: flex;
+    align-items: center;
+    gap: $spacing_md;
+    padding: $spacing_sm $spacing_md;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    flex: 1;
+    min-width: 0;
 }
 
 .reason_code_badge {
@@ -296,12 +414,141 @@
     align-items: center;
     justify-content: center;
     padding: $spacing_sm $spacing_lg;
-    background-color: #EFF6FF;
-    color: #2e6df8;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: $text_white;
     border-radius: 8px;
     font-size: $font_size_base;
     font-weight: $font_weight_bold;
     min-width: 48px;
+    flex-shrink: 0;
+}
+
+.reason_code_description {
+    font-size: $font_size_sm;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    flex: 1;
+}
+
+.credit_score_scale {
+    &__bar {
+        position: relative;
+        width: 100%;
+        height: 32px;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        margin-bottom: $spacing_sm;
+        background-color: #E5E7EB;
+    }
+
+    &__segment {
+        height: 100%;
+        flex: 1;
+        display: block;
+        min-width: 0;
+
+        &--very_risky {
+            background-color: #DC2626;
+        }
+
+        &--risky {
+            background-color: #F59E0B;
+        }
+
+        &--moderate {
+            background-color: #FCD34D;
+        }
+
+        &--good {
+            background-color: #86EFAC;
+        }
+
+        &--excellent {
+            background-color: #10B981;
+        }
+    }
+
+    &__indicator {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: #374151;
+        transform: translateX(-50%);
+        z-index: 10;
+        pointer-events: none;
+
+        &__arrow {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #374151;
+        }
+    }
+
+    &__labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: $font_size_xs;
+        color: $text_secondary;
+        margin-bottom: $spacing_xs;
+        font-weight: $font_weight_medium;
+    }
+
+    &__label {
+        font-weight: $font_weight_medium;
+    }
+
+    &__segments {
+        display: flex;
+        justify-content: space-between;
+        font-size: $font_size_xs;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+        margin-top: $spacing_xs;
+    }
+
+    &__segment_label {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+.credit_score_metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing_md;
+    padding: $spacing_sm 0;
+
+    &__label {
+        font-size: $font_size_sm;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: $font_weight_medium;
+    }
+
+    &__value {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_white;
+        text-align: right;
+        min-width: 120px;
+
+        &--warning {
+            color: #EF4444;
+        }
+
+        &--mono {
+            font-family: 'Courier New', monospace;
+            font-size: $font_size_sm;
+        }
+    }
 }
 
 // ============================================
@@ -366,10 +613,30 @@
         font-family: 'Courier New', monospace;
     }
 
+    &__limit_info {
+        display: flex;
+        align-items: baseline;
+        gap: $spacing_sm;
+        margin-bottom: $spacing_md;
+    }
+
+    &__limit_label {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__limit_value {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+    }
+
     &__details {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: $spacing_md;
+        margin-top: $spacing_md;
         margin-bottom: $spacing_md;
 
         @include respond_to_max(sm) {
@@ -395,23 +662,17 @@
         color: $text_primary;
     }
 
-    &__progress {
+    &__limit_usage {
         margin-top: $spacing_md;
+        padding-top: $spacing_md;
+        border-top: 1px solid #E5E7EB;
     }
 
-    &__progress_label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: $spacing_xs;
+    &__limit_usage_label {
         font-size: $font_size_sm;
         color: $text_secondary;
         font-weight: $font_weight_medium;
-    }
-
-    &__progress_percent {
-        font-weight: $font_weight_bold;
-        color: $text_primary;
+        margin-bottom: $spacing_xs;
     }
 
     &__progress_bar {
@@ -429,12 +690,56 @@
         transition: width 0.5s ease;
     }
 
+    &__payment_history {
+        margin-top: $spacing_md;
+        padding-top: $spacing_md;
+        border-top: 1px solid #E5E7EB;
+    }
+
     &__meta {
         margin-top: $spacing_md;
         padding-top: $spacing_md;
         border-top: 1px solid #E5E7EB;
         font-size: $font_size_sm;
         color: $text_secondary;
+    }
+
+    &__info_grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing_lg;
+        margin-top: $spacing_md;
+        padding-top: $spacing_md;
+        border-top: 1px solid #E5E7EB;
+
+        @include respond_to_max(md) {
+            grid-template-columns: 1fr;
+            gap: $spacing_md;
+        }
+    }
+
+    &__info_item {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
+    }
+
+    &__info_label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__info_value {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+    }
+
+    &__info_payment_history {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
     }
 }
 
@@ -557,6 +862,42 @@
         padding-top: $spacing_md;
         border-top: 1px solid #E5E7EB;
     }
+
+    &__info_grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing_lg;
+        margin-top: $spacing_md;
+
+        @include respond_to_max(md) {
+            grid-template-columns: 1fr;
+            gap: $spacing_md;
+        }
+    }
+
+    &__info_item {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
+    }
+
+    &__info_label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__info_value {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+    }
+
+    &__info_payment_history {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
 }
 
 .payment_history_label {
@@ -577,21 +918,35 @@
     height: 12px;
     border-radius: 2px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
 
     &--paid {
         background-color: #10B981;
+        color: #FFFFFF;
     }
 
     &--delayed {
-        background-color: #F59E0B;
-    }
-
-    &--default {
         background-color: #EF4444;
+        color: #FFFFFF;
     }
 
     &--unknown {
-        background-color: #E5E7EB;
+        background-color: #9CA3AF;
+        color: #FFFFFF;
     }
 }
 

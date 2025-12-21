@@ -1300,7 +1300,7 @@ public class ApiService : IApiService
                                     ReportName = "Kredi Raporu",
                                     ReportDate = reportDate,
                                     Status = 1, // Default: Onaylandı
-                                    StatusText = "Tamamlandı",
+                                    StatusText = "Onaylandı",
                                     LoanAmount = 0, // API'den gelmiyor
                                     Term = 0 // API'den gelmiyor
                                 });
@@ -1478,7 +1478,12 @@ public class ApiService : IApiService
             CreditScoreReasonCode1 = valueObj["bkKrediNotuSebepKodu1"]?.ToString(),
             CreditScoreReasonCode2 = valueObj["bkKrediNotuSebepKodu2"]?.ToString(),
             CreditScoreReasonCode3 = valueObj["bkKrediNotuSebepKodu3"]?.ToString(),
-            CreditScoreReasonCode4 = valueObj["bkKrediNotuSebepKodu4"]?.ToString()
+            CreditScoreReasonCode4 = valueObj["bkKrediNotuSebepKodu4"]?.ToString(),
+            WorstPaymentStatusEver = ParseInt(valueObj["bkWorstPaymetStatusEver"]?.ToString()),
+            CurrentLongestDelayMonths = ParseInt(valueObj["bkMevcutEnUzunGecikmeSuresi"]?.ToString()),
+            LastCreditUsageDate = ParseDate(valueObj["bkSonKrediKullandirimTarihi"]?.ToString()),
+            QueryNumber = valueObj["bkSorguNo"]?.ToString(),
+            ExclusionCode = valueObj["bkExclusionCode"]?.ToString()
         };
 
         // Bireysel detayları parse et
