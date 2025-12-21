@@ -30,6 +30,44 @@
     &__header {
         text-align: center;
         margin-bottom: $spacing_xl;
+        position: relative;
+        padding: $spacing_xl;
+        border-radius: $radius_lg;
+        background: linear-gradient(135deg, rgba($brand_primary, 0.05) 0%, rgba($brand_secondary, 0.08) 100%);
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba($brand_secondary, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba($brand_primary, 0.1) 0%, transparent 50%),
+            linear-gradient(135deg, rgba($brand_primary, 0.03) 0%, rgba($brand_secondary, 0.05) 100%);
+        background-size: 200% 200%, 150% 150%, 100% 100%;
+        background-position: 0% 0%, 100% 100%, 0% 0%;
+        overflow: hidden;
+        
+        // Dekoratif elementler
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba($brand_secondary, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba($brand_primary, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite reverse;
+        }
     }
 }
 
@@ -39,6 +77,8 @@
     color: $brand_primary;
     margin-bottom: $spacing_sm;
     line-height: $line_height_tight;
+    position: relative;
+    z-index: 1;
 }
 
 .onboarding_subtitle {
@@ -46,6 +86,8 @@
     color: $text_secondary;
     margin: 0;
     line-height: $line_height_normal;
+    position: relative;
+    z-index: 1;
 }
 
 // ============================================
@@ -287,6 +329,15 @@
     margin-bottom: 0;
     font-family: 'Courier New', monospace;
     letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: $spacing_sm $spacing_lg;
+    background: rgba($bg_primary, 0.9);
+    border-radius: $radius_md;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba($brand_primary, 0.1);
+    border: 1px solid rgba($brand_primary, 0.1);
 }
 
 .otp_inputs {
@@ -539,6 +590,17 @@
     }
     75% {
         transform: translateX(10px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(20px, -20px) scale(1.1);
+        opacity: 1;
     }
 }
 
