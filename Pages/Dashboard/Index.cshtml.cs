@@ -51,7 +51,7 @@ public class IndexModel : PageModel
         {
             // TCKN'dan isim çıkarılamaz, bu yüzden session'dan alınacak
             // Veya API'den customer bilgilerini çekebiliriz
-            CustomerName = "Müşteri"; // Varsayılan
+            CustomerName = "Efe Siltak"; // Varsayılan
         }
 
         // Profil tamamlama durumunu kontrol et

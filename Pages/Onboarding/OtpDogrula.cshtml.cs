@@ -141,7 +141,7 @@ public class OtpDogrulaModel : PageModel
                 var customerName = HttpContext.Session.GetString("CustomerName");
                 if (string.IsNullOrEmpty(customerName))
                 {
-                    customerName = "Müşteri";
+                    customerName = "Efe Siltak";
                     HttpContext.Session.SetString("CustomerName", customerName);
                 }
 
