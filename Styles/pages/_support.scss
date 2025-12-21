@@ -15,7 +15,7 @@
 // ============================================
 
 .support_hero {
-    background: linear-gradient(135deg, #1E3A8A 0%, #0EA5E9 100%);
+    background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
     border-radius: 24px;
     padding: $spacing_2xl * 1.5 $spacing_xl;
     margin-bottom: $spacing_2xl;
@@ -77,7 +77,7 @@
         background-color: #FFFFFF;
         border: none;
         border-radius: 12px;
-        color: $brand_primary;
+        color: #0056b3;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -93,7 +93,8 @@
         &:hover {
             background-color: #F9FAFB;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+            color: #2e6df8;
         }
 
         &:active {
@@ -146,20 +147,21 @@
 .faq_accordion__item {
     background-color: #FFFFFF;
     border-radius: 8px;
-    border: 1px solid #F3F4F6;
+    border: 1px solid rgba(0, 86, 179, 0.1);
     overflow: hidden;
     transition: all $transition_normal;
 
     &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0, 86, 179, 0.1);
+        border-color: rgba(46, 109, 248, 0.2);
     }
 
     &--active {
-        border-color: #2E6DF8;
-        box-shadow: 0 4px 12px rgba(46, 109, 248, 0.1);
+        border-color: #2e6df8;
+        box-shadow: 0 4px 12px rgba(0, 86, 179, 0.15);
 
         .faq_accordion__header {
-            background-color: #F0F7FF;
+            background: linear-gradient(135deg, rgba(0, 86, 179, 0.08) 0%, rgba(46, 109, 248, 0.05) 100%);
         }
     }
 }
@@ -191,8 +193,12 @@
     height: 20px;
     color: $text_secondary;
     flex-shrink: 0;
-    transition: transform $transition_normal;
+    transition: transform $transition_normal, color $transition_normal;
     transform: rotate(0deg);
+
+    .faq_accordion__item--active & {
+        color: #2e6df8;
+    }
 }
 
 .faq_accordion__content {
@@ -221,8 +227,8 @@
     background-color: #FFFFFF;
     border-radius: 16px;
     padding: $spacing_xl;
-    border: 1px solid #F3F4F6;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 86, 179, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 86, 179, 0.06);
 }
 
 .form_group {
@@ -256,8 +262,8 @@
     outline: none;
 
     &:focus {
-        border-color: #2E6DF8;
-        box-shadow: 0 0 0 3px rgba(46, 109, 248, 0.1);
+        border-color: #2e6df8;
+        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.15);
     }
 
     &::placeholder {
@@ -298,6 +304,20 @@
     padding: $spacing_md $spacing_lg;
     font-size: $font_size_base;
     font-weight: $font_weight_semibold;
+    background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
+    border: none;
+    color: $text_white;
+    
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #004a9a 0%, #1e5dd8 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+    }
+    
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 86, 179, 0.2);
+    }
     
     svg {
         flex-shrink: 0;
@@ -356,14 +376,14 @@
 // ============================================
 
 .support_contact_card {
-    background: linear-gradient(135deg, #2E6DF8 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #0056b3 0%, #2e6df8 100%);
     border-radius: 16px;
     padding: $spacing_xl;
     display: flex;
     align-items: flex-start;
     gap: $spacing_lg;
     color: $text_white;
-    box-shadow: 0 4px 20px rgba(46, 109, 248, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
 }
 
 .support_contact_card__icon {
