@@ -412,3 +412,683 @@
         }
     }
 }
+
+// ============================================
+// CREDIT NOTE CARD (Glassmorphism Financial Card)
+// ============================================
+
+.credit_note_card {
+    position: relative;
+    background: linear-gradient(135deg, #0056B3 0%, #0056B3 100%);
+    border-radius: $radius_lg;
+    padding: $spacing_xl;
+    backdrop-filter: blur($credit_card_blur);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    color: $text_white;
+
+    // Glassmorphism overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur($credit_card_blur);
+        z-index: 0;
+    }
+
+    // İçerik z-index ile üste çıkar
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__greeting {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: $spacing_sm;
+    }
+
+    &__title {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_semibold;
+        color: $text_white;
+        margin-bottom: $spacing_md;
+        line-height: $line_height_tight;
+    }
+
+    &__score {
+        font-size: 64px;
+        font-weight: $font_weight_bold;
+        color: $text_white;
+        line-height: 1;
+        margin-bottom: $spacing_xl;
+        letter-spacing: -2px;
+        font-family: $font_primary;
+    }
+
+    &__risk_bar_wrapper {
+        margin-bottom: $spacing_xl;
+    }
+
+    &__risk_bar {
+        display: flex;
+        width: 100%;
+        height: 8px;
+        border-radius: $radius_full;
+        overflow: visible;
+        margin-bottom: $spacing_xs;
+        background: transparent;
+        position: relative;
+    }
+
+    &__risk_bar_segment {
+        height: 100%;
+        position: relative;
+
+        &:first-child {
+            border-top-left-radius: $radius_full;
+            border-bottom-left-radius: $radius_full;
+            flex: 0 0 36.84%; // 0-699 (700/1900 = 36.84%)
+            background-color: #CCCCCC;
+        }
+
+        &:nth-child(2) {
+            flex: 0 0 21.05%; // 700-1099 (400/1900 = 21.05%)
+            background-color: #E6F7FF;
+        }
+
+        &:nth-child(3) {
+            flex: 0 0 21.05%; // 1100-1499 (400/1900 = 21.05%)
+            background-color: #2E6DF8;
+        }
+
+        &:nth-child(4) {
+            flex: 0 0 10.53%; // 1500-1699 (200/1900 = 10.53%)
+            background-color: #2E6DF8;
+        }
+
+        &:nth-child(5) {
+            border-top-right-radius: $radius_full;
+            border-bottom-right-radius: $radius_full;
+            flex: 0 0 10.53%; // 1700-1900 (200/1900 = 10.53%)
+            background-color: #0056B3;
+        }
+    }
+
+    &__risk_bar_labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: $font_size_xs;
+        color: rgba(255, 255, 255, 0.9);
+        gap: 0;
+    }
+
+    &__risk_bar_label {
+        flex: 1;
+        text-align: center;
+        font-weight: $font_weight_medium;
+        white-space: nowrap;
+    }
+
+    &__actions {
+        display: flex;
+        gap: $spacing_md;
+        margin-top: $spacing_lg;
+    }
+
+    &__button {
+        flex: 1;
+        padding: $spacing_md $spacing_lg;
+        border-radius: $radius_full;
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        font-family: $font_primary;
+        cursor: pointer;
+        transition: all $transition_normal;
+        border: none;
+        outline: none;
+
+        &--primary {
+            background: linear-gradient(135deg, #2E6DF8 0%, #0056B3 100%);
+            color: $text_white;
+            border: none;
+
+            &:hover {
+                background: linear-gradient(135deg, #3B7DFF 0%, #0066CC 100%);
+                box-shadow: 0 6px 20px rgba(46, 109, 248, 0.4);
+                transform: translateY(-2px);
+            }
+
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 8px rgba(46, 109, 248, 0.3);
+            }
+        }
+
+        &--outline {
+            background-color: transparent;
+            color: $text_white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+
+            &:hover {
+                background-color: #fff;
+                color: #2E6DF8;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+
+    // Responsive
+    @include respond_to_max(sm) {
+        padding: $spacing_lg;
+        border-radius: $radius_md;
+
+        &__score {
+            font-size: 48px;
+            margin-bottom: $spacing_lg;
+        }
+
+        &__actions {
+            flex-direction: column;
+            gap: $spacing_sm;
+        }
+
+        &__button {
+            width: 100%;
+        }
+    }
+}
+
+// ============================================
+// SAMPLE RISK REPORT SECTION
+// ============================================
+
+.sample_risk_report {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+    margin-top: $spacing_lg;
+}
+
+// ============================================
+// RISK SCALE CARD
+// ============================================
+
+.risk_scale_card {
+    @include card_base;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    padding: $spacing_xl;
+    border-radius: 15px;
+    box-shadow: $shadow_md;
+
+    &__title {
+        font-size: $font_size_xl;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_lg;
+    }
+}
+
+.risk_scale_bar {
+    display: flex;
+    width: 100%;
+    height: 12px;
+    border-radius: $radius_full;
+    overflow: hidden;
+    margin-bottom: $spacing_lg;
+    background: transparent;
+}
+
+.risk_scale_bar__segment {
+    flex: 1;
+    height: 100%;
+
+    &--critical {
+        background-color: $error_color;
+    }
+
+    &--developing {
+        background-color: $warning_color;
+    }
+
+    &--balanced {
+        background-color: $brand_accent;
+    }
+
+    &--safe {
+        background-color: $brand_secondary;
+    }
+
+    &--prestigious {
+        background-color: $brand_primary;
+    }
+}
+
+.risk_scale_legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing_md;
+    justify-content: space-between;
+}
+
+.risk_scale_legend__item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xs;
+    flex: 1;
+    min-width: 120px;
+}
+
+.risk_scale_legend__label {
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+    color: $text_primary;
+}
+
+.risk_scale_legend__range {
+    font-size: $font_size_xs;
+    color: $text_secondary;
+}
+
+// ============================================
+// CREDIT HISTORY CARD
+// ============================================
+
+.credit_history_card {
+    @include card_base;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: $spacing_xl;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+
+    // Glassmorphism overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        z-index: 0;
+    }
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing_lg;
+    }
+
+    &__title {
+        font-size: 1.1rem;
+        font-weight: $font_weight_semibold;
+        color: #f8fafc;
+        font-family: $font_primary;
+    }
+
+    &__trend {
+        display: flex;
+        align-items: center;
+        gap: $spacing_xs;
+        padding: $spacing_xs $spacing_sm;
+        background-color: rgba(16, 185, 129, 0.2);
+        border-radius: $radius_full;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    &__trend__icon {
+        font-size: $font_size_base;
+        color: $success_color;
+    }
+
+    &__trend__text {
+        font-size: $font_size_sm;
+        font-weight: $font_weight_semibold;
+        color: $success_color;
+    }
+}
+
+.credit_history_chart {
+    width: 100%;
+    height: 220px;
+    position: relative;
+    padding-left: 50px;
+    padding-right: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.credit_history_chart__svg {
+    width: 90%;
+    flex: 1;
+    min-height: 0;
+    margin-left: 0;
+}
+
+.credit_history_chart__y_axis {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 45px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.credit_history_chart__axis_label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+    font-family: $font_primary;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+.credit_history_chart__axis_line {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 1;
+}
+
+.credit_history_chart__grid_line {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 1;
+    stroke-dasharray: 3, 3;
+}
+
+.credit_history_chart__area {
+    transition: opacity $transition_normal;
+    fill: url(#chartGradientHistory);
+}
+
+.credit_history_chart__line {
+    transition: stroke $transition_normal;
+    stroke: #3b82f6;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+.credit_history_chart__x_axis {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacing_sm 0 0 0;
+    margin-top: $spacing_xs;
+}
+
+.credit_history_chart__x_axis_label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+    font-family: $font_primary;
+    opacity: 0.8;
+    flex: 1;
+    text-align: center;
+}
+
+// ============================================
+// CREDIT PRODUCTS SECTION
+// ============================================
+
+.credit_products_section {
+    margin-bottom: $spacing_lg;
+}
+
+.credit_products_section__title {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin-bottom: $spacing_lg;
+}
+
+.credit_products_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing_lg;
+}
+
+.credit_product_card {
+    @include card_base;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    padding: $spacing_lg;
+    border-radius: 15px;
+    box-shadow: $shadow_md;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: $spacing_md;
+    }
+
+    &__title {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin: 0;
+    }
+
+    &__amount {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+    }
+
+    &__progress {
+        margin-top: $spacing_md;
+    }
+
+    &__progress_bar {
+        width: 100%;
+        height: 8px;
+        background-color: $bg_secondary;
+        border-radius: $radius_full;
+        overflow: hidden;
+        margin-bottom: $spacing_sm;
+    }
+
+    &__progress_fill {
+        height: 100%;
+        border-radius: $radius_full;
+        transition: width $transition_normal;
+
+        &--positive {
+            background-color: $success_color;
+        }
+
+        &--negative {
+            background-color: $error_color;
+        }
+    }
+
+    &__progress_labels {
+        display: flex;
+        justify-content: space-between;
+        gap: $spacing_sm;
+    }
+
+    &__progress_label {
+        font-size: $font_size_xs;
+        color: $text_secondary;
+    }
+}
+
+// ============================================
+// USAGE AREAS SECTION
+// ============================================
+
+.usage_areas_section {
+    margin-bottom: $spacing_lg;
+}
+
+.usage_areas_section__title {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin-bottom: $spacing_lg;
+}
+
+.usage_areas_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing_md;
+}
+
+.usage_area_card {
+    @include card_base;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    padding: $spacing_lg;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing_sm;
+    transition: transform $transition_normal;
+    box-shadow: $shadow_md;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow_lg;
+        border-color: $brand_secondary;
+    }
+
+    &__icon {
+        width: 48px;
+        height: 48px;
+        color: $brand_secondary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__label {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        color: $text_primary;
+        text-align: center;
+    }
+}
+
+// ============================================
+// CALCULATION FACTORS SECTION
+// ============================================
+
+.calculation_factors_section {
+    margin-bottom: $spacing_lg;
+}
+
+.calculation_factors_section__title {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin-bottom: $spacing_lg;
+}
+
+.calculation_factors_list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+}
+
+.calculation_factor_item {
+    @include card_base;
+    background-color: $bg_primary;
+    border: 1px solid $border_light;
+    padding: $spacing_md $spacing_lg;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing_md;
+    box-shadow: $shadow_md;
+
+    &__label {
+        font-size: $font_size_base;
+        font-weight: $font_weight_medium;
+        color: $text_primary;
+        flex: 1;
+    }
+
+    &__percentage {
+        font-size: $font_size_lg;
+        font-weight: $font_weight_bold;
+        color: $brand_primary;
+        text-align: right;
+        min-width: 50px;
+    }
+
+    &__chevron {
+        font-size: $font_size_base;
+        color: $brand_secondary;
+        margin-left: $spacing_sm;
+    }
+}
+
+// ============================================
+// RESPONSIVE SAMPLE RISK REPORT
+// ============================================
+
+@include respond_to_max(sm) {
+    .sample_risk_report {
+        gap: $spacing_md;
+    }
+
+    .risk_scale_card,
+    .credit_history_card,
+    .credit_product_card,
+    .usage_area_card,
+    .calculation_factor_item {
+        padding: $spacing_md;
+        border-radius: 12px;
+    }
+
+    .credit_products_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .usage_areas_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .risk_scale_legend {
+        flex-direction: column;
+        gap: $spacing_sm;
+    }
+
+    .risk_scale_legend__item {
+        min-width: 100%;
+    }
+}

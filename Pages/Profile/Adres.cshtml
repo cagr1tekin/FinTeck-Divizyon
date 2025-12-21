@@ -1,7 +1,30 @@
 @page
 @model InteraktifKredi.Pages.Profile.AdresModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     ViewData["Title"] = "Profil Bilgilerim";
+    var customerIdStr = HttpContext.Session.GetString("CustomerId");
+    var customerId = !string.IsNullOrEmpty(customerIdStr) && long.TryParse(customerIdStr, out var id) ? id : 0;
+    var tokenSet = Antiforgery.GetAndStoreTokens(HttpContext);
+    var requestToken = tokenSet.RequestToken;
+    var initials = string.Empty;
+    if (!string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.LastName))
+    {
+        initials = Model.FirstName.Substring(0, 1).ToUpper() + Model.LastName.Substring(0, 1).ToUpper();
+    }
+    else if (!string.IsNullOrEmpty(Model.CustomerName))
+    {
+        var parts = Model.CustomerName.Split(' ');
+        initials = parts.Length > 0 ? parts[0].Substring(0, 1).ToUpper() : "M";
+        if (parts.Length > 1)
+        {
+            initials += parts[1].Substring(0, 1).ToUpper();
+        }
+    }
+    else
+    {
+        initials = "MU";
+    }
 }
 
 <div class="profile_page_container">
@@ -22,473 +45,740 @@
         </div>
     }
 
-    <!-- Header Card - Full Width (12 columns) -->
-    <div class="profile_header_card">
-        <div class="profile_header_card__left">
-            <!-- Avatar -->
-            <div class="profile_avatar">
-                @{
-                    var initials = string.Empty;
-                    if (!string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.LastName))
+    <div class="profile_layout">
+        <!-- Left Sidebar -->
+        <aside class="profile_sidebar">
+            <!-- User Info Card -->
+            <div class="profile_user_card">
+                <div class="profile_user_card__body">
+                    <div class="profile_user_card__avatar">
+                        <div class="profile_avatar">
+                            <span class="profile_avatar__text">@initials</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile_user_card__phone">
+                        <strong>@(Model.Phone ?? "")</strong>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.TCKN))
                     {
-                        initials = Model.FirstName.Substring(0, 1).ToUpper() + Model.LastName.Substring(0, 1).ToUpper();
+                        <div class="profile_user_card__tckn">
+                            <span class="profile_user_card__label">TCKN:</span>
+                            <span class="profile_user_card__value">@Model.TCKN</span>
+                        </div>
                     }
-                    else if (!string.IsNullOrEmpty(Model.CustomerName))
+                    
+                    <div class="profile_user_card__last_signin">
+                        Son giriş: Az önce
+                    </div>
+                </div>
+            </div>
+
+            <!-- User ID Card -->
+            <div class="profile_user_id_card">
+                <div class="profile_user_id_card__header">
+                    <h3 class="profile_user_id_card__title">User ID</h3>
+                </div>
+                <div class="profile_user_id_card__body">
+                    <div class="profile_user_id_card__wrapper">
+                        <input type="text" class="profile_user_id_card__input" value="user_@(customerId.ToString().PadLeft(10, '0'))..." readonly />
+                        <button type="button" class="profile_user_id_card__copy" onclick="copyUserId()">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Main Content -->
+        <main class="profile_main_content">
+            <!-- Adres Bilgileri Card -->
+            <div class="info_card" data-card="address">
+                <div class="info_card__header">
+                    <h2 class="info_card__title">Adres Bilgileri</h2>
+                    <button type="button" class="info_card__edit_btn" data-action="edit" aria-label="Düzenle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="info_card__save_btn" data-action="save" style="display: none;" aria-label="Kaydet">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="info_card__body">
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">İl</label>
+                            <!-- Readonly display -->
+                            <input type="text" class="form_input form_input--readonly address_city_display" 
+                                   value="@(Model.AddressData?.CityId.HasValue == true ? Model.Cities.FirstOrDefault(c => c.Value == Model.AddressData.CityId.Value.ToString())?.Text ?? "" : "")" 
+                                   readonly />
+                            <!-- Editable select -->
+                            <select class="form_select address_city_select" style="display: none;" data-address-field="cityId">
+                                @foreach (var city in Model.Cities)
+                                {
+                                    <option value="@city.Value" selected="@(Model.AddressData?.CityId.HasValue == true && city.Value == Model.AddressData.CityId.Value.ToString())">@city.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">İlçe</label>
+                            <!-- Readonly display -->
+                            <input type="text" class="form_input form_input--readonly address_town_display" 
+                                   value="@(Model.AddressData?.TownId.HasValue == true ? Model.Districts.FirstOrDefault(d => d.Value == Model.AddressData.TownId.Value.ToString())?.Text ?? "" : "")" 
+                                   readonly />
+                            <!-- Editable select -->
+                            <select class="form_select address_town_select" style="display: none;" data-address-field="townId">
+                                @foreach (var district in Model.Districts)
+                                {
+                                    <option value="@district.Value" selected="@(Model.AddressData?.TownId.HasValue == true && district.Value == Model.AddressData.TownId.Value.ToString())">@district.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form_row">
+                        <div class="form_group form_group--full">
+                            <label class="form_label">Adres</label>
+                            <input type="text" class="form_input form_input--readonly address_input" 
+                                   value="@(Model.AddressData?.Address ?? "")" 
+                                   placeholder="@(string.IsNullOrEmpty(Model.AddressData?.Address) ? "Adres bilgisi girilmemiş" : "")"
+                                   data-address-field="address"
+                                   readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İş Bilgileri Card -->
+            <div class="info_card" data-card="job">
+                <div class="info_card__header">
+                    <h2 class="info_card__title">İş Bilgileri</h2>
+                    <button type="button" class="info_card__edit_btn" data-action="edit" aria-label="Düzenle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="info_card__save_btn" data-action="save" style="display: none;" aria-label="Kaydet">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="info_card__body">
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Meslek Grubu</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.JobGroupName ?? "")" readonly />
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Meslek</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.OccupationName ?? "")" readonly />
+                        </div>
+                    </div>
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Şirket Adı</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.TitleCompany ?? "")" readonly />
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Pozisyon</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.CompanyPosition ?? "")" readonly />
+                        </div>
+                    </div>
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Çalışma Süresi</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.JobData?.WorkingYears.HasValue == true || Model.JobData?.WorkingMonth.HasValue == true ? $"{Model.JobData.WorkingYears ?? 0} yıl {Model.JobData.WorkingMonth ?? 0} ay" : "")" readonly />
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Aylık Gelir</label>
+                            <input type="text" class="form_input form_input--readonly" value="@(Model.FinanceData?.SalaryAmount.HasValue == true && Model.FinanceData.SalaryAmount.Value > 0 ? $"{Model.FinanceData.SalaryAmount.Value:N0} ₺" : "")" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eş Bilgileri Card -->
+            <div class="info_card" data-card="wife">
+                <div class="info_card__header">
+                    <h2 class="info_card__title">Eş Bilgileri</h2>
+                    <button type="button" class="info_card__edit_btn" data-action="edit" aria-label="Düzenle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="info_card__save_btn" data-action="save" style="display: none;" aria-label="Kaydet">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="info_card__body">
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Medeni Durum</label>
+                            <input type="text" class="form_input form_input--readonly wife_marital_status_display" value="@(Model.WifeData?.MaritalStatus == true ? "Evli" : Model.WifeData?.MaritalStatus == false ? "Bekar" : "")" readonly />
+                            <select class="form_select wife_marital_status_select" style="display: none;">
+                                <option value="">Seçiniz</option>
+                                @if (Model.WifeData?.MaritalStatus == true)
+                                {
+                                    <option value="Evli" selected>Evli</option>
+                                    <option value="Bekar">Bekar</option>
+                                }
+                                else if (Model.WifeData?.MaritalStatus == false)
+                                {
+                                    <option value="Evli">Evli</option>
+                                    <option value="Bekar" selected>Bekar</option>
+                                }
+                                else
+                                {
+                                    <option value="Evli">Evli</option>
+                                    <option value="Bekar">Bekar</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Eş Çalışıyor mu?</label>
+                            <input type="text" class="form_input form_input--readonly wife_work_display" value="@(Model.WifeData?.WorkWife == true ? "Çalışıyor" : Model.WifeData?.WorkWife == false ? "Çalışmıyor" : "")" readonly />
+                            <select class="form_select wife_work_select" style="display: none;">
+                                <option value="">Seçiniz</option>
+                                @if (Model.WifeData?.WorkWife == true)
+                                {
+                                    <option value="Çalışıyor" selected>Çalışıyor</option>
+                                    <option value="Çalışmıyor">Çalışmıyor</option>
+                                }
+                                else if (Model.WifeData?.WorkWife == false)
+                                {
+                                    <option value="Çalışıyor">Çalışıyor</option>
+                                    <option value="Çalışmıyor" selected>Çalışmıyor</option>
+                                }
+                                else
+                                {
+                                    <option value="Çalışıyor">Çalışıyor</option>
+                                    <option value="Çalışmıyor">Çalışmıyor</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    @if (Model.WifeData?.WorkWife == true && Model.WifeData?.WifeSalaryAmount.HasValue == true)
                     {
-                        var parts = Model.CustomerName.Split(' ');
-                        initials = parts.Length > 0 ? parts[0].Substring(0, 1).ToUpper() : "M";
-                        if (parts.Length > 1)
-                        {
-                            initials += parts[1].Substring(0, 1).ToUpper();
-                        }
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label class="form_label">Eş Maaşı</label>
+                                <input type="text" class="form_input form_input--readonly wife_salary_display" value="@($"{Model.WifeData.WifeSalaryAmount.Value:N0} ₺")" readonly />
+                                <input type="number" class="form_input wife_salary_input" style="display: none;" value="@(Model.WifeData.WifeSalaryAmount.Value)" placeholder="Maaş tutarı" />
+                            </div>
+                        </div>
                     }
                     else
                     {
-                        initials = "MU";
+                        <div class="form_row wife_salary_row" style="display: none;">
+                            <div class="form_group">
+                                <label class="form_label">Eş Maaşı</label>
+                                <input type="number" class="form_input wife_salary_input" placeholder="Maaş tutarı" />
+                            </div>
+                        </div>
                     }
-                }
-                <span class="profile_avatar__text">@initials</span>
-            </div>
-
-            <!-- Name and Title -->
-            <div class="profile_header_card__info">
-                <h1 class="profile_header_card__name">@(Model.CustomerName ?? "Müşteri")</h1>
-                <p class="profile_header_card__title">@(Model.CustomerTitle ?? "Kullanıcı")</p>
-            </div>
-        </div>
-
-        <!-- Credit Score Badge -->
-        <div class="profile_header_card__right">
-            <div class="credit_score_badge">
-                <div class="credit_score_badge__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                    </svg>
-                </div>
-                <div class="credit_score_badge__content">
-                    <span class="credit_score_badge__label">Kredi Notu</span>
-                    <span class="credit_score_badge__value">@Model.CreditScore</span>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Form Cards Grid -->
-    <div class="profile_content">
-            <form id="profile_form" method="post" class="profile_form" novalidate>
-                <!-- Kişisel Bilgiler Card -->
-                <div class="info_card">
-                    <div class="info_card__header">
-                        <h2 class="info_card__title">Kişisel Bilgiler</h2>
-                    </div>
-                    <div class="info_card__body">
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="FirstName" class="form_label">Ad</label>
-                                <input asp-for="FirstName" id="first_name_input" class="form_input" type="text" readonly />
-                                <span asp-validation-for="FirstName" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="LastName" class="form_label">Soyad</label>
-                                <input asp-for="LastName" id="last_name_input" class="form_input" type="text" readonly />
-                                <span asp-validation-for="LastName" class="form_error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="TCKN" class="form_label">TC Kimlik No</label>
-                                <input asp-for="TCKN" id="tckn_input" class="form_input" type="text" readonly />
-                                <span asp-validation-for="TCKN" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="Phone" class="form_label form_label--required">Telefon</label>
-                                <div class="form_input_wrapper">
-                                    <input type="hidden" asp-for="Phone" id="phone_hidden" value="@Model.Phone" />
-                                    <input type="tel" id="phone_input" class="form_input" placeholder="(5XX) XXX XX XX" required />
-                                    <span class="form_input_wrapper__icon form_input_wrapper__icon--right">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                                <span asp-validation-for="Phone" class="form_error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="CityId" class="form_label form_label--required">İl</label>
-                                <select asp-for="CityId" asp-items="Model.Cities" id="city_select" class="form_select" required>
-                                </select>
-                                <span asp-validation-for="CityId" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="TownId" class="form_label form_label--required">İlçe</label>
-                                <select asp-for="TownId" asp-items="Model.Districts" id="town_select" class="form_select" required disabled>
-                                </select>
-                                <span asp-validation-for="TownId" class="form_error"></span>
-                                <span class="form_hint" id="town_hint" style="display: none;">Lütfen önce il seçiniz</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- İş ve Gelir Bilgileri Card -->
-                <div class="info_card">
-                    <div class="info_card__header">
-                        <h2 class="info_card__title">İş ve Gelir Bilgileri</h2>
-                    </div>
-                    <div class="info_card__body">
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="JobId" class="form_label form_label--required">Meslek</label>
-                                <select asp-for="JobId" asp-items="Model.Jobs" id="job_select" class="form_select" required>
-                                </select>
-                                <span asp-validation-for="JobId" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="SectorId" class="form_label form_label--required">Sektör</label>
-                                <select asp-for="SectorId" asp-items="Model.Sectors" id="sector_select" class="form_select" required>
-                                </select>
-                                <span asp-validation-for="SectorId" class="form_error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="CompanyName" class="form_label">Şirket Adı</label>
-                                <input asp-for="CompanyName" id="company_name_input" class="form_input" type="text" placeholder="Şirket adını giriniz" />
-                                <span asp-validation-for="CompanyName" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="Position" class="form_label">Pozisyon</label>
-                                <input asp-for="Position" id="position_input" class="form_input" type="text" placeholder="Pozisyonunuzu giriniz" />
-                                <span asp-validation-for="Position" class="form_error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form_row">
-                            <div class="form_group">
-                                <label asp-for="WorkingYears" class="form_label">Çalışma Yılı</label>
-                                <input asp-for="WorkingYears" id="working_years_input" class="form_input" type="number" min="0" max="50" placeholder="0" />
-                                <span asp-validation-for="WorkingYears" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="WorkingMonths" class="form_label">Çalışma Ayı</label>
-                                <input asp-for="WorkingMonths" id="working_months_input" class="form_input" type="number" min="0" max="11" placeholder="0" />
-                                <span asp-validation-for="WorkingMonths" class="form_error"></span>
-                            </div>
-                            <div class="form_group">
-                                <label asp-for="MonthlyIncome" class="form_label form_label--required">Aylık Gelir</label>
-                                <div class="form_input_wrapper">
-                                    <input type="hidden" asp-for="MonthlyIncome" id="monthly_income_hidden" value="@Model.MonthlyIncome" />
-                                    <input type="text" id="monthly_income_input" class="form_input" placeholder="10.000 ₺" required data-mask="currency" />
-                                    <span class="form_input_wrapper__icon form_input_wrapper__icon--right">₺</span>
-                                </div>
-                                <span asp-validation-for="MonthlyIncome" class="form_error"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ek Bilgiler Card -->
-                <div class="info_card">
-                    <div class="info_card__header">
-                        <h2 class="info_card__title">Ek Bilgiler</h2>
-                    </div>
-                    <div class="info_card__body">
-                        <div class="form_group">
-                            <label asp-for="MaritalStatus" class="form_label form_label--required">Medeni Durum</label>
-                            <select asp-for="MaritalStatus" asp-items="Model.MaritalStatuses" id="marital_status_select" class="form_select" required>
-                            </select>
-                            <span asp-validation-for="MaritalStatus" class="form_error"></span>
-                        </div>
-
-                        <!-- Eş Bilgileri (Conditional) -->
-                        <div class="conditional_fields" id="spouse_fields" style="display: none;">
-                            <div class="form_row">
-                                <div class="form_group">
-                                    <label asp-for="WorkSpouse" class="form_label">Eş Çalışıyor mu?</label>
-                                    <div class="form_checkbox">
-                                        <input asp-for="WorkSpouse" id="work_spouse_checkbox" class="form_checkbox__input" type="checkbox" />
-                                        <label for="work_spouse_checkbox" class="form_checkbox__label">Evet, eşim çalışıyor</label>
-                                    </div>
-                                </div>
-                                <div class="form_group" id="spouse_salary_group" style="display: none;">
-                                    <label asp-for="SpouseSalary" class="form_label">Eş Maaşı</label>
-                                    <div class="form_input_wrapper">
-                                        <input type="hidden" asp-for="SpouseSalary" id="spouse_salary_hidden" value="@(Model.SpouseSalary.HasValue ? Model.SpouseSalary.Value.ToString() : "")" />
-                                        <input type="text" id="spouse_salary_input" class="form_input" placeholder="10.000 ₺" data-mask="currency" />
-                                        <span class="form_input_wrapper__icon form_input_wrapper__icon--right">₺</span>
-                                    </div>
-                                    <span asp-validation-for="SpouseSalary" class="form_error"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="profile_form__actions">
-                    <button type="submit" id="submit_btn" class="btn_primary btn_primary--solid">
-                        <span class="btn_primary__text">Bilgileri Güncelle</span>
+            <!-- Finansal Durum / Varlık Bilgileri Card -->
+            <div class="info_card" data-card="finance">
+                <div class="info_card__header">
+                    <h2 class="info_card__title">Finansal Durum / Varlık Bilgileri</h2>
+                    <button type="button" class="info_card__edit_btn" data-action="edit" aria-label="Düzenle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="info_card__save_btn" data-action="save" style="display: none;" aria-label="Kaydet">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
                     </button>
                 </div>
-            </form>
+                <div class="info_card__body">
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Maaş Bankası</label>
+                            <input type="text" class="form_input form_input--readonly finance_salary_bank_display" value="@(Model.FinanceData?.SalaryBank ?? "")" readonly />
+                            <input type="text" class="form_input finance_salary_bank_input" style="display: none;" value="@(Model.FinanceData?.SalaryBank ?? "")" placeholder="Maaş bankası" />
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Maaş Tutarı</label>
+                            <input type="text" class="form_input form_input--readonly finance_salary_amount_display" value="@(Model.FinanceData?.SalaryAmount.HasValue == true ? $"{Model.FinanceData.SalaryAmount.Value:N0} ₺" : "")" readonly />
+                            <input type="number" class="form_input finance_salary_amount_input" style="display: none;" value="@(Model.FinanceData?.SalaryAmount ?? 0)" placeholder="Maaş tutarı" />
+                        </div>
+                    </div>
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Araba Durumu</label>
+                            <input type="text" class="form_input form_input--readonly finance_car_status_display" value="@(Model.FinanceData?.CarStatus == true ? "Var" : Model.FinanceData?.CarStatus == false ? "Yok" : "")" readonly />
+                            <select class="form_select finance_car_status_select" style="display: none;">
+                                <option value="">Seçiniz</option>
+                                @if (Model.FinanceData?.CarStatus == true)
+                                {
+                                    <option value="Var" selected>Var</option>
+                                    <option value="Yok">Yok</option>
+                                }
+                                else if (Model.FinanceData?.CarStatus == false)
+                                {
+                                    <option value="Var">Var</option>
+                                    <option value="Yok" selected>Yok</option>
+                                }
+                                else
+                                {
+                                    <option value="Var">Var</option>
+                                    <option value="Yok">Yok</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Ev Durumu</label>
+                            <input type="text" class="form_input form_input--readonly finance_house_status_display" value="@(Model.FinanceData?.HouseStatus == true ? "Var" : Model.FinanceData?.HouseStatus == false ? "Yok" : "")" readonly />
+                            <select class="form_select finance_house_status_select" style="display: none;">
+                                <option value="">Seçiniz</option>
+                                @if (Model.FinanceData?.HouseStatus == true)
+                                {
+                                    <option value="Var" selected>Var</option>
+                                    <option value="Yok">Yok</option>
+                                }
+                                else if (Model.FinanceData?.HouseStatus == false)
+                                {
+                                    <option value="Var">Var</option>
+                                    <option value="Yok" selected>Yok</option>
+                                }
+                                else
+                                {
+                                    <option value="Var">Var</option>
+                                    <option value="Yok">Yok</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/cities-districts.js" asp-append-version="true"></script>
-    
+    <input type="hidden" name="__RequestVerificationToken" value="@requestToken" />
     <script>
         $(document).ready(function() {
-            // Selector Caching
-            var $form = $('#profile_form');
-            var $citySelect = $('#city_select');
-            var $townSelect = $('#town_select');
-            var $townHint = $('#town_hint');
-            var $phoneInput = $('#phone_input');
-            var $phoneHidden = $('#phone_hidden');
-            var $monthlyIncomeInput = $('#monthly_income_input');
-            var $monthlyIncomeHidden = $('#monthly_income_hidden');
-            var $spouseSalaryInput = $('#spouse_salary_input');
-            var $spouseSalaryHidden = $('#spouse_salary_hidden');
-            var $maritalStatusSelect = $('#marital_status_select');
-            var $spouseFields = $('#spouse_fields');
-            var $workSpouseCheckbox = $('#work_spouse_checkbox');
-            var $spouseSalaryGroup = $('#spouse_salary_group');
-            var $submitBtn = $('#submit_btn');
-            var $btnText = $submitBtn.find('.btn_primary__text');
+            // CustomerId session'dan alınıyor
+            var customerId = @HttpContext.Session.GetString("CustomerId");
+            
+            // Anti-forgery token
+            var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
-            // Telefon Masking: (5XX) XXX XX XX
-            $phoneInput.on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-                if (value.length > 10) value = value.substring(0, 10);
+            // Copy User ID
+            function copyUserId() {
+                var $input = $('.profile_user_id_card__input');
+                $input.select();
+                document.execCommand('copy');
                 
-                var formatted = '';
-                if (value.length > 0) {
-                    if (value.length <= 3) {
-                        formatted = '(' + value;
-                    } else if (value.length <= 6) {
-                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3);
-                    } else if (value.length <= 8) {
-                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + ' ' + value.substring(6);
-                    } else {
-                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + ' ' + value.substring(6, 8) + ' ' + value.substring(8, 10);
-                    }
-                }
-                $(this).val(formatted);
-                $phoneHidden.val(value);
-            });
-
-            // İlk yüklemede telefon formatını uygula
-            var initialPhoneValue = $phoneHidden.val();
-            if (initialPhoneValue && initialPhoneValue.length > 0) {
-                var initialPhone = initialPhoneValue.replace(/\D/g, '');
-                if (initialPhone.length > 0) {
-                    var formatted = '';
-                    if (initialPhone.length <= 3) {
-                        formatted = '(' + initialPhone;
-                    } else if (initialPhone.length <= 6) {
-                        formatted = '(' + initialPhone.substring(0, 3) + ') ' + initialPhone.substring(3);
-                    } else if (initialPhone.length <= 8) {
-                        formatted = '(' + initialPhone.substring(0, 3) + ') ' + initialPhone.substring(3, 6) + ' ' + initialPhone.substring(6);
-                    } else {
-                        formatted = '(' + initialPhone.substring(0, 3) + ') ' + initialPhone.substring(3, 6) + ' ' + initialPhone.substring(6, 8) + ' ' + initialPhone.substring(8, 10);
-                    }
-                    $phoneInput.val(formatted);
-                    $phoneHidden.val(initialPhone);
-                }
+                var $btn = $('.profile_user_id_card__copy');
+                var originalText = $btn.text();
+                $btn.text('Kopyalandı!');
+                setTimeout(function() {
+                    $btn.text(originalText);
+                }, 2000);
             }
+            
+            window.copyUserId = copyUserId;
 
-            // Para Formatı: 10.000 ₺
-            function format_currency(value) {
-                if (typeof value === 'string') {
-                    value = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-                }
-                if (value === 0) return '';
-                return new Intl.NumberFormat('tr-TR', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                }).format(value);
-            }
-
-            function parse_currency(value) {
-                if (!value) return 0;
-                return parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-            }
-
-            // Aylık Gelir Masking
-            $monthlyIncomeInput.on('input', function() {
-                var value = $(this).val().replace(/[^\d,]/g, '');
-                var numericValue = parse_currency(value);
-                var formatted = format_currency(numericValue);
-                $(this).val(formatted ? formatted + ' ₺' : '');
-                $monthlyIncomeHidden.val(numericValue > 0 ? numericValue.toString() : '0');
-            });
-
-            $monthlyIncomeInput.on('focus', function() {
-                var value = parse_currency($(this).val());
-                $(this).val(value > 0 ? value.toString() : '');
-            });
-
-            $monthlyIncomeInput.on('blur', function() {
-                var value = parse_currency($(this).val());
-                var formatted = format_currency(value);
-                $(this).val(formatted ? formatted + ' ₺' : '');
-                $monthlyIncomeHidden.val(value > 0 ? value.toString() : '0');
-            });
-
-            // Eş Maaşı Masking
-            $spouseSalaryInput.on('input', function() {
-                var value = $(this).val().replace(/[^\d,]/g, '');
-                var numericValue = parse_currency(value);
-                var formatted = format_currency(numericValue);
-                $(this).val(formatted ? formatted + ' ₺' : '');
-                if (numericValue > 0) {
-                    $spouseSalaryHidden.val(numericValue.toString());
-                } else {
-                    $spouseSalaryHidden.val('');
-                }
-            });
-
-            $spouseSalaryInput.on('focus', function() {
-                var value = parse_currency($(this).val());
-                $(this).val(value > 0 ? value.toString() : '');
-            });
-
-            $spouseSalaryInput.on('blur', function() {
-                var value = parse_currency($(this).val());
-                var formatted = format_currency(value);
-                $(this).val(formatted ? formatted + ' ₺' : '');
-                if (value > 0) {
-                    $spouseSalaryHidden.val(value.toString());
-                } else {
-                    $spouseSalaryHidden.val('');
-                }
-            });
-
-            // İl değişikliğinde ilçeleri yükle
-            $citySelect.on('change', function() {
-                var cityId = parseInt($(this).val());
+            // Edit butonuna tıklandığında
+            $('.info_card__edit_btn').on('click', function() {
+                var $card = $(this).closest('.info_card');
+                var $editBtn = $card.find('.info_card__edit_btn');
+                var $saveBtn = $card.find('.info_card__save_btn');
+                var cardType = $card.data('card');
                 
-                if (cityId > 0) {
-                    loadDistricts(cityId);
-                    $townSelect.prop('disabled', false);
-                    $townHint.hide();
+                if (cardType === 'address') {
+                    // Adres kartı için özel işlem: display input'ları gizle, select'leri göster
+                    $card.find('.address_city_display, .address_town_display').hide();
+                    $card.find('.address_city_select, .address_town_select').show();
+                    $card.find('.address_input').prop('readonly', false).removeClass('form_input--readonly');
+                } else if (cardType === 'wife') {
+                    // Eş bilgileri kartı için: display input'ları gizle, select'leri göster
+                    $card.find('.wife_marital_status_display, .wife_work_display, .wife_salary_display').hide();
+                    $card.find('.wife_marital_status_select, .wife_work_select').show();
+                    $card.find('.wife_salary_input').show();
+                    $card.find('.wife_salary_row').show();
+                } else if (cardType === 'finance') {
+                    // Finansal durum kartı için: display input'ları gizle, edit input'ları göster
+                    $card.find('.finance_salary_bank_display, .finance_salary_amount_display, .finance_car_status_display, .finance_house_status_display').hide();
+                    $card.find('.finance_salary_bank_input, .finance_salary_amount_input').show();
+                    $card.find('.finance_car_status_select, .finance_house_status_select').show();
                 } else {
-                    $townSelect.html('<option value="">İlçe Seçiniz</option>');
-                    $townSelect.prop('disabled', true);
-                    $townHint.show();
+                    // Diğer kartlar için normal işlem
+                    var $inputs = $card.find('.form_input--readonly');
+                    $inputs.prop('readonly', false).removeClass('form_input--readonly');
+                }
+                
+                // Edit ikonunu gizle, Save ikonunu göster
+                $editBtn.hide();
+                $saveBtn.show();
+            });
+            
+            // Eş çalışma durumu değiştiğinde maaş alanını göster/gizle
+            $(document).on('change', '.wife_work_select', function() {
+                var $card = $(this).closest('.info_card');
+                var workStatus = $(this).val();
+                
+                if (workStatus === 'Çalışıyor') {
+                    $card.find('.wife_salary_row').show();
+                } else {
+                    $card.find('.wife_salary_row').hide();
+                    $card.find('.wife_salary_input').val('');
                 }
             });
-
-            // İlçe yükleme fonksiyonu
-            function loadDistricts(cityId) {
-                $townSelect.html('<option value="">Yükleniyor...</option>');
-                $townSelect.prop('disabled', true);
-
-                var districts = get_districts_by_city_id(cityId);
+            
+            // İl seçildiğinde ilçe listesini güncelle
+            $(document).on('change', '.address_city_select', function() {
+                var cityId = $(this).val();
+                var $townSelect = $(this).closest('.info_card').find('.address_town_select');
                 
-                if (districts && districts.length > 0) {
-                    var options = '<option value="">İlçe Seçiniz</option>';
-                    districts.forEach(function(district) {
-                        options += '<option value="' + district.id + '">' + district.name + '</option>';
+                if (cityId) {
+                    // İlçe listesini AJAX ile yükle
+                    $.ajax({
+                        url: '/Profile/Adres?handler=GetDistricts',
+                        method: 'GET',
+                        data: { cityId: cityId },
+                        success: function(response) {
+                            $townSelect.empty();
+                            $townSelect.append('<option value="">İlçe Seçiniz</option>');
+                            if (response && response.districts) {
+                                $.each(response.districts, function(index, district) {
+                                    $townSelect.append('<option value="' + district.value + '">' + district.text + '</option>');
+                                });
+                            }
+                        },
+                        error: function() {
+                            console.error('İlçe listesi yüklenemedi');
+                        }
                     });
-                    $townSelect.html(options);
-                    $townSelect.prop('disabled', false);
                 } else {
-                    $townSelect.html('<option value="">İlçe bulunamadı</option>');
-                }
-            }
-
-            // Medeni Durum değişikliğinde eş bilgilerini göster/gizle
-            $maritalStatusSelect.on('change', function() {
-                var status = $(this).val();
-                if (status === 'Evli') {
-                    $spouseFields.slideDown(300);
-                } else {
-                    $spouseFields.slideUp(300);
-                    $workSpouseCheckbox.prop('checked', false);
-                    $spouseSalaryGroup.hide();
-                    $spouseSalaryInput.val('');
+                    $townSelect.empty();
+                    $townSelect.append('<option value="">İlçe Seçiniz</option>');
                 }
             });
 
-            // Eş çalışıyor mu checkbox
-            $workSpouseCheckbox.on('change', function() {
-                if ($(this).is(':checked')) {
-                    $spouseSalaryGroup.slideDown(300);
-                } else {
-                    $spouseSalaryGroup.slideUp(300);
-                    $spouseSalaryInput.val('');
+            // Save butonuna tıklandığında
+            $('.info_card__save_btn').on('click', function() {
+                var $card = $(this).closest('.info_card');
+                var $editBtn = $card.find('.info_card__edit_btn');
+                var $saveBtn = $card.find('.info_card__save_btn');
+                var $inputs = $card.find('.form_input');
+                var cardType = $card.data('card');
+                
+                // Buton disable et
+                $saveBtn.prop('disabled', true).css('opacity', '0.5');
+                
+                // Kart tipine göre veri topla ve API çağrısı yap
+                if (cardType === 'address') {
+                    saveAddressData($card, $editBtn, $saveBtn, $inputs);
+                } else if (cardType === 'job') {
+                    saveJobData($card, $editBtn, $saveBtn, $inputs);
+                } else if (cardType === 'wife') {
+                    saveWifeData($card, $editBtn, $saveBtn, $inputs);
+                } else if (cardType === 'finance') {
+                    saveFinanceData($card, $editBtn, $saveBtn, $inputs);
                 }
             });
 
-            // İlk yüklemede kontrol et
-            var initialMaritalStatus = $maritalStatusSelect.val();
-            if (initialMaritalStatus === 'Evli') {
-                $spouseFields.show();
-                if ($workSpouseCheckbox.is(':checked')) {
-                    $spouseSalaryGroup.show();
+            // Adres bilgilerini kaydet
+            function saveAddressData($card, $editBtn, $saveBtn, $inputs) {
+                var cityId = parseInt($card.find('.address_city_select').val()) || 0;
+                var townId = parseInt($card.find('.address_town_select').val()) || 0;
+                var address = $card.find('.address_input').val() || '';
+                
+                // Validation
+                if (!cityId || cityId === 0) {
+                    show_toast('Lütfen bir il seçiniz.', 'error');
+                    $saveBtn.prop('disabled', false).css('opacity', '1');
+                    return;
                 }
+                
+                if (!townId || townId === 0) {
+                    show_toast('Lütfen bir ilçe seçiniz.', 'error');
+                    $saveBtn.prop('disabled', false).css('opacity', '1');
+                    return;
+                }
+                
+                // AddressModel formatına uygun veri hazırla
+                var data = {
+                    CustomerId: customerId,
+                    Address: address,
+                    CityId: cityId,
+                    TownId: townId
+                };
+
+                $.ajax({
+                    url: '/Profile/Adres?handler=SaveAddress',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('RequestVerificationToken', antiForgeryToken);
+                    },
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            show_toast(response.message || 'Adres bilgileri güncellendi', 'success');
+                            // Display input'ları tekrar göster, select'leri gizle
+                            $card.find('.address_city_display, .address_town_display').show();
+                            $card.find('.address_city_select, .address_town_select').hide();
+                            $card.find('.address_input').prop('readonly', true).addClass('form_input--readonly');
+                            $editBtn.show();
+                            $saveBtn.hide().prop('disabled', false).css('opacity', '1');
+                            // Sayfayı yenile (veriyi tazele)
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            show_toast(response.message || 'Bir hata oluştu', 'error');
+                            $saveBtn.prop('disabled', false).css('opacity', '1');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            try {
+                                var errorObj = JSON.parse(xhr.responseText);
+                                if (errorObj.message) {
+                                    errorMessage = errorObj.message;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing response:', xhr.responseText);
+                            }
+                        }
+                        show_toast(errorMessage, 'error');
+                        console.error('AJAX Error:', status, error, xhr.responseText);
+                        $saveBtn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
             }
 
-            // Form submit
-            $form.on('submit', function(e) {
-                e.preventDefault();
+            // İş bilgilerini kaydet
+            function saveJobData($card, $editBtn, $saveBtn, $inputs) {
+                var $formInputs = $card.find('.form_input');
+                
+                var data = {
+                    customerId: customerId,
+                    customerWork: 5, // Varsayılan: çalışıyor (1-7 arası değer, 5 = özel sektör)
+                    jobGroupId: @(Model.JobData?.CustomerId ?? 0), // API'den jobGroupId gelmeli
+                    workingYears: @(Model.JobData?.WorkingYears ?? 0),
+                    workingMonth: @(Model.JobData?.WorkingMonth ?? 0),
+                    titleCompany: $formInputs.eq(2).val() || '',
+                    companyPosition: $formInputs.eq(3).val() || ''
+                };
 
-                if (!$form[0].checkValidity()) {
-                    $form[0].reportValidity();
-                    return false;
-                }
-
-                if ($form.data('submitting')) {
-                    return false;
-                }
-
-                var monthlyIncomeValue = parse_currency($monthlyIncomeInput.val());
-                $monthlyIncomeHidden.val(monthlyIncomeValue > 0 ? monthlyIncomeValue.toString() : '0');
-
-                var spouseSalaryValue = parse_currency($spouseSalaryInput.val());
-                if (spouseSalaryValue > 0) {
-                    $spouseSalaryHidden.val(spouseSalaryValue.toString());
-                } else {
-                    $spouseSalaryHidden.val('');
-                }
-
-                var phoneValue = $phoneInput.val().replace(/\D/g, '');
-                $phoneHidden.val(phoneValue);
-
-                $form.data('submitting', true);
-                $submitBtn.prop('disabled', true)
-                    .addClass('btn_primary--loading');
-                $btnText.text('Güncelleniyor...');
-
-                $form.off('submit').submit();
-            });
-
-            // İlk yüklemede ilçeleri kontrol et
-            var initialCityId = parseInt($citySelect.val());
-            if (initialCityId > 0) {
-                loadDistricts(initialCityId);
-                $townSelect.prop('disabled', false);
+                $.ajax({
+                    url: '/Profile/Adres?handler=SaveJob',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'RequestVerificationToken': antiForgeryToken
+                    },
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            show_toast(response.message || 'İş bilgileri güncellendi', 'success');
+                            // Input'ları tekrar readonly yap
+                            $inputs.prop('readonly', true).addClass('form_input--readonly');
+                            $editBtn.show();
+                            $saveBtn.hide().prop('disabled', false).css('opacity', '1');
+                            // Sayfayı yenile (veriyi tazele)
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            show_toast(response.message || 'Bir hata oluştu', 'error');
+                            $saveBtn.prop('disabled', false).css('opacity', '1');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        show_toast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+                        $saveBtn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
             }
 
-            // İlk yüklemede para formatlarını uygula
-            var initialMonthlyIncome = parseFloat($monthlyIncomeHidden.val()) || 0;
-            if (initialMonthlyIncome > 0) {
-                var formatted = format_currency(initialMonthlyIncome);
-                $monthlyIncomeInput.val(formatted + ' ₺');
+            // Eş bilgilerini kaydet
+            function saveWifeData($card, $editBtn, $saveBtn, $inputs) {
+                var maritalStatusText = $card.find('.wife_marital_status_select').val();
+                var workWifeText = $card.find('.wife_work_select').val();
+                var wifeSalaryAmount = parseFloat($card.find('.wife_salary_input').val()) || 0;
+                
+                // Validation
+                if (!maritalStatusText || maritalStatusText === '') {
+                    show_toast('Lütfen medeni durum seçiniz.', 'error');
+                    $saveBtn.prop('disabled', false).css('opacity', '1');
+                    return;
+                }
+                
+                if (!workWifeText || workWifeText === '') {
+                    show_toast('Lütfen eş çalışma durumu seçiniz.', 'error');
+                    $saveBtn.prop('disabled', false).css('opacity', '1');
+                    return;
+                }
+                
+                if (workWifeText === 'Çalışıyor' && (!wifeSalaryAmount || wifeSalaryAmount <= 0)) {
+                    show_toast('Eş çalışıyorsa maaş tutarı girmelisiniz.', 'error');
+                    $saveBtn.prop('disabled', false).css('opacity', '1');
+                    return;
+                }
+                
+                var maritalStatus = maritalStatusText === 'Evli' ? true : false;
+                var workWife = workWifeText === 'Çalışıyor' ? true : false;
+
+                // WifeInfoModel formatına uygun veri hazırla (C# model binding için büyük harf)
+                var data = {
+                    CustomerId: customerId,
+                    MaritalStatus: maritalStatus,
+                    WorkWife: workWife,
+                    WifeSalaryAmount: wifeSalaryAmount
+                };
+
+                $.ajax({
+                    url: '/Profile/Adres?handler=SaveWife',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('RequestVerificationToken', antiForgeryToken);
+                    },
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            show_toast(response.message || 'Eş bilgileri güncellendi', 'success');
+                            
+                            // Display input'ları güncelle ve göster
+                            var maritalStatusDisplayText = maritalStatus ? 'Evli' : 'Bekar';
+                            var workWifeDisplayText = workWife ? 'Çalışıyor' : 'Çalışmıyor';
+                            
+                            $card.find('.wife_marital_status_display').val(maritalStatusDisplayText).show();
+                            $card.find('.wife_work_display').val(workWifeDisplayText).show();
+                            
+                            if (workWife === true && wifeSalaryAmount > 0) {
+                                $card.find('.wife_salary_display').val(wifeSalaryAmount.toLocaleString('tr-TR') + ' ₺').show();
+                                $card.find('.wife_salary_row').show();
+                            } else {
+                                $card.find('.wife_salary_display').hide();
+                                $card.find('.wife_salary_row').hide();
+                            }
+                            
+                            // Select'leri gizle
+                            $card.find('.wife_marital_status_select, .wife_work_select').hide();
+                            $card.find('.wife_salary_input').hide();
+                            
+                            $editBtn.show();
+                            $saveBtn.hide().prop('disabled', false).css('opacity', '1');
+                            // Sayfayı yenile (veriyi tazele)
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            show_toast(response.message || 'Bir hata oluştu', 'error');
+                            $saveBtn.prop('disabled', false).css('opacity', '1');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            try {
+                                var errorObj = JSON.parse(xhr.responseText);
+                                if (errorObj.message) {
+                                    errorMessage = errorObj.message;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing response:', xhr.responseText);
+                            }
+                        }
+                        show_toast(errorMessage, 'error');
+                        console.error('AJAX Error (Wife):', status, error, xhr.responseText);
+                        $saveBtn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
             }
 
-            var initialSpouseSalary = parseFloat($spouseSalaryHidden.val()) || 0;
-            if (initialSpouseSalary > 0) {
-                var formatted = format_currency(initialSpouseSalary);
-                $spouseSalaryInput.val(formatted + ' ₺');
+            // Finansal durum bilgilerini kaydet
+            function saveFinanceData($card, $editBtn, $saveBtn, $inputs) {
+                var salaryBank = $card.find('.finance_salary_bank_input').val() || '';
+                var salaryAmount = parseFloat($card.find('.finance_salary_amount_input').val()) || 0;
+                var carStatusText = $card.find('.finance_car_status_select').val();
+                var houseStatusText = $card.find('.finance_house_status_select').val();
+                
+                var carStatus = carStatusText === 'Var' ? true : (carStatusText === 'Yok' ? false : null);
+                var houseStatus = houseStatusText === 'Var' ? true : (houseStatusText === 'Yok' ? false : null);
+
+                // FinanceModel formatına uygun veri hazırla (backend camelCase'e çevirecek)
+                var data = {
+                    CustomerId: customerId,
+                    WorkSector: 0, // Şimdilik 0, ileride formdan alınabilir
+                    SalaryBank: salaryBank,
+                    SalaryAmount: salaryAmount > 0 ? salaryAmount : null,
+                    CarStatus: carStatus,
+                    HouseStatus: houseStatus
+                };
+
+                $.ajax({
+                    url: '/Profile/Adres?handler=SaveFinance',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('RequestVerificationToken', antiForgeryToken);
+                    },
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            show_toast(response.message || 'Finansal bilgiler güncellendi', 'success');
+                            
+                            // Display input'ları güncelle ve göster
+                            $card.find('.finance_salary_bank_display').val(salaryBank || '').show();
+                            $card.find('.finance_salary_amount_display').val(salaryAmount > 0 ? salaryAmount.toLocaleString('tr-TR') + ' ₺' : '').show();
+                            $card.find('.finance_car_status_display').val(carStatusText || '').show();
+                            $card.find('.finance_house_status_display').val(houseStatusText || '').show();
+                            
+                            // Edit input'ları gizle
+                            $card.find('.finance_salary_bank_input, .finance_salary_amount_input').hide();
+                            $card.find('.finance_car_status_select, .finance_house_status_select').hide();
+                            
+                            $editBtn.show();
+                            $saveBtn.hide().prop('disabled', false).css('opacity', '1');
+                            // Sayfayı yenile (veriyi tazele)
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            show_toast(response.message || 'Bir hata oluştu', 'error');
+                            $saveBtn.prop('disabled', false).css('opacity', '1');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            try {
+                                var errorObj = JSON.parse(xhr.responseText);
+                                if (errorObj.message) {
+                                    errorMessage = errorObj.message;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing response:', xhr.responseText);
+                            }
+                        }
+                        show_toast(errorMessage, 'error');
+                        console.error('AJAX Error (Finance):', status, error, xhr.responseText);
+                        $saveBtn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
             }
         });
     </script>

@@ -39,7 +39,7 @@
 
             <div class="otp_timer" id="otp_timer">
                 <span class="otp_timer__text">Kod tekrar gönderilebilir:</span>
-                <span class="otp_timer__countdown" id="timer_countdown">2:00</span>
+                <span class="otp_timer__countdown" id="timer_countdown">1:00</span>
             </div>
 
             <div class="otp_resend" id="otp_resend" style="display: none;">
@@ -52,12 +52,6 @@
                 </button>
             </div>
         </form>
-
-        <div class="onboarding_footer">
-            <p class="onboarding_footer__text">
-                SMS gelmedi mi? <a href="#" id="resend_otp_link_footer" class="onboarding_footer__link" style="display: none;">Tekrar gönder</a>
-            </p>
-        </div>
     </div>
 </div>
 
@@ -74,11 +68,10 @@
             var $timer = $('#otp_timer');
             var $timerCountdown = $('#timer_countdown');
             var $resendLink = $('#resend_otp_link');
-            var $resendLinkFooter = $('#resend_otp_link_footer');
             var $resendContainer = $('#otp_resend');
             var $otpInputsContainer = $('#otp_inputs');
             
-            var timerSeconds = 120; // 2 dakika
+            var timerSeconds = 60; // 1 dakika
             var timerInterval = null;
             var retryCount = @Model.RetryCount;
 
@@ -190,12 +183,12 @@
 
             // Timer başlat
             function startTimer() {
-                timerSeconds = 120;
+                timerSeconds = 60; // 1 dakika
                 updateTimerDisplay();
                 
                 $timer.show();
                 $resendContainer.hide();
-                $resendLinkFooter.hide();
+                
                 $resendLink.prop('disabled', true);
                 
                 timerInterval = setInterval(function() {
@@ -207,7 +200,6 @@
                         timerInterval = null;
                         $timer.hide();
                         $resendContainer.show();
-                        $resendLinkFooter.show();
                         $resendLink.prop('disabled', false);
                     }
                 }, 1000);
@@ -223,12 +215,9 @@
             // Tekrar gönder
             $resendLink.on('click', function(e) {
                 e.preventDefault();
-                resendOtp();
-            });
-
-            $resendLinkFooter.on('click', function(e) {
-                e.preventDefault();
-                resendOtp();
+                if (!$resendLink.prop('disabled')) {
+                    resendOtp();
+                }
             });
 
             function resendOtp() {
@@ -250,6 +239,15 @@
                     data: JSON.stringify({ TCKN: tckn, GSM: gsm }),
                     success: function(response) {
                         if (response.success && response.value) {
+                            // OTPCode veya otpCode olabilir
+                            var otpCode = response.value.OTPCode || response.value.otpCode || response.value.OtpCode;
+                            
+                            if (!otpCode) {
+                                show_toast('OTP kodu alınamadı.', 'error');
+                                enableResendLinks();
+                                return;
+                            }
+                            
                             // SMS gönder
                             $.ajax({
                                 url: '/api/otp/send-sms',
@@ -257,7 +255,7 @@
                                 contentType: 'application/json',
                                 data: JSON.stringify({ 
                                     GSM: gsm, 
-                                    OtpCode: response.value.otpCode 
+                                    OtpCode: otpCode 
                                 }),
                                 success: function(smsResponse) {
                                     if (smsResponse.success) {
@@ -265,29 +263,33 @@
                                         // Input'ları temizle
                                         $otpInputs.val('').data('real-value', '').first().focus();
                                         updateOtpCode();
-                                        // Timer'ı yeniden başlat
+                                        // Timer'ı yeniden başlat (60 saniye)
                                         startTimer();
                                     } else {
                                         show_toast(smsResponse.message || 'SMS gönderilemedi.', 'error');
+                                        enableResendLinks();
                                     }
                                 },
                                 error: function() {
                                     show_toast('SMS gönderilirken bir hata oluştu.', 'error');
-                                },
-                                complete: function() {
-                                    $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                                    enableResendLinks();
                                 }
                             });
                         } else {
                             show_toast(response.message || 'OTP oluşturulamadı.', 'error');
-                            $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                            enableResendLinks();
                         }
                     },
                     error: function() {
                         show_toast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
-                        $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
+                        enableResendLinks();
                     }
                 });
+            }
+            
+            // Resend linkini aktif et helper fonksiyonu
+            function enableResendLinks() {
+                $resendLink.prop('disabled', false).text('Kodu Tekrar Gönder');
             }
 
             // Form submit
@@ -330,3 +332,4 @@
         });
     </script>
 }
+

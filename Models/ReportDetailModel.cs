@@ -1,7 +1,7 @@
 namespace InteraktifKredi.Models;
 
 /// <summary>
-/// Rapor detay modeli
+/// Rapor detay modeli - Dashboard için yeni yapı
 /// </summary>
 public class ReportDetailModel
 {
@@ -11,68 +11,151 @@ public class ReportDetailModel
     public long ReportId { get; set; }
 
     /// <summary>
-    /// Rapor numarası
+    /// Rapor numarası (referansNo)
     /// </summary>
     public string ReportNumber { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Rapor başlığı
-    /// </summary>
-    public string ReportTitle { get; set; } = string.Empty;
 
     /// <summary>
     /// Rapor tarihi
     /// </summary>
     public DateTime ReportDate { get; set; }
 
+    // ÖZET KARTLAR (Scoreboard)
     /// <summary>
-    /// Rapor durumu (0: Bekliyor, 1: Onaylandı, 2: Reddedildi)
+    /// Kredi notu
     /// </summary>
-    public int Status { get; set; }
+    public string CreditScore { get; set; } = "0";
 
     /// <summary>
-    /// Durum metni
+    /// Toplam limit
     /// </summary>
-    public string StatusText { get; set; } = string.Empty;
+    public decimal TotalLimit { get; set; }
 
     /// <summary>
-    /// Kredi tutarı (decimal - ZORUNLU!)
+    /// Toplam risk (borç)
     /// </summary>
-    public decimal LoanAmount { get; set; }
+    public decimal TotalRisk { get; set; }
 
     /// <summary>
-    /// Vade (ay)
+    /// Gecikmedeki toplam hesap sayısı
     /// </summary>
-    public int Term { get; set; }
+    public int DelayedAccountCount { get; set; }
 
     /// <summary>
-    /// Aylık taksit (decimal - ZORUNLU!)
+    /// Toplam kredili hesap sayısı
     /// </summary>
-    public decimal MonthlyPayment { get; set; }
+    public int TotalCreditAccountCount { get; set; }
+
+    // KREDİ NOTU ANALİZİ
+    /// <summary>
+    /// Kredi notu sebep kodu 1
+    /// </summary>
+    public string? CreditScoreReasonCode1 { get; set; }
 
     /// <summary>
-    /// Toplam geri ödeme (decimal - ZORUNLU!)
+    /// Kredi notu sebep kodu 2
     /// </summary>
-    public decimal TotalPayment { get; set; }
+    public string? CreditScoreReasonCode2 { get; set; }
 
     /// <summary>
-    /// Toplam faiz (decimal - ZORUNLU!)
+    /// Kredi notu sebep kodu 3
     /// </summary>
-    public decimal TotalInterest { get; set; }
+    public string? CreditScoreReasonCode3 { get; set; }
 
     /// <summary>
-    /// Faiz oranı (aylık %)
+    /// Kredi notu sebep kodu 4
     /// </summary>
-    public decimal InterestRate { get; set; }
+    public string? CreditScoreReasonCode4 { get; set; }
+
+    // BİREYSEL DETAYLAR
+    /// <summary>
+    /// Aktif krediler listesi
+    /// </summary>
+    public List<CreditDetail> ActiveCredits { get; set; } = new();
 
     /// <summary>
-    /// Rapor içeriği (JSON veya HTML)
+    /// Kapanmış krediler listesi
     /// </summary>
-    public string? Content { get; set; }
+    public List<CreditDetail> ClosedCredits { get; set; } = new();
 
     /// <summary>
-    /// Ek bilgiler (key-value pairs)
+    /// Ek bilgiler
     /// </summary>
     public Dictionary<string, string>? AdditionalInfo { get; set; }
 }
 
+/// <summary>
+/// Kredi detay modeli
+/// </summary>
+public class CreditDetail
+{
+    /// <summary>
+    /// Sıra numarası
+    /// </summary>
+    public string SequenceNumber { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Kurum rumuzu
+    /// </summary>
+    public string InstitutionCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Kredi türü
+    /// </summary>
+    public string CreditType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Açılış tarihi
+    /// </summary>
+    public DateTime? OpeningDate { get; set; }
+
+    /// <summary>
+    /// Kapanış tarihi (null ise aktif)
+    /// </summary>
+    public DateTime? ClosingDate { get; set; }
+
+    /// <summary>
+    /// Kredi limiti
+    /// </summary>
+    public decimal CreditLimit { get; set; }
+
+    /// <summary>
+    /// Toplam bakiye
+    /// </summary>
+    public decimal TotalBalance { get; set; }
+
+    /// <summary>
+    /// Gecikmedeki bakiye
+    /// </summary>
+    public decimal DelayedBalance { get; set; }
+
+    /// <summary>
+    /// Limit kullanım oranı (0-1 arası)
+    /// </summary>
+    public decimal LimitUsageRatio { get; set; }
+
+    /// <summary>
+    /// Ödeme performans tarihçesi (timeline için)
+    /// </summary>
+    public string PaymentHistory { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Kayıt referans numarası
+    /// </summary>
+    public string RecordReferenceNumber { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Döviz kodu
+    /// </summary>
+    public string CurrencyCode { get; set; } = "TL";
+
+    /// <summary>
+    /// Toplam geciktirilmiş ödeme sayısı
+    /// </summary>
+    public int TotalDelayedPaymentCount { get; set; }
+
+    /// <summary>
+    /// Takibe alınma bakiyesi
+    /// </summary>
+    public decimal CollectionBalance { get; set; }
+}

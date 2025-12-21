@@ -11,24 +11,14 @@ public class JobProfileModel
     public long CustomerId { get; set; }
 
     /// <summary>
-    /// Meslek grubu ID
+    /// Meslek grubu adı
     /// </summary>
-    public int JobGroupId { get; set; }
+    public string? JobGroupName { get; set; }
 
     /// <summary>
-    /// Müşteri çalışma durumu (1: Çalışıyor, 0: Çalışmıyor)
+    /// Meslek adı
     /// </summary>
-    public int CustomerWork { get; set; }
-
-    /// <summary>
-    /// Çalışma yılı
-    /// </summary>
-    public int WorkingYears { get; set; }
-
-    /// <summary>
-    /// Çalışma ayı (0-11)
-    /// </summary>
-    public int WorkingMonth { get; set; }
+    public string? OccupationName { get; set; }
 
     /// <summary>
     /// Şirket unvanı
@@ -39,5 +29,19 @@ public class JobProfileModel
     /// Şirketteki pozisyonu
     /// </summary>
     public string? CompanyPosition { get; set; }
+
+    /// <summary>
+    /// Çalışma yılı
+    /// </summary>
+    public int? WorkingYears { get; set; }
+
+    /// <summary>
+    /// Çalışma ayı (0-11)
+    /// </summary>
+    public int? WorkingMonth { get; set; }
+
+    // Legacy properties (geriye dönük uyumluluk için)
+    public int JobGroupId { get; set; }
+    public int CustomerWork { get; set; }
 }
 

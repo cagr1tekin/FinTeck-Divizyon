@@ -53,6 +53,10 @@
             </div>
 
             <div class="form_group">
+                <a href="#" id="kvkk_link" class="kvkk_link">KVKK metnine buradan ulaşabilirsiniz</a>
+            </div>
+
+            <div class="form_group">
                 <button type="submit" id="submit_btn" class="btn_primary btn_primary--full_width">
                     <span class="btn_primary__text">Devam Et</span>
                 </button>
@@ -63,6 +67,38 @@
             <p class="onboarding_footer__text">
                 Bilgileriniz güvenli bir şekilde işlenmektedir.
             </p>
+        </div>
+    </div>
+</div>
+
+<!-- KVKK Modal -->
+<div class="modal" id="kvkk_modal">
+    <div class="modal__overlay"></div>
+    <div class="modal__container modal__container--lg">
+        <div class="modal__header">
+            <div>
+                <h2 class="modal__title" id="kvkk_modal_title">KVKK Aydınlatma Metni</h2>
+            </div>
+            <button type="button" class="modal_close" id="kvkk_modal_close" aria-label="Kapat"></button>
+        </div>
+        <div class="modal__body">
+            <div class="kvkk_modal_content" id="kvkk_modal_content">
+                <div class="kvkk_modal_loading">
+                    <div class="kvkk_modal_loading__spinner"></div>
+                    <p>KVKK metni yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <label class="kvkk_modal_checkbox">
+                <input type="checkbox" id="kvkk_accept_checkbox" class="kvkk_modal_checkbox__input" />
+                <span class="kvkk_modal_checkbox__label">
+                    <strong>Okudum, Onaylıyorum</strong>
+                </span>
+            </label>
+            <button type="button" id="kvkk_accept_btn" class="btn_primary" disabled>
+                <span class="btn_primary__text">Onayla ve Kapat</span>
+            </button>
         </div>
     </div>
 </div>
@@ -78,23 +114,26 @@
             var $submitBtn = $('#submit_btn');
             var $btnText = $submitBtn.find('.btn_primary__text');
 
-            // TCKN input masking - sadece rakam
+            // Input masking artık aşağıdaki event handler'larda yapılıyor
+
+            // Input değişikliklerinde buton durumunu güncelle
             $tcknInput.on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-                if (value.length > 11) value = value.substring(0, 11);
-                $(this).val(value);
+                updateSubmitButtonState();
             });
 
-            // GSM input masking - sadece rakam
             $gsmInput.on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-                if (value.length > 11) value = value.substring(0, 11);
-                $(this).val(value);
+                updateSubmitButtonState();
             });
 
             // Form submit
             $form.on('submit', function(e) {
                 e.preventDefault();
+
+                // KVKK onayı kontrolü
+                if (!kvkkAccepted) {
+                    show_toast('KVKK aydınlatma metnini okudum ve onaylıyorum seçeneğini işaretlemelisiniz.', 'error');
+                    return false;
+                }
 
                 // Client-side validation
                 if (!$form[0].checkValidity()) {
@@ -142,6 +181,156 @@
                     $form.submit();
                 }
             });
+
+            // KVKK Modal
+            var $kvkkLink = $('#kvkk_link');
+            var $kvkkModal = $('#kvkk_modal');
+            var $kvkkModalOverlay = $kvkkModal.find('.modal__overlay');
+            var $kvkkModalClose = $('#kvkk_modal_close');
+            var $kvkkModalContent = $('#kvkk_modal_content');
+            var $kvkkAcceptCheckbox = $('#kvkk_accept_checkbox');
+            var $kvkkAcceptBtn = $('#kvkk_accept_btn');
+            var kvkkAccepted = false;
+
+            // KVKK link'ine tıklanınca modal aç
+            $kvkkLink.on('click', function(e) {
+                e.preventDefault();
+                openKvkkModal();
+            });
+
+            // Modal aç
+            function openKvkkModal() {
+                // Checkbox ve buton durumunu sıfırla
+                $kvkkAcceptCheckbox.prop('checked', false);
+                $kvkkAcceptBtn.prop('disabled', true);
+                kvkkAccepted = false;
+                updateSubmitButtonState();
+                
+                $kvkkModal.addClass('modal--visible');
+                $('body').addClass('modal_open');
+                loadKvkkText();
+            }
+
+            // Modal kapat
+            function closeKvkkModal() {
+                $kvkkModal.removeClass('modal--visible');
+                $('body').removeClass('modal_open');
+            }
+
+            // Close butonuna tıklanınca kapat (her zaman çalışır)
+            $kvkkModalClose.on('click', function(e) {
+                e.preventDefault();
+                closeKvkkModal();
+            });
+
+            // Overlay'e tıklanınca kapat (her zaman çalışır, ama onaylanmamışsa uyarı gösterilebilir)
+            $kvkkModalOverlay.on('click', function(e) {
+                if ($(e.target).is($kvkkModalOverlay)) {
+                    // Onaylanmamışsa modal kapanmasın (kullanıcı okusun)
+                    if (!kvkkAccepted) {
+                        return;
+                    }
+                    closeKvkkModal();
+                }
+            });
+
+            // ESC tuşu ile kapat (sadece onaylanmışsa)
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $kvkkModal.hasClass('modal--visible')) {
+                    // Onaylanmamışsa modal kapanmasın
+                    if (!kvkkAccepted) {
+                        return;
+                    }
+                    closeKvkkModal();
+                }
+            });
+
+            // Checkbox değişikliğinde buton durumunu güncelle
+            $kvkkAcceptCheckbox.on('change', function() {
+                kvkkAccepted = $(this).is(':checked');
+                $kvkkAcceptBtn.prop('disabled', !kvkkAccepted);
+                updateSubmitButtonState(); // Devam Et butonunu da güncelle
+            });
+
+            // Onayla butonuna tıklanınca
+            $kvkkAcceptBtn.on('click', function(e) {
+                e.preventDefault();
+                if (kvkkAccepted) {
+                    closeKvkkModal();
+                    // Devam Et butonuna tıkla
+                    setTimeout(function() {
+                        $submitBtn.click();
+                    }, 300);
+                }
+            });
+
+            // Submit buton durumunu güncelle
+            function updateSubmitButtonState() {
+                // KVKK onayı kontrolü
+                if (!kvkkAccepted) {
+                    $submitBtn.prop('disabled', true);
+                    return;
+                }
+                
+                // Diğer validasyonları da kontrol et
+                var tckn = $tcknInput.val().trim();
+                var gsm = $gsmInput.val().trim();
+                var isValid = tckn.length === 11 && /^\d+$/.test(tckn) && 
+                              gsm.length >= 10 && gsm.length <= 11 && /^5\d{9,10}$/.test(gsm);
+                $submitBtn.prop('disabled', !isValid);
+            }
+
+            // Sayfa yüklendiğinde buton durumunu kontrol et
+            updateSubmitButtonState();
+
+            // KVKK metnini yükle
+            function loadKvkkText() {
+                // Şimdilik sabit test metni kullan (API bağlantısı test sonrası açılacak)
+                var testKvkkHtml = '<div class="space-y-4 text-sm text-gray-700 leading-relaxed p-2">\r\n  <h3 class="text-lg font-bold text-gray-900 text-center mb-6">\r\nKİŞİSEL VERİLERİN KORUNMASI VE İŞLENMESİNE İLİŞKİN AYDINLATMA METNİ\r\n  </h3>\r\n\r\n  <div>\r\n    <h4 class="font-bold text-gray-900 mb-1">1. Veri Sorumlusu</h4>\r\n    <p>\r\n      6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, \r\n      kişisel verileriniz; veri sorumlusu sıfatıyla \r\n      <strong> İnteraktif Kredi Danışmanlık A.Ş.</strong> tarafından, \r\n      aşağıda açıklanan amaçlar ve hukuki sebepler çerçevesinde işlenebilecektir.\r\n    </p>\r\n  </div>\r\n\r\n  <div>\r\n    <h4 class="font-bold text-gray-900 mb-1">2. İşlenen Kişisel Veriler</h4>\r\n    <p class="mb-2">\r\n      Şirketimiz tarafından sunulan finansal analiz, kredi danışmanlığı ve skorlama hizmetleri kapsamında aşağıda yer alan kişisel verileriniz işlenmektedir:\r\n    </p>\r\n    <ul class="list-disc pl-5 space-y-1">\r\n      <li>\r\n        <strong>Kimlik ve İletişim Bilgileri:</strong> Ad, soyad, T.C. kimlik numarası, doğum tarihi, cep telefonu numarası.\r\n      </li>\r\n      <li>\r\n        <strong>Finansal Bilgiler:</strong> Gelir durumu, kredi notu, banka borç ve limit bilgileri, finansal varlıklara ilişkin veriler (konut, araç vb.).\r\n      </li>\r\n      <li>\r\n        <strong>Mesleki Bilgiler:</strong> Çalışma durumu, sektör bilgisi, meslek/unvan, SGK hizmet dökümü kapsamındaki veriler.\r\n      </li>\r\n      <li>\r\n        <strong>Aile ve Yakınlık Bilgileri:</strong> Hizmetin niteliği gereği eşin çalışma durumu ve gelir bilgileri.\r\n      </li>\r\n      <li>\r\n        <strong>İşlem Güvenliği Bilgileri:</strong> IP adresi, cihaz ve tarayıcı bilgileri, SMS doğrulama (OTP) kayıtları.\r\n      </li>\r\n    </ul>\r\n  </div>\r\n\r\n  <div>\r\n    <h4 class="font-bold text-gray-900 mb-1">3. Kişisel Verilerin İşlenme Amaçları</h4>\r\n    <p>\r\n      Kişisel verileriniz; kimlik doğrulama süreçlerinin yürütülmesi, \r\n      kredi risk analizlerinin yapılması, finansal skorunuzun hesaplanması, \r\n      bankalar ve finans kuruluşları nezdinde kredibilitenizin değerlendirilmesi \r\n      ve tarafınıza uygun finansal ürün ve hizmetlerin sunulması amaçlarıyla işlenmektedir.\r\n    </p>\r\n  </div>\r\n\r\n  <div>\r\n    <h4 class="font-bold text-gray-900 mb-1">4. Kişisel Verilerin Aktarılması</h4>\r\n    <p>\r\n      Kişisel verileriniz; hizmetin ifası ve yasal yükümlülükler kapsamında, \r\n      KVKK ve ilgili mevzuata uygun olmak kaydıyla; iş ortaklarımız olan bankalara, \r\n      finansman kuruluşlarına, SMS ve iletişim hizmeti sağlayan tedarikçilere \r\n      ve kanunen yetkili kamu kurum ve kuruluşlarına \r\n      (BDDK, mahkemeler ve diğer yetkili merciler) aktarılabilecektir.\r\n    </p>\r\n  </div>\r\n\r\n  <div>\r\n    <h4 class="font-bold text-gray-900 mb-1">5. İlgili Kişinin Hakları</h4>\r\n    <p>\r\n      KVKK\'nın 11. maddesi uyarınca; kişisel verilerinizin işlenip işlenmediğini öğrenme, \r\n      işlenmişse buna ilişkin bilgi talep etme, verilerin düzeltilmesini veya silinmesini isteme, \r\n      işleme faaliyetlerinin sınırlandırılmasını talep etme ve \r\n      kanuna aykırı bir işleme nedeniyle zarara uğramanız hâlinde \r\n      zararın giderilmesini talep etme haklarına sahipsiniz.\r\n    </p>\r\n  </div>\r\n</div>';
+                
+                // HTML'i direkt render et
+                $kvkkModalContent.html('<div class="kvkk_modal_text">' + testKvkkHtml + '</div>');
+                
+                /* API bağlantısı şimdilik kapalı - test sonrası açılacak
+                $kvkkModalContent.html('<div class="kvkk_modal_loading"><div class="kvkk_modal_loading__spinner"></div><p>KVKK metni yükleniyor...</p></div>');
+
+                $.ajax({
+                    url: '/api/kvkk/text/1',
+                    method: 'GET',
+                    contentType: 'application/json',
+                    success: function(response) {
+                        if (response.success && response.value) {
+                            // Response'dan Text alanını al (HTML olarak geliyor)
+                            var kvkkHtml = response.value;
+                            
+                            // className'leri class'a çevir (React syntax'ını HTML'e çevir)
+                            kvkkHtml = kvkkHtml.replace(/className=/g, 'class=');
+                            
+                            // KVKK başlığını güncelle
+                            if (response.name) {
+                                $('#kvkk_modal_title').text(response.name);
+                            }
+                            
+                            // HTML'i direkt render et (güvenli olduğu için)
+                            $kvkkModalContent.html('<div class="kvkk_modal_text">' + kvkkHtml + '</div>');
+                            
+                            // İçerik yüklendikten sonra scroll durumunu kontrol et
+                            setTimeout(function() {
+                                checkScrollStatus();
+                            }, 100);
+                        } else {
+                            $kvkkModalContent.html('<div class="kvkk_modal_error">KVKK metni yüklenemedi. Lütfen tekrar deneyin.</div>');
+                            show_toast(response.message || 'KVKK metni yüklenemedi.', 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $kvkkModalContent.html('<div class="kvkk_modal_error">KVKK metni yüklenirken bir hata oluştu. Lütfen tekrar deneyin.</div>');
+                        show_toast('KVKK metni yüklenirken bir hata oluştu.', 'error');
+                        console.error('KVKK metni yükleme hatası:', error);
+                    }
+                });
+                */
+            }
         });
     </script>
 }

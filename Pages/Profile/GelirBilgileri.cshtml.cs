@@ -69,11 +69,11 @@ public class GelirBilgileriModel : PageModel
             if (response.Success && response.Value != null)
             {
                 var financeInfo = response.Value;
-                SalaryAmount = financeInfo.SalaryAmount;
+                SalaryAmount = financeInfo.SalaryAmount ?? 0;
                 SalaryBank = financeInfo.SalaryBank ?? string.Empty;
-                WorkSector = financeInfo.WorkSector;
-                CarStatus = financeInfo.CarStatus;
-                HouseStatus = financeInfo.HouseStatus;
+                WorkSector = financeInfo.WorkSector ?? 0;
+                CarStatus = financeInfo.CarStatus ?? false;
+                HouseStatus = financeInfo.HouseStatus ?? false;
             }
         }
         catch (Exception ex)

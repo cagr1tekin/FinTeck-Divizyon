@@ -2,10 +2,10 @@
 @use '../abstracts' as *;
 
 // ============================================
-// REPORT DETAIL PAGE - FINANCIAL ANALYSIS
+// REPORT DASHBOARD PAGE
 // ============================================
 
-.report_detail_container {
+.report_dashboard_container {
     max-width: 1400px;
     margin: 0 auto;
     padding: $spacing_xl $spacing_lg;
@@ -20,7 +20,7 @@
 // BACK BUTTON
 // ============================================
 
-.report_detail__back {
+.report_dashboard__back {
     margin-bottom: $spacing_xl;
 }
 
@@ -28,7 +28,7 @@
 // LOADING & EMPTY STATES
 // ============================================
 
-.report_detail__loading {
+.report_dashboard__loading {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,7 +40,7 @@
         width: 48px;
         height: 48px;
         border: 4px solid #F3F4F6;
-        border-top-color: #0EA5E9;
+        border-top-color: #2e6df8;
         border-radius: $radius_full;
         animation: spin 0.8s linear infinite;
         margin-bottom: $spacing_lg;
@@ -57,7 +57,7 @@
     to { transform: rotate(360deg); }
 }
 
-.report_detail__empty {
+.report_dashboard__empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,327 +89,59 @@
 }
 
 // ============================================
-// HERO SECTION - Aylık Taksit ve Durum
+// SCOREBOARD CARDS (Özet Kartlar)
 // ============================================
 
-.report_hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.05) 100%);
-    border-radius: 20px;
-    padding: $spacing_xl * 1.5;
-    margin-bottom: $spacing_xl * 1.5;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-
-    @include respond_to_max(md) {
-        flex-direction: column;
-        gap: $spacing_lg;
-        text-align: center;
-    }
-
-    &__left {
-        flex: 1;
-    }
-
-    &__right {
-        flex-shrink: 0;
-    }
-
-    &__monthly_payment {
-        display: flex;
-        flex-direction: column;
-        gap: $spacing_xs;
-
-        &__amount {
-            font-size: $font_size_2xl * 1.5;
-            font-weight: $font_weight_bold;
-            color: #1a237e;
-            line-height: 1.2;
-            letter-spacing: -1px;
-        }
-
-        &__label {
-            font-size: $font_size_base;
-            color: $text_secondary;
-            font-weight: $font_weight_normal;
-        }
-    }
-
-    &__status {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: $spacing_md;
-
-        @include respond_to_max(md) {
-            align-items: center;
-        }
-    }
-
-    &__meta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: $spacing_xs;
-        font-size: $font_size_sm;
-        color: $text_secondary;
-
-        @include respond_to_max(md) {
-            align-items: center;
-        }
-
-        &__item {
-            display: block;
-        }
-    }
-}
-
-// Status Badge
-.report_status_badge {
-    display: inline-flex;
-    align-items: center;
-    gap: $spacing_sm;
-    padding: $spacing_md $spacing_xl;
-    border-radius: 50px;
-    font-size: $font_size_base;
-    font-weight: $font_weight_bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-    &--approved {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-        color: $text_white;
-    }
-
-    &--pending {
-        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-        color: $text_white;
-    }
-
-    &--rejected {
-        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-        color: $text_white;
-    }
-
-    &__icon {
-        width: 20px;
-        height: 20px;
-    }
-
-    &__text {
-        font-size: $font_size_base;
-    }
-}
-
-// ============================================
-// CHARTS SECTION - Donut Chart ve Grid
-// ============================================
-
-.report_charts_section {
+.report_dashboard__scoreboard {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing_xl * 1.5;
-    margin-bottom: $spacing_xl * 1.5;
-
-    @include respond_to_max(md) {
-        grid-template-columns: 1fr;
-        gap: $spacing_xl;
-    }
-}
-
-// Chart Card
-.report_chart_card,
-.report_details_card {
-    background-color: #FFFFFF;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-
-    &__header {
-        padding: $spacing_lg $spacing_xl;
-        border-bottom: 1px solid #F3F4F6;
-        background-color: #FAFBFC;
-    }
-
-    &__title {
-        font-size: $font_size_xl;
-        font-weight: $font_weight_bold;
-        color: $text_primary;
-        margin: 0;
-        letter-spacing: -0.3px;
-    }
-
-    &__body {
-        padding: $spacing_xl;
-
-        @include respond_to_max(sm) {
-            padding: $spacing_lg;
-        }
-    }
-}
-
-// ============================================
-// DONUT CHART
-// ============================================
-
-.donut_chart_container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $spacing_xl;
-}
-
-.donut_chart {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    border-radius: $radius_full;
-    background: conic-gradient(
-        #0EA5E9 0% var(--principal-percent, 0%),
-        #F59E0B var(--principal-percent, 0%) 100%
-    );
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: donutFadeIn 1s ease-out;
-
-    &::before {
-        content: '';
-        position: absolute;
-        width: 70%;
-        height: 70%;
-        border-radius: $radius_full;
-        background-color: #FFFFFF;
-        z-index: 1;
-    }
-
-    &__inner {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-
-        &__value {
-            font-size: $font_size_xl;
-            font-weight: $font_weight_bold;
-            color: #1a237e;
-            line-height: 1.2;
-            margin-bottom: $spacing_xs;
-        }
-
-        &__label {
-            font-size: $font_size_sm;
-            color: $text_secondary;
-            font-weight: $font_weight_medium;
-        }
-    }
-
-    @include respond_to_max(sm) {
-        width: 240px;
-        height: 240px;
-    }
-}
-
-@keyframes donutFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.donut_chart__legend {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing_md;
-    width: 100%;
-
-    &__item {
-        display: flex;
-        align-items: center;
-        gap: $spacing_md;
-        padding: $spacing_sm 0;
-    }
-
-    &__color {
-        width: 16px;
-        height: 16px;
-        border-radius: $radius_sm;
-        flex-shrink: 0;
-
-        &--principal {
-            background-color: #0EA5E9;
-        }
-
-        &--interest {
-            background-color: #F59E0B;
-        }
-    }
-
-    &__label {
-        flex: 1;
-        font-size: $font_size_base;
-        color: $text_primary;
-        font-weight: $font_weight_medium;
-    }
-
-    &__value {
-        font-size: $font_size_base;
-        color: #1a237e;
-        font-weight: $font_weight_bold;
-    }
-}
-
-// ============================================
-// DETAILS GRID - 4'lü Grid
-// ============================================
-
-.report_details_grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: $spacing_lg;
+    margin-bottom: $spacing_xl * 1.5;
+
+    @include respond_to_max(lg) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
     @include respond_to_max(sm) {
         grid-template-columns: 1fr;
-        gap: $spacing_md;
     }
 }
 
-.report_details_grid__item {
+.scoreboard_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: $spacing_xl;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: $spacing_lg;
-    background-color: #FAFBFC;
-    border-radius: 12px;
-    border: 1px solid #F3F4F6;
+    gap: $spacing_lg;
     transition: all $transition_normal;
+    border: 1px solid #F3F4F6;
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
 
     &__icon {
-        width: 48px;
-        height: 48px;
-        color: #0EA5E9;
-        margin-bottom: $spacing_md;
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(14, 165, 233, 0.1);
-        border-radius: $radius_full;
+        flex-shrink: 0;
+        color: #FFFFFF;
 
         svg {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
         }
+    }
+
+    &__content {
+        flex: 1;
+        min-width: 0;
     }
 
     &__label {
@@ -420,34 +152,61 @@
     }
 
     &__value {
-        font-size: $font_size_lg;
+        font-size: $font_size_xl;
         font-weight: $font_weight_bold;
-        color: #1a237e;
+        color: $text_primary;
         line-height: 1.2;
+        word-break: break-word;
+    }
+
+    &--credit_score {
+        .scoreboard_card__icon {
+            background: linear-gradient(135deg, #2e6df8 0%, #1e40af 100%);
+        }
+    }
+
+    &--total_limit {
+        .scoreboard_card__icon {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+    }
+
+    &--total_risk {
+        .scoreboard_card__icon {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+    }
+
+    &--delayed {
+        .scoreboard_card__icon {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
     }
 }
 
 // ============================================
-// TIMELINE SECTION
+// DASHBOARD SECTIONS
 // ============================================
 
-.report_timeline_section {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing_xl * 1.5;
+.report_dashboard__section {
+    margin-bottom: $spacing_xl * 1.5;
 }
 
-.report_timeline_card,
-.report_customer_card {
+.dashboard_card {
     background-color: #FFFFFF;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #F3F4F6;
     overflow: hidden;
 
     &__header {
         padding: $spacing_lg $spacing_xl;
         border-bottom: 1px solid #F3F4F6;
         background-color: #FAFBFC;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing_md;
     }
 
     &__title {
@@ -456,6 +215,17 @@
         color: $text_primary;
         margin: 0;
         letter-spacing: -0.3px;
+    }
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        padding: $spacing_xs $spacing_md;
+        background-color: #EFF6FF;
+        color: #2e6df8;
+        border-radius: 12px;
+        font-size: $font_size_sm;
+        font-weight: $font_weight_semibold;
     }
 
     &__body {
@@ -467,8 +237,212 @@
     }
 }
 
-// Timeline
-.timeline {
+// ============================================
+// CREDIT SCORE ANALYSIS
+// ============================================
+
+.credit_score_analysis {
+    display: flex;
+    align-items: center;
+    gap: $spacing_xl * 2;
+    padding: $spacing_xl;
+
+    @include respond_to_max(md) {
+        flex-direction: column;
+        gap: $spacing_xl;
+        text-align: center;
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing_sm;
+    }
+
+    &__score {
+        font-size: $font_size_3xl * 1.5;
+        font-weight: $font_weight_bold;
+        color: #2e6df8;
+        line-height: 1;
+    }
+
+    &__label {
+        font-size: $font_size_base;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__reasons {
+        flex: 1;
+    }
+
+    &__reasons_title {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+        margin-bottom: $spacing_md;
+    }
+
+    &__reasons_list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing_md;
+    }
+}
+
+.reason_code_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing_sm $spacing_lg;
+    background-color: #EFF6FF;
+    color: #2e6df8;
+    border-radius: 8px;
+    font-size: $font_size_base;
+    font-weight: $font_weight_bold;
+    min-width: 48px;
+}
+
+// ============================================
+// ACTIVE CREDITS LIST
+// ============================================
+
+.credits_list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+}
+
+.credit_item {
+    padding: $spacing_lg;
+    background-color: #FAFBFC;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    transition: all $transition_normal;
+
+    &:hover {
+        border-color: #2e6df8;
+        box-shadow: 0 2px 8px rgba(46, 109, 248, 0.1);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing_md;
+        flex-wrap: wrap;
+        gap: $spacing_sm;
+    }
+
+    &__institution {
+        display: flex;
+        align-items: center;
+        gap: $spacing_md;
+    }
+
+    &__institution_code {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: #2e6df8;
+        color: #FFFFFF;
+        border-radius: 8px;
+        font-size: $font_size_base;
+        font-weight: $font_weight_bold;
+    }
+
+    &__type {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+    }
+
+    &__reference {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-family: 'Courier New', monospace;
+    }
+
+    &__details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing_md;
+        margin-bottom: $spacing_md;
+
+        @include respond_to_max(sm) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__detail_row {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
+    }
+
+    &__detail_label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__detail_value {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+    }
+
+    &__progress {
+        margin-top: $spacing_md;
+    }
+
+    &__progress_label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing_xs;
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__progress_percent {
+        font-weight: $font_weight_bold;
+        color: $text_primary;
+    }
+
+    &__progress_bar {
+        width: 100%;
+        height: 8px;
+        background-color: #E5E7EB;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    &__progress_fill {
+        height: 100%;
+        background: linear-gradient(90deg, #2e6df8 0%, #1e40af 100%);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    &__meta {
+        margin-top: $spacing_md;
+        padding-top: $spacing_md;
+        border-top: 1px solid #E5E7EB;
+        font-size: $font_size_sm;
+        color: $text_secondary;
+    }
+}
+
+// ============================================
+// CLOSED CREDITS TIMELINE
+// ============================================
+
+.credits_timeline {
     display: flex;
     flex-direction: column;
     gap: $spacing_xl;
@@ -478,126 +452,146 @@
     &::before {
         content: '';
         position: absolute;
-        left: 20px;
-        top: 40px;
-        bottom: 40px;
+        left: 12px;
+        top: 0;
+        bottom: 0;
         width: 2px;
-        background: linear-gradient(180deg, #10B981 0%, #0EA5E9 100%);
-    }
-
-    &__step {
-        position: relative;
-        display: flex;
-        align-items: flex-start;
-        gap: $spacing_lg;
-
-        &--completed {
-            .timeline__step__dot {
-                background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-                color: $text_white;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            }
-        }
-
-        &__dot {
-            width: 40px;
-            height: 40px;
-            border-radius: $radius_full;
-            background-color: #F3F4F6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            z-index: 1;
-            border: 3px solid #FFFFFF;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-            svg {
-                width: 20px;
-                height: 20px;
-            }
-        }
-
-        &__content {
-            flex: 1;
-            padding-top: $spacing_xs;
-        }
-
-        &__title {
-            font-size: $font_size_base;
-            font-weight: $font_weight_semibold;
-            color: $text_primary;
-            margin-bottom: $spacing_xs;
-        }
-
-        &__date {
-            font-size: $font_size_sm;
-            color: $text_secondary;
-        }
+        background: linear-gradient(180deg, #2e6df8 0%, #E5E7EB 100%);
     }
 }
 
-// ============================================
-// CUSTOMER INFO TABLE
-// ============================================
-
-.customer_info_table {
+.timeline_item {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #FFFFFF;
+    align-items: flex-start;
+    gap: $spacing_lg;
 
-    &__row {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        border-bottom: 1px solid #E5E7EB;
-
-        &:last-child {
-            border-bottom: none;
-        }
-
-        @include respond_to_max(sm) {
-            grid-template-columns: 1fr;
-        }
+    &__marker {
+        position: absolute;
+        left: -$spacing_xl + 4px;
+        top: $spacing_md;
+        width: 16px;
+        height: 16px;
+        border-radius: $radius_full;
+        background-color: #2e6df8;
+        border: 3px solid #FFFFFF;
+        box-shadow: 0 2px 8px rgba(46, 109, 248, 0.3);
+        z-index: 1;
     }
 
-    &__cell {
-        padding: $spacing_md $spacing_lg;
-        font-size: $font_size_base;
-        line-height: $line_height_normal;
-
-        &--label {
-            background-color: #FAFBFC;
-            font-weight: $font_weight_semibold;
-            color: $text_primary;
-            border-right: 1px solid #E5E7EB;
-
-            @include respond_to_max(sm) {
-                border-right: none;
-                border-bottom: 1px solid #E5E7EB;
-            }
-        }
-
-        &--value {
-            color: $text_primary;
-            word-break: break-word;
-        }
+    &__content {
+        flex: 1;
+        background-color: #FAFBFC;
+        border-radius: 12px;
+        padding: $spacing_lg;
+        border: 1px solid #E5E7EB;
+        margin-left: $spacing_xl;
     }
 
-    &__json {
-        margin: 0;
-        font-family: 'Courier New', monospace;
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing_md;
+        flex-wrap: wrap;
+        gap: $spacing_sm;
+    }
+
+    &__institution {
+        display: flex;
+        align-items: center;
+        gap: $spacing_md;
+    }
+
+    &__institution_code {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background-color: #2e6df8;
+        color: #FFFFFF;
+        border-radius: 8px;
         font-size: $font_size_sm;
-        line-height: $line_height_relaxed;
+        font-weight: $font_weight_bold;
+    }
+
+    &__type {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
         color: $text_primary;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        background-color: transparent;
-        border: none;
-        padding: 0;
+    }
+
+    &__date {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+    }
+
+    &__details {
+        display: flex;
+        gap: $spacing_lg;
+        margin-bottom: $spacing_md;
+        flex-wrap: wrap;
+    }
+
+    &__detail {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_xs;
+    }
+
+    &__detail_label {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        font-weight: $font_weight_medium;
+    }
+
+    &__detail_value {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
+        color: $text_primary;
+    }
+
+    &__payment_history {
+        margin-top: $spacing_md;
+        padding-top: $spacing_md;
+        border-top: 1px solid #E5E7EB;
+    }
+}
+
+.payment_history_label {
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    font-weight: $font_weight_medium;
+    margin-bottom: $spacing_sm;
+}
+
+.payment_history_chart {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+}
+
+.payment_history_item {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+
+    &--paid {
+        background-color: #10B981;
+    }
+
+    &--delayed {
+        background-color: #F59E0B;
+    }
+
+    &--default {
+        background-color: #EF4444;
+    }
+
+    &--unknown {
+        background-color: #E5E7EB;
     }
 }
 
@@ -606,15 +600,33 @@
 // ============================================
 
 @include respond_to_max(sm) {
-    .report_detail_container {
+    .report_dashboard_container {
         padding: $spacing_lg $spacing_md;
     }
 
-    .report_hero {
+    .report_dashboard__scoreboard {
+        gap: $spacing_md;
+    }
+
+    .scoreboard_card {
         padding: $spacing_lg;
     }
 
-    .report_charts_section {
-        gap: $spacing_lg;
+    .credit_score_analysis {
+        padding: $spacing_lg;
+    }
+
+    .credits_timeline {
+        padding-left: $spacing_lg;
+    }
+
+    .timeline_item {
+        &__marker {
+            left: -$spacing_lg + 4px;
+        }
+
+        &__content {
+            margin-left: $spacing_lg;
+        }
     }
 }

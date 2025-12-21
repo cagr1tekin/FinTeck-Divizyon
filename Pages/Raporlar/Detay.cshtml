@@ -1,12 +1,12 @@
 @page
 @model InteraktifKredi.Pages.Raporlar.DetayModel
 @{
-    ViewData["Title"] = "Kredi Başvurusu Detay Raporu";
+    ViewData["Title"] = "Rapor Detayı";
 }
 
-<div class="report_detail_container">
+<div class="report_dashboard_container">
     <!-- Geri Butonu -->
-    <div class="report_detail__back">
+    <div class="report_dashboard__back">
         <a href="/Raporlar/Liste" class="btn_ghost">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;">
                 <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
@@ -17,9 +17,9 @@
 
     @if (Model.IsLoading)
     {
-        <div class="report_detail__loading">
-            <div class="report_detail__loading__spinner"></div>
-            <p class="report_detail__loading__text">Rapor detayı yükleniyor...</p>
+        <div class="report_dashboard__loading">
+            <div class="report_dashboard__loading__spinner"></div>
+            <p class="report_dashboard__loading__text">Rapor detayı yükleniyor...</p>
         </div>
     }
     else if (!string.IsNullOrEmpty(Model.ErrorMessage))
@@ -31,257 +31,251 @@
     }
     else if (Model.ReportDetail == null)
     {
-        <div class="report_detail__empty">
-            <div class="report_detail__empty__icon">
+        <div class="report_dashboard__empty">
+            <div class="report_dashboard__empty__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                 </svg>
             </div>
-            <h3 class="report_detail__empty__title">Rapor bulunamadı</h3>
-            <p class="report_detail__empty__text">Aradığınız rapor bulunamadı veya erişim yetkiniz yok.</p>
+            <h3 class="report_dashboard__empty__title">Rapor bulunamadı</h3>
+            <p class="report_dashboard__empty__text">Aradığınız rapor bulunamadı veya erişim yetkiniz yok.</p>
         </div>
     }
     else
     {
         var report = Model.ReportDetail;
-        var principalPercent = (report.LoanAmount / report.TotalPayment) * 100;
-        var interestPercent = (report.TotalInterest / report.TotalPayment) * 100;
         
-        <!-- 1. HERO SECTION - Aylık Taksit ve Durum -->
-        <div class="report_hero">
-            <div class="report_hero__left">
-                <div class="report_hero__monthly_payment">
-                    <span class="report_hero__monthly_payment__amount">@FormatCurrency(report.MonthlyPayment)</span>
-                    <span class="report_hero__monthly_payment__label">@report.Term Ay Boyunca Sabit</span>
+        <!-- 1. ÖZET KARTLAR (Scoreboard) -->
+        <div class="report_dashboard__scoreboard">
+            <div class="scoreboard_card scoreboard_card--credit_score">
+                <div class="scoreboard_card__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
                 </div>
-            </div>
-            <div class="report_hero__right">
-                <div class="report_hero__status">
-                    <div class="report_status_badge report_status_badge--@GetStatusClass(report.Status)">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="report_status_badge__icon">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                        </svg>
-                        <span class="report_status_badge__text">@report.StatusText.ToUpper()</span>
-                    </div>
-                    <div class="report_hero__meta">
-                        <span class="report_hero__meta__item">Rapor No: @report.ReportNumber</span>
-                        <span class="report_hero__meta__item">@report.ReportDate.ToString("dd.MM.yyyy")</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. CHARTS SECTION - Donut Chart ve Kredi Detayları -->
-        <div class="report_charts_section">
-            <!-- Sol: Donut Chart -->
-            <div class="report_chart_card">
-                <div class="report_chart_card__header">
-                    <h2 class="report_chart_card__title">Geri Ödeme Analizi</h2>
-                </div>
-                <div class="report_chart_card__body">
-                    <div class="donut_chart_container">
-                        <div class="donut_chart" data-principal="@principalPercent" data-interest="@interestPercent">
-                            <div class="donut_chart__inner">
-                                <div class="donut_chart__inner__value">@FormatCurrency(report.TotalPayment)</div>
-                                <div class="donut_chart__inner__label">Toplam Geri Ödeme</div>
-                            </div>
-                        </div>
-                        <div class="donut_chart__legend">
-                            <div class="donut_chart__legend__item">
-                                <span class="donut_chart__legend__color donut_chart__legend__color--principal"></span>
-                                <span class="donut_chart__legend__label">Ana Para</span>
-                                <span class="donut_chart__legend__value">@FormatCurrency(report.LoanAmount)</span>
-                            </div>
-                            <div class="donut_chart__legend__item">
-                                <span class="donut_chart__legend__color donut_chart__legend__color--interest"></span>
-                                <span class="donut_chart__legend__label">Toplam Faiz</span>
-                                <span class="donut_chart__legend__value">@FormatCurrency(report.TotalInterest)</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="scoreboard_card__content">
+                    <div class="scoreboard_card__label">Kredi Notu</div>
+                    <div class="scoreboard_card__value">@report.CreditScore</div>
                 </div>
             </div>
 
-            <!-- Sağ: Kredi Detayları Grid -->
-            <div class="report_details_card">
-                <div class="report_details_card__header">
-                    <h2 class="report_details_card__title">Kredi Detayları</h2>
+            <div class="scoreboard_card scoreboard_card--total_limit">
+                <div class="scoreboard_card__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    </svg>
                 </div>
-                <div class="report_details_card__body">
-                    <div class="report_details_grid">
-                        <div class="report_details_grid__item">
-                            <div class="report_details_grid__item__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                                </svg>
-                            </div>
-                            <div class="report_details_grid__item__label">Kredi Tutarı</div>
-                            <div class="report_details_grid__item__value">@FormatCurrency(report.LoanAmount)</div>
-                        </div>
+                <div class="scoreboard_card__content">
+                    <div class="scoreboard_card__label">Toplam Limit</div>
+                    <div class="scoreboard_card__value">@FormatCurrency(report.TotalLimit)</div>
+                </div>
+            </div>
 
-                        <div class="report_details_grid__item">
-                            <div class="report_details_grid__item__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                                </svg>
-                            </div>
-                            <div class="report_details_grid__item__label">Vade</div>
-                            <div class="report_details_grid__item__value">@report.Term Ay</div>
-                        </div>
+            <div class="scoreboard_card scoreboard_card--total_risk">
+                <div class="scoreboard_card__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+                    </svg>
+                </div>
+                <div class="scoreboard_card__content">
+                    <div class="scoreboard_card__label">Toplam Borç</div>
+                    <div class="scoreboard_card__value">@FormatCurrency(report.TotalRisk)</div>
+                </div>
+            </div>
 
-                        <div class="report_details_grid__item">
-                            <div class="report_details_grid__item__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                                </svg>
-                            </div>
-                            <div class="report_details_grid__item__label">Faiz Oranı</div>
-                            <div class="report_details_grid__item__value">%@report.InterestRate.ToString("N2")</div>
-                        </div>
-
-                        <div class="report_details_grid__item">
-                            <div class="report_details_grid__item__icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z"/>
-                                </svg>
-                            </div>
-                            <div class="report_details_grid__item__label">Kredi Türü</div>
-                            <div class="report_details_grid__item__value">İhtiyaç</div>
-                        </div>
-                    </div>
+            <div class="scoreboard_card scoreboard_card--delayed">
+                <div class="scoreboard_card__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <div class="scoreboard_card__content">
+                    <div class="scoreboard_card__label">Gecikme Sayısı</div>
+                    <div class="scoreboard_card__value">@report.DelayedAccountCount</div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. TIMELINE & CUSTOMER INFO -->
-        <div class="report_timeline_section">
-            <!-- Timeline -->
-            <div class="report_timeline_card">
-                <div class="report_timeline_card__header">
-                    <h2 class="report_timeline_card__title">Başvuru Süreci</h2>
+        <!-- 2. KREDİ NOTU ANALİZİ -->
+        <div class="report_dashboard__section">
+            <div class="dashboard_card">
+                <div class="dashboard_card__header">
+                    <h2 class="dashboard_card__title">Kredi Notu Analizi</h2>
                 </div>
-                <div class="report_timeline_card__body">
-                    <div class="timeline">
-                        <div class="timeline__step timeline__step--completed">
-                            <div class="timeline__step__dot">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="timeline__step__content">
-                                <div class="timeline__step__title">Başvuru Yapıldı</div>
-                                <div class="timeline__step__date">@report.ReportDate.ToString("dd.MM.yyyy")</div>
-                            </div>
+                <div class="dashboard_card__body">
+                    <div class="credit_score_analysis">
+                        <div class="credit_score_analysis__main">
+                            <div class="credit_score_analysis__score">@report.CreditScore</div>
+                            <div class="credit_score_analysis__label">Kredi Notu</div>
                         </div>
-                        <div class="timeline__step timeline__step--completed">
-                            <div class="timeline__step__dot">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="timeline__step__content">
-                                <div class="timeline__step__title">Onaylandı</div>
-                                <div class="timeline__step__date">@report.ReportDate.AddDays(3).ToString("dd.MM.yyyy")</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Müşteri Bilgileri -->
-            @if (!string.IsNullOrEmpty(report.Content))
-            {
-                <div class="report_customer_card">
-                    <div class="report_customer_card__header">
-                        <h2 class="report_customer_card__title">Müşteri Bilgileri</h2>
-                    </div>
-                    <div class="report_customer_card__body">
-                        @{
-                            try
-                            {
-                                var customerData = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(report.Content);
-                                if (customerData != null && customerData.Any())
+                        <div class="credit_score_analysis__reasons">
+                            <h3 class="credit_score_analysis__reasons_title">Sebep Kodları</h3>
+                            <div class="credit_score_analysis__reasons_list">
+                                @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode1))
                                 {
-                                    <div class="customer_info_table">
-                                        @foreach (var item in customerData)
+                                    <div class="reason_code_badge">@report.CreditScoreReasonCode1</div>
+                                }
+                                @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode2))
+                                {
+                                    <div class="reason_code_badge">@report.CreditScoreReasonCode2</div>
+                                }
+                                @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode3))
+                                {
+                                    <div class="reason_code_badge">@report.CreditScoreReasonCode3</div>
+                                }
+                                @if (!string.IsNullOrEmpty(report.CreditScoreReasonCode4))
+                                {
+                                    <div class="reason_code_badge">@report.CreditScoreReasonCode4</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. AKTİF KREDİLER & KARTLAR -->
+        @if (report.ActiveCredits.Any())
+        {
+            <div class="report_dashboard__section">
+                <div class="dashboard_card">
+                    <div class="dashboard_card__header">
+                        <h2 class="dashboard_card__title">Aktif Krediler & Kartlar</h2>
+                        <span class="dashboard_card__badge">@report.ActiveCredits.Count Adet</span>
+                    </div>
+                    <div class="dashboard_card__body">
+                        <div class="credits_list">
+                            @foreach (var credit in report.ActiveCredits)
+                            {
+                                <div class="credit_item">
+                                    <div class="credit_item__header">
+                                        <div class="credit_item__institution">
+                                            <span class="credit_item__institution_code">@credit.InstitutionCode</span>
+                                            <span class="credit_item__type">@GetCreditTypeName(credit.CreditType)</span>
+                                        </div>
+                                        <div class="credit_item__reference">@credit.RecordReferenceNumber</div>
+                                    </div>
+                                    <div class="credit_item__details">
+                                        <div class="credit_item__detail_row">
+                                            <span class="credit_item__detail_label">Limit:</span>
+                                            <span class="credit_item__detail_value">@FormatCurrency(credit.CreditLimit)</span>
+                                        </div>
+                                        <div class="credit_item__detail_row">
+                                            <span class="credit_item__detail_label">Bakiye:</span>
+                                            <span class="credit_item__detail_value">@FormatCurrency(credit.TotalBalance)</span>
+                                        </div>
+                                        <div class="credit_item__detail_row">
+                                            <span class="credit_item__detail_label">Gecikme:</span>
+                                            <span class="credit_item__detail_value">@FormatCurrency(credit.DelayedBalance)</span>
+                                        </div>
+                                    </div>
+                                    <div class="credit_item__progress">
+                                        <div class="credit_item__progress_label">
+                                            <span>Limit Kullanımı</span>
+                                            <span class="credit_item__progress_percent">%@(credit.LimitUsageRatio.ToString("P0"))</span>
+                                        </div>
+                                        <div class="credit_item__progress_bar">
+                                            <div class="credit_item__progress_fill" style="width: @(credit.LimitUsageRatio * 100)%"></div>
+                                        </div>
+                                    </div>
+                                    @if (credit.OpeningDate.HasValue)
+                                    {
+                                        <div class="credit_item__meta">
+                                            <span>Açılış: @credit.OpeningDate.Value.ToString("dd.MM.yyyy")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- 4. KAPANMIŞ HESAPLAR & GEÇMİŞ -->
+        @if (report.ClosedCredits.Any())
+        {
+            <div class="report_dashboard__section">
+                <div class="dashboard_card">
+                    <div class="dashboard_card__header">
+                        <h2 class="dashboard_card__title">Kapanmış Hesaplar & Geçmiş</h2>
+                        <span class="dashboard_card__badge">@report.ClosedCredits.Count Adet</span>
+                    </div>
+                    <div class="dashboard_card__body">
+                        <div class="credits_timeline">
+                            @foreach (var credit in report.ClosedCredits.OrderByDescending(c => c.ClosingDate))
+                            {
+                                <div class="timeline_item">
+                                    <div class="timeline_item__marker"></div>
+                                    <div class="timeline_item__content">
+                                        <div class="timeline_item__header">
+                                            <div class="timeline_item__institution">
+                                                <span class="timeline_item__institution_code">@credit.InstitutionCode</span>
+                                                <span class="timeline_item__type">@GetCreditTypeName(credit.CreditType)</span>
+                                            </div>
+                                            @if (credit.ClosingDate.HasValue)
+                                            {
+                                                <div class="timeline_item__date">@credit.ClosingDate.Value.ToString("dd.MM.yyyy")</div>
+                                            }
+                                        </div>
+                                        <div class="timeline_item__details">
+                                            <div class="timeline_item__detail">
+                                                <span class="timeline_item__detail_label">Limit:</span>
+                                                <span class="timeline_item__detail_value">@FormatCurrency(credit.CreditLimit)</span>
+                                            </div>
+                                            <div class="timeline_item__detail">
+                                                <span class="timeline_item__detail_label">Son Bakiye:</span>
+                                                <span class="timeline_item__detail_value">@FormatCurrency(credit.TotalBalance)</span>
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(credit.PaymentHistory))
                                         {
-                                            <div class="customer_info_table__row">
-                                                <div class="customer_info_table__cell customer_info_table__cell--label">@item.Key</div>
-                                                <div class="customer_info_table__cell customer_info_table__cell--value">@item.Value</div>
+                                            <div class="timeline_item__payment_history">
+                                                <div class="payment_history_label">Ödeme Geçmişi:</div>
+                                                <div class="payment_history_chart">
+                                                    @foreach (var payment in credit.PaymentHistory.Take(24))
+                                                    {
+                                                        <div class="payment_history_item payment_history_item--@GetPaymentStatusClass(payment)"></div>
+                                                    }
+                                                </div>
                                             </div>
                                         }
                                     </div>
-                                }
-                            }
-                            catch
-                            {
-                                <div class="customer_info_table">
-                                    <div class="customer_info_table__row">
-                                        <div class="customer_info_table__cell customer_info_table__cell--label">Ham Veri</div>
-                                        <div class="customer_info_table__cell customer_info_table__cell--value">
-                                            <pre class="customer_info_table__json">@FormatJsonContent(report.Content)</pre>
-                                        </div>
-                                    </div>
                                 </div>
                             }
-                        }
+                        </div>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     }
 </div>
 
 @functions {
-    private string GetStatusClass(int status)
+    private string FormatCurrency(decimal amount)
     {
-        return status switch
+        return new System.Globalization.CultureInfo("tr-TR").NumberFormat.CurrencySymbol + 
+               amount.ToString("N2", new System.Globalization.CultureInfo("tr-TR"));
+    }
+
+    private string GetCreditTypeName(string creditType)
+    {
+        return creditType switch
         {
-            0 => "pending",
-            1 => "approved",
-            2 => "rejected",
-            _ => "unknown"
+            "23" => "Kredi Kartı",
+            "26" => "Tüketici Kredisi",
+            _ => $"Kredi Türü {creditType}"
         };
     }
 
-    private string FormatCurrency(decimal amount)
+    private string GetPaymentStatusClass(char payment)
     {
-        return amount.ToString("N2", new System.Globalization.CultureInfo("tr-TR")) + " ₺";
-    }
-
-    private string FormatJsonContent(string? jsonContent)
-    {
-        if (string.IsNullOrEmpty(jsonContent))
-            return string.Empty;
-
-        try
+        return payment switch
         {
-            var jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-            var formatted = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObject, Newtonsoft.Json.Formatting.Indented);
-            return System.Net.WebUtility.HtmlEncode(formatted);
-        }
-        catch
-        {
-            return System.Net.WebUtility.HtmlEncode(jsonContent);
-        }
+            '0' => "paid",      // Ödendi
+            '1' => "delayed",   // Gecikme
+            'X' => "default",   // Takip
+            _ => "unknown"
+        };
     }
-}
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Donut chart animation
-            var $donutChart = $('.donut_chart');
-            if ($donutChart.length) {
-                var principalPercent = parseFloat($donutChart.data('principal')) || 0;
-                var interestPercent = parseFloat($donutChart.data('interest')) || 0;
-                
-                // CSS custom properties ile animasyon
-                $donutChart.css({
-                    '--principal-percent': principalPercent + '%',
-                    '--interest-percent': interestPercent + '%'
-                });
-            }
-        });
-    </script>
 }

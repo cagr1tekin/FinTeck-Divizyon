@@ -1,0 +1,410 @@
+@use '../abstracts' as *;
+
+// ============================================
+// SUPPORT PAGE STYLES
+// ============================================
+
+.support_container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 $spacing_lg;
+}
+
+// ============================================
+// HERO SECTION
+// ============================================
+
+.support_hero {
+    background: linear-gradient(135deg, #1E3A8A 0%, #0EA5E9 100%);
+    border-radius: 24px;
+    padding: $spacing_2xl * 1.5 $spacing_xl;
+    margin-bottom: $spacing_2xl;
+    color: $text_white;
+
+    &__content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    &__title {
+        font-size: $font_size_3xl;
+        font-weight: $font_weight_bold;
+        color: $text_white;
+        margin: 0 0 $spacing_xl 0;
+        line-height: $line_height_tight;
+
+        @include respond_to_max(sm) {
+            font-size: $font_size_2xl;
+        }
+    }
+
+    &__search {
+        display: flex;
+        gap: $spacing_sm;
+        max-width: 600px;
+        margin: 0 auto;
+
+        @include respond_to_max(sm) {
+            flex-direction: column;
+        }
+    }
+
+    &__search_input {
+        flex: 1;
+        padding: $spacing_md $spacing_lg;
+        border: none;
+        border-radius: 12px;
+        font-size: $font_size_base;
+        font-family: inherit;
+        background-color: rgba(255, 255, 255, 0.95);
+        color: $text_primary;
+        outline: none;
+        transition: all $transition_normal;
+
+        &:focus {
+            background-color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &::placeholder {
+            color: $text_muted;
+        }
+    }
+
+    &__search_button {
+        padding: $spacing_md $spacing_lg;
+        background-color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        color: $brand_primary;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all $transition_normal;
+        flex-shrink: 0;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            background-color: #F9FAFB;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+// ============================================
+// CONTENT GRID
+// ============================================
+
+.support_content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing_xl * 2;
+    margin-bottom: $spacing_2xl;
+
+    @include respond_to_max(md) {
+        grid-template-columns: 1fr;
+        gap: $spacing_xl;
+    }
+}
+
+.support_content__left,
+.support_content__right {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+}
+
+.support_section__title {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_bold;
+    color: $text_primary;
+    margin: 0 0 $spacing_lg 0;
+    letter-spacing: -0.3px;
+}
+
+// ============================================
+// FAQ ACCORDION
+// ============================================
+
+.faq_accordion {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+}
+
+.faq_accordion__item {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid #F3F4F6;
+    overflow: hidden;
+    transition: all $transition_normal;
+
+    &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    &--active {
+        border-color: #2E6DF8;
+        box-shadow: 0 4px 12px rgba(46, 109, 248, 0.1);
+
+        .faq_accordion__header {
+            background-color: #F0F7FF;
+        }
+    }
+}
+
+.faq_accordion__header {
+    width: 100%;
+    padding: $spacing_lg;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing_md;
+    transition: background-color $transition_normal;
+    font-family: inherit;
+}
+
+.faq_accordion__question {
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    flex: 1;
+}
+
+.faq_accordion__icon {
+    width: 20px;
+    height: 20px;
+    color: $text_secondary;
+    flex-shrink: 0;
+    transition: transform $transition_normal;
+    transform: rotate(0deg);
+}
+
+.faq_accordion__content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height $transition_normal;
+}
+
+.faq_accordion__item--active .faq_accordion__content {
+    max-height: 500px;
+}
+
+.faq_accordion__answer {
+    padding: 0 $spacing_lg $spacing_lg $spacing_lg;
+    font-size: $font_size_sm;
+    color: $text_secondary;
+    line-height: $line_height_relaxed;
+    margin: 0;
+}
+
+// ============================================
+// CONTACT FORM
+// ============================================
+
+.support_form {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: $spacing_xl;
+    border: 1px solid #F3F4F6;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.form_group {
+    margin-bottom: $spacing_lg;
+
+    &:last-of-type {
+        margin-bottom: $spacing_xl;
+    }
+}
+
+.form_label {
+    display: block;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_semibold;
+    color: $text_primary;
+    margin-bottom: $spacing_xs;
+}
+
+.form_input,
+.form_textarea,
+.form_select {
+    width: 100%;
+    padding: $spacing_md;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: $font_size_base;
+    font-family: inherit;
+    color: $text_primary;
+    background-color: #FFFFFF;
+    transition: all $transition_normal;
+    outline: none;
+
+    &:focus {
+        border-color: #2E6DF8;
+        box-shadow: 0 0 0 3px rgba(46, 109, 248, 0.1);
+    }
+
+    &::placeholder {
+        color: $text_muted;
+    }
+}
+
+.form_select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $spacing_md center;
+    background-size: 20px 20px;
+    padding-right: $spacing_xl * 2;
+
+    &:focus {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232E6DF8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+
+    option {
+        padding: $spacing_sm;
+        color: $text_primary;
+    }
+}
+
+.form_textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn--block {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing_sm;
+    padding: $spacing_md $spacing_lg;
+    font-size: $font_size_base;
+    font-weight: $font_weight_semibold;
+    
+    svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+    
+    span {
+        flex-shrink: 0;
+    }
+}
+
+// ============================================
+// MESSAGE ALERTS
+// ============================================
+
+.support_message {
+    padding: $spacing_md $spacing_lg;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: $spacing_sm;
+    margin-bottom: $spacing_lg;
+    font-size: $font_size_sm;
+    font-weight: $font_weight_medium;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    &--success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+
+        svg {
+            color: #10B981;
+        }
+    }
+
+    &--error {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #EF4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+
+        svg {
+            color: #EF4444;
+        }
+    }
+}
+
+// ============================================
+// CONTACT CARD
+// ============================================
+
+.support_contact_card {
+    background: linear-gradient(135deg, #2E6DF8 0%, #1e40af 100%);
+    border-radius: 16px;
+    padding: $spacing_xl;
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing_lg;
+    color: $text_white;
+    box-shadow: 0 4px 20px rgba(46, 109, 248, 0.2);
+}
+
+.support_contact_card__icon {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        width: 24px;
+        height: 24px;
+        color: $text_white;
+    }
+}
+
+.support_contact_card__content {
+    flex: 1;
+}
+
+.support_contact_card__title {
+    font-size: $font_size_base;
+    font-weight: $font_weight_bold;
+    color: $text_white;
+    margin: 0 0 $spacing_sm 0;
+}
+
+.support_contact_card__phone {
+    font-size: $font_size_xl;
+    font-weight: $font_weight_bold;
+    color: $text_white;
+    margin: 0 0 $spacing_xs 0;
+    letter-spacing: 0.5px;
+}
+
+.support_contact_card__hours {
+    font-size: $font_size_sm;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+

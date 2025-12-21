@@ -12,18 +12,23 @@ public class WifeInfoModel
     public long CustomerId { get; set; }
 
     /// <summary>
-    /// Medeni durum (evli mi?)
+    /// TC Kimlik No
     /// </summary>
-    public bool MaritalStatus { get; set; }
+    public string? TCKN { get; set; }
 
     /// <summary>
-    /// Eş çalışıyor mu?
+    /// Medeni durum (evli mi?) - nullable
     /// </summary>
-    public bool WorkWife { get; set; }
+    public bool? MaritalStatus { get; set; }
 
     /// <summary>
-    /// Eş maaşı (decimal - ZORUNLU!)
+    /// Eş çalışıyor mu? - nullable
     /// </summary>
-    public decimal WifeSalaryAmount { get; set; }
+    public bool? WorkWife { get; set; }
+
+    /// <summary>
+    /// Eş maaşı (decimal - nullable)
+    /// </summary>
+    public decimal? WifeSalaryAmount { get; set; }
 }
 

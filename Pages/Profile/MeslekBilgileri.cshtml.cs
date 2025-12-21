@@ -147,8 +147,12 @@ public class MeslekBilgileriModel : PageModel
             var request = new JobProfileRequest
             {
                 CustomerId = customerId,
-                JobId = JobId ?? 0,
-                SectorId = SectorId ?? 0
+                CustomerWork = 5, // Varsayılan: çalışıyor (5 = özel sektör)
+                JobGroupId = JobId ?? 0,
+                WorkingYears = WorkingYears ?? 0,
+                WorkingMonth = WorkingMonths ?? 0,
+                TitleCompany = CompanyName ?? string.Empty,
+                CompanyPosition = Position ?? string.Empty
             };
 
             var response = await _apiService.SaveJobProfile(request);

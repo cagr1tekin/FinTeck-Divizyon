@@ -136,9 +136,17 @@ public class OtpDogrulaModel : PageModel
                 
                 HttpContext.Session.SetString("CustomerId", customerId.ToString());
                 HttpContext.Session.Remove("OtpRetryCount"); // Retry count'u temizle
+                
+                // Eğer CustomerName session'da yoksa varsayılan değer koy
+                var customerName = HttpContext.Session.GetString("CustomerName");
+                if (string.IsNullOrEmpty(customerName))
+                {
+                    customerName = "Müşteri";
+                    HttpContext.Session.SetString("CustomerName", customerName);
+                }
 
-                _logger.LogInformation("OTP doğrulama başarılı: CustomerId={CustomerId}", 
-                    customerId);
+                _logger.LogInformation("OTP doğrulama başarılı: CustomerId={CustomerId}, CustomerName={CustomerName}", 
+                    customerId, customerName);
 
                 // Başarılı - Direkt Dashboard'a yönlendir
                 return RedirectToPage("/Dashboard/Index");

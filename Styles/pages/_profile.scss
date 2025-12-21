@@ -8,8 +8,8 @@
 // Main Container
 .profile_page_container {
     min-height: 100vh;
-    padding: $spacing_xl * 1 $spacing_lg;
-    background-color: #F5F7FB; // Clean light grey/blue background
+    padding: $spacing_xl * 2 $spacing_lg;
+    background-color: #F5F7FB;
     position: relative;
 
     @include respond_to_max(sm) {
@@ -18,65 +18,175 @@
 }
 
 // ============================================
-// HEADER CARD - FULL WIDTH (12 COLUMNS)
+// PROFILE LAYOUT - SIDEBAR + MAIN CONTENT
 // ============================================
 
-.profile_header_card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #FFFFFF;
-    border-radius: 20px;
-    padding: $spacing_xl * 1.5;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: $spacing_xl * 1.5;
+.profile_layout {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 20px;
     max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 
     @include respond_to_max(md) {
-        flex-direction: column;
-        gap: $spacing_lg;
-        text-align: center;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+// ============================================
+// LEFT SIDEBAR
+// ============================================
+
+.profile_sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: $spacing_xl;
+    height: fit-content;
+    align-self: start;
+
+    @include respond_to_max(md) {
+        position: relative;
+        top: 0;
+    }
+
+}
+
+// ============================================
+// PROFILE USER CARD (Sidebar)
+// ============================================
+
+.profile_user_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &__body {
         padding: $spacing_lg;
-    }
-
-    &__left {
-        display: flex;
-        align-items: center;
-        gap: $spacing_lg;
-        flex: 1;
-
-        @include respond_to_max(md) {
-            flex-direction: column;
-        }
-    }
-
-    &__right {
-        flex-shrink: 0;
-    }
-
-    &__info {
         display: flex;
         flex-direction: column;
-        gap: $spacing_xs;
+        align-items: center;
+        text-align: center;
     }
 
-    &__name {
-        font-size: $font_size_2xl;
-        font-weight: $font_weight_bold;
+    &__avatar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: $spacing_lg;
+    }
+
+    &__phone {
+        font-size: $font_size_base;
+        font-weight: $font_weight_semibold;
         color: $text_primary;
-        margin: 0;
-        line-height: $line_height_tight;
-        letter-spacing: -0.5px;
+        margin-bottom: $spacing_md;
+        word-break: break-word;
+        line-height: $line_height_normal;
+    }
+
+    &__tckn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing_xs;
+        margin-bottom: $spacing_md;
+        padding: $spacing_sm;
+        background-color: #F9FAFB;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    &__label {
+        font-size: $font_size_xs;
+        color: $text_secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__value {
+        font-size: $font_size_sm;
+        font-weight: $font_weight_medium;
+        color: $text_primary;
+    }
+
+    &__last_signin {
+        font-size: $font_size_sm;
+        color: $text_secondary;
+        line-height: $line_height_normal;
+    }
+}
+
+// ============================================
+// PROFILE USER ID CARD (Sidebar)
+// ============================================
+
+.profile_user_id_card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing_md $spacing_lg;
+        border-bottom: 1px solid #F3F4F6;
+        background-color: #FAFBFC;
     }
 
     &__title {
-        font-size: $font_size_base;
+        font-size: $font_size_xs;
+        font-weight: $font_weight_semibold;
         color: $text_secondary;
         margin: 0;
-        font-weight: $font_weight_normal;
-        line-height: $line_height_normal;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__body {
+        padding: $spacing_md $spacing_lg;
+    }
+
+    &__wrapper {
+        display: flex;
+        gap: $spacing_xs;
+        align-items: stretch;
+    }
+
+    &__input {
+        flex: 1;
+        padding: $spacing_sm $spacing_md;
+        font-size: $font_size_sm;
+        font-family: $font_primary;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        background-color: #F9FAFB;
+        color: $text_primary;
+        cursor: default;
+        min-width: 0;
+    }
+
+    &__copy {
+        padding: $spacing_sm $spacing_md;
+        font-size: $font_size_sm;
+        font-weight: $font_weight_medium;
+        color: $text_white;
+        background-color: #2e6df8;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color $transition_normal;
+        white-space: nowrap;
+        flex-shrink: 0;
+
+        &:hover {
+            background-color: #1e5ae8;
+        }
+
+        &:active {
+            transform: scale(0.98);
+        }
     }
 }
 
@@ -88,17 +198,12 @@
     width: 100px;
     height: 100px;
     border-radius: $radius_full;
-    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    background: linear-gradient(135deg, #2e6df8 0%, #1e5ae8 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
-
-    @include respond_to_max(md) {
-        width: 80px;
-        height: 80px;
-    }
+    box-shadow: 0 2px 8px rgba(46, 109, 248, 0.2);
 
     &__text {
         font-size: $font_size_2xl;
@@ -109,78 +214,26 @@
 }
 
 // ============================================
-// CREDIT SCORE BADGE
+// MAIN CONTENT AREA
 // ============================================
 
-.credit_score_badge {
+.profile_main_content {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing_sm;
-    padding: $spacing_md $spacing_lg;
-    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
-    border-radius: 12px;
-    margin-top: $spacing_xl;
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
-
-    &__icon {
-        width: 24px;
-        height: 24px;
-        color: $text_white;
-        flex-shrink: 0;
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    &__content {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2px;
-    }
-
-    &__label {
-        font-size: $font_size_xs;
-        font-weight: $font_weight_medium;
-        color: rgba(255, 255, 255, 0.9);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        line-height: 1;
-    }
-
-    &__value {
-        font-size: $font_size_xl;
-        font-weight: $font_weight_bold;
-        color: $text_white;
-        line-height: 1;
-        letter-spacing: -0.5px;
-    }
-}
-
-// ============================================
-// PROFILE CONTENT - FORM CARDS (VERTICAL STACK)
-// ============================================
-
-.profile_content {
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .profile_form {
     display: flex;
     flex-direction: column;
-    gap: $spacing_lg; // Kartlar arası boşluk
+    gap: 20px;
 
     @include respond_to_max(md) {
-        gap: $spacing_lg; // Yarı yarıya: $spacing_xl -> $spacing_lg
+        gap: 20px;
     }
 
     @include respond_to_max(sm) {
-        gap: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
+        gap: $spacing_md;
     }
 }
 
@@ -190,32 +243,81 @@
 
 .info_card {
     background-color: #FFFFFF;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     width: 100%;
+    margin-bottom: 20px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 
     &__header {
-        padding: $spacing_lg $spacing_xl;
+        padding: $spacing_md $spacing_lg;
         border-bottom: 1px solid #F3F4F6;
         background-color: #FAFBFC;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
     }
 
     &__title {
-        font-size: $font_size_xl;
+        font-size: $font_size_lg;
         font-weight: $font_weight_bold;
         color: $text_primary;
         margin: 0;
         line-height: $line_height_tight;
-        letter-spacing: -0.3px;
+        letter-spacing: -0.2px;
+    }
+
+    &__edit_btn,
+    &__save_btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        background-color: transparent;
+        color: #2e6df8;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all $transition_normal;
+        padding: 0;
+        flex-shrink: 0;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        &:hover {
+            background-color: rgba(46, 109, 248, 0.1);
+            color: #1e5ae8;
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    &__save_btn {
+        color: #10B981;
+
+        &:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
     }
 
     &__body {
-        padding: $spacing_xl;
+        padding: $spacing_lg;
+        background-color: #FFFFFF;
 
         @include respond_to_max(sm) {
-            padding: $spacing_lg;
+            padding: $spacing_md;
         }
     }
 }
@@ -227,9 +329,9 @@
 .profile_form {
     .form_row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
-        margin-bottom: $spacing_md; // Yarı yarıya: $spacing_lg -> $spacing_md
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing_lg;
+        margin-bottom: $spacing_lg;
 
         &:last-child {
             margin-bottom: 0;
@@ -237,16 +339,20 @@
 
         @include respond_to_max(sm) {
             grid-template-columns: 1fr;
-            gap: $spacing_sm; // Yarı yarıya: $spacing_md -> $spacing_sm
+            gap: $spacing_md;
         }
     }
 
     .form_group {
         margin-bottom: 0;
+
+        &--full {
+            grid-column: 1 / -1;
+        }
     }
 
     &__actions {
-        margin-top: $spacing_lg; // Yarı yarıya: $spacing_xl -> $spacing_lg
+        margin-top: $spacing_lg;
         display: flex;
         justify-content: flex-end;
 
@@ -254,8 +360,6 @@
             justify-content: stretch;
         }
     }
-
-    // Form içindeki kartlar arası gap (yukarıda tanımlı, burada override edilmiyor)
 }
 
 // ============================================
@@ -301,17 +405,24 @@
     }
 
     &:focus {
-        border-color: #0EA5E9;
-        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        border-color: #2e6df8;
+        box-shadow: 0 0 0 3px rgba(46, 109, 248, 0.1);
         outline: none;
+    }
+
+    &--readonly {
+        background-color: #F9FAFB;
+        cursor: default;
+        opacity: 1;
+        border-color: #E5E7EB;
     }
 
     &:disabled,
     &[readonly] {
         background-color: #F9FAFB;
-        cursor: not-allowed;
-        opacity: 0.7;
-        border-color: #F3F4F6;
+        cursor: default;
+        opacity: 1;
+        border-color: #E5E7EB;
     }
 
     &--error {
@@ -403,7 +514,39 @@
     }
 
     .form_input:focus + &__icon {
-        color: #0EA5E9;
+        color: #6366F1;
+    }
+}
+
+// ============================================
+// FORM INPUT WITH BADGE (Verified badge)
+// ============================================
+
+.form_input_with_badge {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: $spacing_sm;
+
+    .form_input {
+        flex: 1;
+    }
+}
+
+.form_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing_xs $spacing_sm;
+    font-size: $font_size_xs;
+    font-weight: $font_weight_semibold;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &--verified {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #065F46;
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
 }
 
@@ -590,3 +733,4 @@
     }
 
 }
+
