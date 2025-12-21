@@ -51,6 +51,34 @@
             grid-template-columns: 1fr;
         }
     }
+    
+    // Yatay layout (ana içerikte kullanım için)
+    &--horizontal {
+        background: #FFFFFF;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        
+        .crypto_widget__body {
+            display: flex;
+            flex-direction: row;
+            gap: $spacing_unit * 2;
+            flex-wrap: wrap;
+            
+            @media (max-width: 768px) {
+                flex-direction: column;
+            }
+        }
+        
+        .crypto_item {
+            flex: 1;
+            min-width: 200px;
+            background: $bg_secondary;
+            
+            @media (max-width: 768px) {
+                min-width: 100%;
+            }
+        }
+    }
 }
 
 // Kripto Para Item

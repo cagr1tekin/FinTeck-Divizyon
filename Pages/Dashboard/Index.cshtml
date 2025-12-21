@@ -257,146 +257,6 @@
                 </div>
             </div>
 
-            <!-- Kripto Para Widget -->
-            <div class="crypto_widget" id="crypto_widget">
-                <div class="crypto_widget__header">
-                    <h3 class="crypto_widget__title">Kripto Para Fiyatları</h3>
-                    <div class="crypto_widget__badge">
-                        <span class="crypto_widget__badge_dot"></span>
-                        <span class="crypto_widget__badge_text">Canlı</span>
-                    </div>
-                </div>
-                <div class="crypto_widget__body">
-                    <!-- BTC/TRY -->
-                    <div class="crypto_item" data-symbol="BTC" data-crypto-symbol="BTC">
-                        <div class="crypto_item__symbol">BTC</div>
-                        <div class="crypto_item__label">Bitcoin</div>
-                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
-                            @(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
-                        </div>
-                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0)">
-                            @{
-                                var btcChange = Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0;
-                                var btcChangeClass = btcChange > 0 ? "crypto_item__change--up" : btcChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
-                            }
-                            <span class="crypto_item__change_percent @btcChangeClass">
-                                @(btcChange.ToString("F2"))%
-                            </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                @if (btcChange > 0)
-                                {
-                                    <polyline points="18 15 12 9 6 15"/>
-                                }
-                                else if (btcChange < 0)
-                                {
-                                    <polyline points="6 9 12 15 18 9"/>
-                                }
-                                else
-                                {
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                }
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <!-- ETH/TRY -->
-                    <div class="crypto_item" data-symbol="ETH" data-crypto-symbol="ETH">
-                        <div class="crypto_item__symbol">ETH</div>
-                        <div class="crypto_item__label">Ethereum</div>
-                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
-                            @(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
-                        </div>
-                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0)">
-                            @{
-                                var ethChange = Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0;
-                                var ethChangeClass = ethChange > 0 ? "crypto_item__change--up" : ethChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
-                            }
-                            <span class="crypto_item__change_percent @ethChangeClass">
-                                @(ethChange.ToString("F2"))%
-                            </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                @if (ethChange > 0)
-                                {
-                                    <polyline points="18 15 12 9 6 15"/>
-                                }
-                                else if (ethChange < 0)
-                                {
-                                    <polyline points="6 9 12 15 18 9"/>
-                                }
-                                else
-                                {
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                }
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <!-- BNB/TRY -->
-                    <div class="crypto_item" data-symbol="BNB" data-crypto-symbol="BNB">
-                        <div class="crypto_item__symbol">BNB</div>
-                        <div class="crypto_item__label">Binance Coin</div>
-                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
-                            @(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
-                        </div>
-                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0)">
-                            @{
-                                var bnbChange = Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0;
-                                var bnbChangeClass = bnbChange > 0 ? "crypto_item__change--up" : bnbChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
-                            }
-                            <span class="crypto_item__change_percent @bnbChangeClass">
-                                @(bnbChange.ToString("F2"))%
-                            </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                @if (bnbChange > 0)
-                                {
-                                    <polyline points="18 15 12 9 6 15"/>
-                                }
-                                else if (bnbChange < 0)
-                                {
-                                    <polyline points="6 9 12 15 18 9"/>
-                                }
-                                else
-                                {
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                }
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <!-- SOL/TRY -->
-                    <div class="crypto_item" data-symbol="SOL" data-crypto-symbol="SOL">
-                        <div class="crypto_item__symbol">SOL</div>
-                        <div class="crypto_item__label">Solana</div>
-                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
-                            @(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
-                        </div>
-                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0)">
-                            @{
-                                var solChange = Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0;
-                                var solChangeClass = solChange > 0 ? "crypto_item__change--up" : solChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
-                            }
-                            <span class="crypto_item__change_percent @solChangeClass">
-                                @(solChange.ToString("F2"))%
-                            </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                @if (solChange > 0)
-                                {
-                                    <polyline points="18 15 12 9 6 15"/>
-                                }
-                                else if (solChange < 0)
-                                {
-                                    <polyline points="6 9 12 15 18 9"/>
-                                }
-                                else
-                                {
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                }
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Finansal Koç Kartı -->
             <div class="advisor_card">
                 <div class="advisor_card__icon">
@@ -971,12 +831,141 @@
                 </div>
             </div>
 
-            <!-- Satır 3: Son İşlemler (Timeline) -->
-            <div class="timeline_card">
-                <div class="timeline_card__header">
-                    <h2 class="timeline_card__title">Son İşlemler</h2>
+            <!-- Satır 3: Kripto Para Fiyatları (Yatay) -->
+            <div class="crypto_widget crypto_widget--horizontal" id="crypto_widget">
+                <div class="crypto_widget__header">
+                    <h3 class="crypto_widget__title">Kripto Para Fiyatları</h3>
+                    <div class="crypto_widget__badge">
+                        <span class="crypto_widget__badge_dot"></span>
+                        <span class="crypto_widget__badge_text">Canlı</span>
+                    </div>
                 </div>
-
+                <div class="crypto_widget__body">
+                    <!-- BTC/TRY -->
+                    <div class="crypto_item" data-symbol="BTC" data-crypto-symbol="BTC">
+                        <div class="crypto_item__symbol">BTC</div>
+                        <div class="crypto_item__label">Bitcoin</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var btcChange = Model.CryptoCurrencyData?.Data?.BTC?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var btcChangeClass = btcChange > 0 ? "crypto_item__change--up" : btcChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @btcChangeClass">
+                                @(btcChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (btcChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (btcChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- ETH/TRY -->
+                    <div class="crypto_item" data-symbol="ETH" data-crypto-symbol="ETH">
+                        <div class="crypto_item__symbol">ETH</div>
+                        <div class="crypto_item__label">Ethereum</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var ethChange = Model.CryptoCurrencyData?.Data?.ETH?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var ethChangeClass = ethChange > 0 ? "crypto_item__change--up" : ethChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @ethChangeClass">
+                                @(ethChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (ethChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (ethChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- BNB/TRY -->
+                    <div class="crypto_item" data-symbol="BNB" data-crypto-symbol="BNB">
+                        <div class="crypto_item__symbol">BNB</div>
+                        <div class="crypto_item__label">Binance Coin</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var bnbChange = Model.CryptoCurrencyData?.Data?.BNB?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var bnbChangeClass = bnbChange > 0 ? "crypto_item__change--up" : bnbChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @bnbChangeClass">
+                                @(bnbChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (bnbChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (bnbChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- SOL/TRY -->
+                    <div class="crypto_item" data-symbol="SOL" data-crypto-symbol="SOL">
+                        <div class="crypto_item__symbol">SOL</div>
+                        <div class="crypto_item__label">Solana</div>
+                        <div class="crypto_item__value" data-price="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("F2") ?? "0.00")">
+                            @(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.Price.ToString("N2") ?? "-") ₺
+                        </div>
+                        <div class="crypto_item__change crypto_item__change--neutral" data-change="@(Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0)">
+                            @{
+                                var solChange = Model.CryptoCurrencyData?.Data?.SOL?.Quote?.TRY?.PercentChange24h ?? 0;
+                                var solChangeClass = solChange > 0 ? "crypto_item__change--up" : solChange < 0 ? "crypto_item__change--down" : "crypto_item__change--neutral";
+                            }
+                            <span class="crypto_item__change_percent @solChangeClass">
+                                @(solChange.ToString("F2"))%
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                @if (solChange > 0)
+                                {
+                                    <polyline points="18 15 12 9 6 15"/>
+                                }
+                                else if (solChange < 0)
+                                {
+                                    <polyline points="6 9 12 15 18 9"/>
+                                }
+                                else
+                                {
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                }
+                            </svg>
                         </div>
                     </div>
                 </div>
